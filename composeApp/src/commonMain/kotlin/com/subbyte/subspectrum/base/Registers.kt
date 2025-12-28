@@ -15,6 +15,16 @@ enum class FlagSet(position: Int) {
     S(7),
 }
 
+enum class RegisterCode(val code: Int) {
+    A(0b111),
+    B(0b000),
+    C(0b001),
+    D(0b010),
+    E(0b011),
+    H(0b100),
+    L(0b101),
+}
+
 data class RegisterSet(
     private var A: Byte = 0,
     private var F: Byte = 0,
@@ -24,7 +34,6 @@ data class RegisterSet(
     private var E: Byte = 0,
     private var H: Byte = 0,
     private var L: Byte = 0,
-
 ) {
     fun getA(): Byte = A
     fun setA(value: Byte) { A = value }
@@ -70,6 +79,27 @@ data class RegisterSet(
         setL(bytes.second)
     }
 
+    fun getRegister(code: RegisterCode): Byte = when (code) {
+        RegisterCode.A -> A
+        RegisterCode.B -> B
+        RegisterCode.C -> C
+        RegisterCode.D -> D
+        RegisterCode.E -> E
+        RegisterCode.H -> H
+        RegisterCode.L -> L
+    }
+    fun setRegister(code: RegisterCode, value: Byte) {
+        when (code) {
+            RegisterCode.A -> A = value
+            RegisterCode.B -> B = value
+            RegisterCode.C -> C = value
+            RegisterCode.D -> D = value
+            RegisterCode.E -> E = value
+            RegisterCode.H -> H = value
+            RegisterCode.L -> L = value
+        }
+    }
+
     fun reset() {
         A = 0
         F = 0
@@ -83,32 +113,32 @@ data class RegisterSet(
 
     fun getCFlag(): Boolean = F.getBit(FlagSet.C.ordinal)
     fun setCFlag(value: Boolean) {
-        F.setBit(FlagSet.C.ordinal, value)
+        F = F.setBit(FlagSet.C.ordinal, value)
     }
 
     fun getNFlag(): Boolean = F.getBit(FlagSet.N.ordinal)
     fun setNFlag(value: Boolean) {
-        F.setBit(FlagSet.N.ordinal, value)
+        F = F.setBit(FlagSet.N.ordinal, value)
     }
 
     fun getPVFlag(): Boolean = F.getBit(FlagSet.PV.ordinal)
     fun setPVFlag(value: Boolean) {
-        F.setBit(FlagSet.PV.ordinal, value)
+        F = F.setBit(FlagSet.PV.ordinal, value)
     }
 
     fun getHFlag(): Boolean = F.getBit(FlagSet.H.ordinal)
     fun setHFlag(value: Boolean) {
-        F.setBit(FlagSet.H.ordinal, value)
+        F = F.setBit(FlagSet.H.ordinal, value)
     }
 
     fun getZFlag(): Boolean = F.getBit(FlagSet.Z.ordinal)
     fun setZFlag(value: Boolean) {
-        F.setBit(FlagSet.Z.ordinal, value)
+        F = F.setBit(FlagSet.Z.ordinal, value)
     }
 
     fun getSFlag(): Boolean = F.getBit(FlagSet.S.ordinal)
     fun setSFlag(value: Boolean) {
-        F.setBit(FlagSet.S.ordinal, value)
+        F = F.setBit(FlagSet.S.ordinal, value)
     }
 }
 

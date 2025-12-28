@@ -6,7 +6,7 @@ import com.subbyte.subspectrum.units.setBit
 typealias Address = UShort
 val MEMORY_SIZE = Address.MAX_VALUE.toInt() + 1
 
-class MemorySet (
+data class MemorySet (
     private val memoryCells: ByteArray = ByteArray(MEMORY_SIZE)
 ) {
     fun getMemoryCell(address: Address): Byte {

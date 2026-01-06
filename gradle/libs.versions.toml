@@ -1,6 +1,13 @@
 [versions]
+version-name = "1.0.0"
+app-pkg = "com.subbyte.subspectrum"
+app-name = "subspectrum"
+app-vendor = "subbyte"
+app-description = "ZX Spectrum emulator and debugger"
+app-menugroup = "Other"
+
 androidx-lifecycle = "2.9.4"
-composeHotReload = "1.0.0-rc02"
+composeHotReload = "1.1.0-alpha03"
 composeMultiplatform = "1.9.1"
 junit = "4.13.2"
 kotlin = "2.2.21"

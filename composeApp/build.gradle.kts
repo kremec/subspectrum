@@ -50,8 +50,29 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.subbyte.subspectrum"
-            packageVersion = "1.0.0"
+            packageName = libs.versions.app.pkg.get()
+            packageVersion = libs.versions.version.name.get()
+            vendor = libs.versions.app.vendor.get()
+            description = libs.versions.app.description.get()
+
+            macOS {
+                dockName = libs.versions.app.name.get()
+                iconFile.set(project.file("../media/icon.icns"))
+            }
+            windows {
+                iconFile.set(project.file("../media/icon.ico"))
+                msiPackageVersion = libs.versions.version.name.get()
+                shortcut = true
+                dirChooser = true
+                menu = true
+                menuGroup = libs.versions.app.menugroup.get()
+            }
+            linux {
+                iconFile.set(project.file("../media/icon.png"))
+                debMaintainer = libs.versions.app.vendor.get()
+                menuGroup = libs.versions.app.menugroup.get()
+                shortcut = true
+            }
         }
     }
 }

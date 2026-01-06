@@ -3,7 +3,7 @@ package com.subbyte.subspectrum.units
 typealias Word = Short
 
 fun Pair<Byte, Byte>.fromBytes(): Word {
-    return ((first.toInt() shl 8) or second.toInt()).toShort()
+    return ((first.toInt() and 0xFF) shl 8 or (second.toInt() and 0xFF)).toShort()
 }
 
 fun Word.toBytes(): Pair<Byte, Byte> {

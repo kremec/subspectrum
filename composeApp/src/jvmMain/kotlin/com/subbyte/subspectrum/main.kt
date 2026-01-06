@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
@@ -8,6 +9,14 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "subspectrum",
     ) {
-        App()
+        window.rootPane.apply {
+            rootPane.putClientProperty("apple.awt.fullWindowContent", true)
+            rootPane.putClientProperty("apple.awt.transparentTitleBar", true)
+        }
+
+        Column {
+            TopBar()
+            App()
+        }
     }
 }

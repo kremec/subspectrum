@@ -16,13 +16,13 @@ class LDnnATest {
 
     @Test
     fun decodeInstruction() {
-        val instruction = LDnnA.decode(0x320012L, 0x1000u)
+        val instruction = LDnnA.decode(0x321200L, 0x1000u)
 
         assertEquals(0x1000u, instruction.address)
         assertEquals(3, instruction.bytes.size)
         assertEquals(0x32.toByte(), instruction.bytes[0])
-        assertEquals(0x00.toByte(), instruction.bytes[1])
-        assertEquals(0x12.toByte(), instruction.bytes[2])
+        assertEquals(0x12.toByte(), instruction.bytes[1])
+        assertEquals(0x00.toByte(), instruction.bytes[2])
 
         val ldnnA = instruction as LDnnA
         assertEquals(0x0012, ldnnA.destinationWord)
@@ -34,7 +34,7 @@ class LDnnATest {
 
         val instruction = LDnnA(
             address = 0x1000u,
-            bytes = byteArrayOf(0x32, 0x00, 0x12),
+            bytes = byteArrayOf(0x32, 0x12, 0x00),
             destinationWord = 0x0012
         )
 
@@ -47,7 +47,7 @@ class LDnnATest {
     fun toStringFormat() {
         val instruction = LDnnA(
             address = 0x0000u,
-            bytes = byteArrayOf(0x32, 0x00, 0x12),
+            bytes = byteArrayOf(0x32, 0x12, 0x00),
             destinationWord = 0x0012
         )
 

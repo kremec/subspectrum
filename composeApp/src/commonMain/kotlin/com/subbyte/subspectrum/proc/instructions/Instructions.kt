@@ -3,6 +3,26 @@ package com.subbyte.subspectrum.proc.instructions
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
+import com.subbyte.subspectrum.proc.instructions.load16.LDHLnn
+import com.subbyte.subspectrum.proc.instructions.load16.LDIXMEMnn
+import com.subbyte.subspectrum.proc.instructions.load16.LDIXnn
+import com.subbyte.subspectrum.proc.instructions.load16.LDIYMEMnn
+import com.subbyte.subspectrum.proc.instructions.load16.LDIYnn
+import com.subbyte.subspectrum.proc.instructions.load16.LDSPHL
+import com.subbyte.subspectrum.proc.instructions.load16.LDSPIX
+import com.subbyte.subspectrum.proc.instructions.load16.LDSPIY
+import com.subbyte.subspectrum.proc.instructions.load16.LDddMEMnn
+import com.subbyte.subspectrum.proc.instructions.load16.LDddnn
+import com.subbyte.subspectrum.proc.instructions.load16.LDnnHL
+import com.subbyte.subspectrum.proc.instructions.load16.LDnnIX
+import com.subbyte.subspectrum.proc.instructions.load16.LDnnIY
+import com.subbyte.subspectrum.proc.instructions.load16.LDnndd
+import com.subbyte.subspectrum.proc.instructions.load16.POPIX
+import com.subbyte.subspectrum.proc.instructions.load16.POPIY
+import com.subbyte.subspectrum.proc.instructions.load16.POPqq
+import com.subbyte.subspectrum.proc.instructions.load16.PUSHIX
+import com.subbyte.subspectrum.proc.instructions.load16.PUSHIY
+import com.subbyte.subspectrum.proc.instructions.load16.PUSHqq
 import com.subbyte.subspectrum.proc.instructions.load8.LDrr
 import com.subbyte.subspectrum.proc.instructions.load8.LDrn
 import com.subbyte.subspectrum.proc.instructions.load8.LDrHL
@@ -42,27 +62,50 @@ interface InstructionDefinition {
 
 object Instructions {
     private val definitions: List<InstructionDefinition> = listOf(
-        LDrr.Companion,
-        LDrn.Companion,
-        LDrHL.Companion,
-        LDrIXd.Companion,
-        LDrIYd.Companion,
-        LDHLr.Companion,
-        LDIXdr.Companion,
-        LDIYdr.Companion,
-        LDHLn.Companion,
-        LDIXdn.Companion,
-        LDIYdn.Companion,
-        LDABC.Companion,
-        LDADE.Companion,
-        LDAnn.Companion,
-        LDBCA.Companion,
-        LDDEA.Companion,
-        LDnnA.Companion,
-        LDAI.Companion,
-        LDAR.Companion,
-        LDIA.Companion,
-        LDRA.Companion,
+        // load8
+        LDrr,
+        LDrn,
+        LDrHL,
+        LDrIXd,
+        LDrIYd,
+        LDHLr,
+        LDIXdr,
+        LDIYdr,
+        LDHLn,
+        LDIXdn,
+        LDIYdn,
+        LDABC,
+        LDADE,
+        LDAnn,
+        LDBCA,
+        LDDEA,
+        LDnnA,
+        LDAI,
+        LDAR,
+        LDIA,
+        LDRA,
+
+        // load16
+        LDddnn,
+        LDIXnn,
+        LDIYnn,
+        LDHLnn,
+        LDddMEMnn,
+        LDIXMEMnn,
+        LDIYMEMnn,
+        LDnnHL,
+        LDnndd,
+        LDnnIX,
+        LDnnIY,
+        LDSPHL,
+        LDSPIX,
+        LDSPIY,
+        PUSHqq,
+        PUSHIX,
+        PUSHIY,
+        POPqq,
+        POPIX,
+        POPIY
     )
 
     fun decode(pc: Address): Instruction {

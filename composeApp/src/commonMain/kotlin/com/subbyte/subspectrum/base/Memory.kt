@@ -1,7 +1,14 @@
 package com.subbyte.subspectrum.base
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import com.subbyte.subspectrum.units.getBit
 import com.subbyte.subspectrum.units.setBit
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 typealias Address = UShort
 val MEMORY_SIZE = Address.MAX_VALUE.toInt() + 1
@@ -9,16 +16,29 @@ val MEMORY_SIZE = Address.MAX_VALUE.toInt() + 1
 data class MemorySet (
     private val memoryCells: ByteArray = ByteArray(MEMORY_SIZE)
 ) {
+    private val _invalidations = MutableSharedFlow<Unit>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
+    val invalidations: SharedFlow<Unit> = _invalidations.asSharedFlow()
+    private fun invalidate() {
+        _invalidations.tryEmit(Unit) // never suspends
+    }
+
     fun getMemoryCell(address: Address): Byte {
         return memoryCells[address.toInt()]
     }
+
     fun setMemoryCell(address: Address, value: Byte) {
         memoryCells[address.toInt()] = value
+        invalidate()
     }
 
     fun getMemoryCells(startAddress: Address, endInclusiveAddress: Address): ByteArray {
         return memoryCells.sliceArray(IntRange(startAddress.toInt(), endInclusiveAddress.toInt()))
     }
+
     fun setMemoryCells(startAddress: Address, data: ByteArray) {
         if (data.size > MEMORY_SIZE) {
             throw IllegalArgumentException(
@@ -35,6 +55,7 @@ data class MemorySet (
         }
 
         data.copyInto(memoryCells, startAddress.toInt())
+        invalidate()
     }
 
     fun getBitInMemoryCell(address: Address, bit: Int): Boolean {
@@ -53,10 +74,12 @@ data class MemorySet (
 
         val byte = getMemoryCell(address)
         setMemoryCell(address, byte.setBit(bit, value))
+        invalidate()
     }
 
     fun reset() {
         memoryCells.fill(0x00)
+        invalidate()
     }
 }
 

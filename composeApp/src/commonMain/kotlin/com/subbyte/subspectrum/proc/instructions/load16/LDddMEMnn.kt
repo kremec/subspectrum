@@ -31,8 +31,8 @@ data class LDddMEMnn(
         override val bitPattern = BitPattern.of("11101101 01dd1011 llllllll hhhhhhhh")
         override fun decode(word: Long, address: Address): Instruction {
             val d = bitPattern.get(word, 'd')
-            val l = LDIXnn.Companion.bitPattern.get(word, 'l').toByte()
-            val h = LDIXnn.Companion.bitPattern.get(word, 'h').toByte()
+            val l = LDIXnn.bitPattern.get(word, 'l').toByte()
+            val h = LDIXnn.bitPattern.get(word, 'h').toByte()
 
 
             val destinationRegisterPair = RegisterPairCode.entries.first { it.code == d }

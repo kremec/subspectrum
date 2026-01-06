@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instructions
@@ -152,7 +151,7 @@ private fun buildDisassemblyRows(): List<DisassemblyRow> {
             )
 
             address += instruction.bytes.size
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // Handle unknown opcodes by showing as data
             val byte =
                 Memory.memorySet.getMemoryCell(address.toUShort())

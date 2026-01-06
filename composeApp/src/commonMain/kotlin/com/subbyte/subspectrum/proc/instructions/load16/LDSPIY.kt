@@ -1,13 +1,10 @@
 package com.subbyte.subspectrum.proc.instructions.load16
 
+import BitPattern
 import com.subbyte.subspectrum.base.Address
-import com.subbyte.subspectrum.base.Memory
-import com.subbyte.subspectrum.base.RegisterPairCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
-import com.subbyte.subspectrum.units.Word
-import com.subbyte.subspectrum.units.toBytes
 
 data class LDSPIY(
     override val address: Address,

@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.subbyte.subspectrum.base.Memory
-import com.subbyte.subspectrum.base.Registers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

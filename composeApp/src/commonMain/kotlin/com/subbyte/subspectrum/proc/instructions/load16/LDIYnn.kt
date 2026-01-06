@@ -1,7 +1,7 @@
 package com.subbyte.subspectrum.proc.instructions.load16
 
+import BitPattern
 import com.subbyte.subspectrum.base.Address
-import com.subbyte.subspectrum.base.RegisterPairCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition

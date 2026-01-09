@@ -16,7 +16,7 @@ data class LDHLnn(
 ) : Instruction {
     override fun execute() {
         val sourceLowValue = Memory.memorySet.getMemoryCell(sourceWord.toUShort())
-        val sourceHighValue = Memory.memorySet.getMemoryCell(sourceWord.plus(1).toUShort())
+        val sourceHighValue = Memory.memorySet.getMemoryCell(sourceWord.inc().toUShort())
         val sourceValue = ((sourceHighValue.toInt() shl 8) or (sourceLowValue.toInt() and 0xFF)).toShort()
         Registers.registerSet.setHL(sourceValue)
     }

@@ -17,7 +17,7 @@ data class LDddMEMnn(
 ) : Instruction {
     override fun execute() {
         val sourceLowValue = Memory.memorySet.getMemoryCell(sourceWord.toUShort())
-        val sourceHighValue = Memory.memorySet.getMemoryCell(sourceWord.plus(1).toUShort())
+        val sourceHighValue = Memory.memorySet.getMemoryCell(sourceWord.inc().toUShort())
         val sourceValue = ((sourceHighValue.toInt() shl 8) or (sourceLowValue.toInt() and 0xFF)).toShort()
         Registers.setRegisterPair(destinationRegisterPair, sourceValue)
     }

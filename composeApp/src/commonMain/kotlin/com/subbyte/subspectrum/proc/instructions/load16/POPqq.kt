@@ -15,9 +15,9 @@ data class POPqq(
 ) : Instruction {
     override fun execute() {
         val sourceLowValue = Memory.memorySet.getMemoryCell(Registers.specialPurposeRegisters.getSP().toUShort())
-        Registers.specialPurposeRegisters.setSP(Registers.specialPurposeRegisters.getSP().plus(1).toShort())
+        Registers.specialPurposeRegisters.setSP(Registers.specialPurposeRegisters.getSP().inc())
         val sourceHighValue = Memory.memorySet.getMemoryCell(Registers.specialPurposeRegisters.getSP().toUShort())
-        Registers.specialPurposeRegisters.setSP(Registers.specialPurposeRegisters.getSP().plus(1).toShort())
+        Registers.specialPurposeRegisters.setSP(Registers.specialPurposeRegisters.getSP().inc())
 
         val sourceValue = ((sourceHighValue.toInt() shl 8) or (sourceLowValue.toInt() and 0xFF)).toShort()
         Registers.setRegisterPair(destinationRegisterPairCode, sourceValue)

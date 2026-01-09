@@ -16,9 +16,9 @@ data class PUSHIX(
         val sourceValue = Registers.specialPurposeRegisters.getIX()
         val (sourceHighValue, sourceLowValue) = sourceValue.toBytes()
 
-        Registers.specialPurposeRegisters.setSP(Registers.specialPurposeRegisters.getSP().minus(1).toShort())
+        Registers.specialPurposeRegisters.setSP(Registers.specialPurposeRegisters.getSP().dec())
         Memory.memorySet.setMemoryCell(Registers.specialPurposeRegisters.getSP().toUShort(), sourceHighValue)
-        Registers.specialPurposeRegisters.setSP(Registers.specialPurposeRegisters.getSP().minus(1).toShort())
+        Registers.specialPurposeRegisters.setSP(Registers.specialPurposeRegisters.getSP().dec())
         Memory.memorySet.setMemoryCell(Registers.specialPurposeRegisters.getSP().toUShort(), sourceLowValue)
     }
 

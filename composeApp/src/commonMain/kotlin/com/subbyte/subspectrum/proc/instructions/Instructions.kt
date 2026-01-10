@@ -3,6 +3,68 @@ package com.subbyte.subspectrum.proc.instructions
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
+import com.subbyte.subspectrum.proc.instructions.arith8.ADCAHL
+import com.subbyte.subspectrum.proc.instructions.arith8.ADCAIXd
+import com.subbyte.subspectrum.proc.instructions.arith8.ADCAIYd
+import com.subbyte.subspectrum.proc.instructions.arith8.ADCAn
+import com.subbyte.subspectrum.proc.instructions.arith8.ADCAr
+import com.subbyte.subspectrum.proc.instructions.arith8.ADDAHL
+import com.subbyte.subspectrum.proc.instructions.arith8.ADDAIXd
+import com.subbyte.subspectrum.proc.instructions.arith8.ADDAIYd
+import com.subbyte.subspectrum.proc.instructions.arith8.ADDAn
+import com.subbyte.subspectrum.proc.instructions.arith8.ADDAr
+import com.subbyte.subspectrum.proc.instructions.arith8.ANDHL
+import com.subbyte.subspectrum.proc.instructions.arith8.ANDIXd
+import com.subbyte.subspectrum.proc.instructions.arith8.ANDIYd
+import com.subbyte.subspectrum.proc.instructions.arith8.ANDn
+import com.subbyte.subspectrum.proc.instructions.arith8.ANDr
+import com.subbyte.subspectrum.proc.instructions.arith8.CPHL
+import com.subbyte.subspectrum.proc.instructions.arith8.CPIXd
+import com.subbyte.subspectrum.proc.instructions.arith8.CPIYd
+import com.subbyte.subspectrum.proc.instructions.arith8.CPn
+import com.subbyte.subspectrum.proc.instructions.arith8.CPr
+import com.subbyte.subspectrum.proc.instructions.arith8.DECHL
+import com.subbyte.subspectrum.proc.instructions.arith8.DECIXd
+import com.subbyte.subspectrum.proc.instructions.arith8.DECIYd
+import com.subbyte.subspectrum.proc.instructions.arith8.DECr
+import com.subbyte.subspectrum.proc.instructions.arith8.INCHL
+import com.subbyte.subspectrum.proc.instructions.arith8.INCIXd
+import com.subbyte.subspectrum.proc.instructions.arith8.INCIYd
+import com.subbyte.subspectrum.proc.instructions.arith8.INCr
+import com.subbyte.subspectrum.proc.instructions.arith8.ORHL
+import com.subbyte.subspectrum.proc.instructions.arith8.ORIXd
+import com.subbyte.subspectrum.proc.instructions.arith8.ORIYd
+import com.subbyte.subspectrum.proc.instructions.arith8.ORn
+import com.subbyte.subspectrum.proc.instructions.arith8.ORr
+import com.subbyte.subspectrum.proc.instructions.arith8.SBCAHL
+import com.subbyte.subspectrum.proc.instructions.arith8.SBCAIXd
+import com.subbyte.subspectrum.proc.instructions.arith8.SBCAIYd
+import com.subbyte.subspectrum.proc.instructions.arith8.SBCAn
+import com.subbyte.subspectrum.proc.instructions.arith8.SBCAr
+import com.subbyte.subspectrum.proc.instructions.arith8.SUBAHL
+import com.subbyte.subspectrum.proc.instructions.arith8.SUBAIXd
+import com.subbyte.subspectrum.proc.instructions.arith8.SUBAIYd
+import com.subbyte.subspectrum.proc.instructions.arith8.SUBAn
+import com.subbyte.subspectrum.proc.instructions.arith8.SUBAr
+import com.subbyte.subspectrum.proc.instructions.arith8.XORHL
+import com.subbyte.subspectrum.proc.instructions.arith8.XORIXd
+import com.subbyte.subspectrum.proc.instructions.arith8.XORIYd
+import com.subbyte.subspectrum.proc.instructions.arith8.XORn
+import com.subbyte.subspectrum.proc.instructions.arith8.XORr
+import com.subbyte.subspectrum.proc.instructions.block.CPD
+import com.subbyte.subspectrum.proc.instructions.block.CPDR
+import com.subbyte.subspectrum.proc.instructions.block.CPI
+import com.subbyte.subspectrum.proc.instructions.block.CPIR
+import com.subbyte.subspectrum.proc.instructions.block.LDD
+import com.subbyte.subspectrum.proc.instructions.block.LDDR
+import com.subbyte.subspectrum.proc.instructions.block.LDI
+import com.subbyte.subspectrum.proc.instructions.block.LDIR
+import com.subbyte.subspectrum.proc.instructions.ex.EXAFAF
+import com.subbyte.subspectrum.proc.instructions.ex.EXDEHL
+import com.subbyte.subspectrum.proc.instructions.ex.EXSPHL
+import com.subbyte.subspectrum.proc.instructions.ex.EXSPIX
+import com.subbyte.subspectrum.proc.instructions.ex.EXSPIY
+import com.subbyte.subspectrum.proc.instructions.ex.EXX
 import com.subbyte.subspectrum.proc.instructions.load16.LDHLnn
 import com.subbyte.subspectrum.proc.instructions.load16.LDIXMEMnn
 import com.subbyte.subspectrum.proc.instructions.load16.LDIXnn
@@ -105,7 +167,75 @@ object Instructions {
         PUSHIY,
         POPqq,
         POPIX,
-        POPIY
+        POPIY,
+
+        // ex
+        EXDEHL,
+        EXAFAF,
+        EXX,
+        EXSPHL,
+        EXSPIX,
+        EXSPIY,
+
+        // block
+        LDI,
+        LDIR,
+        LDD,
+        LDDR,
+        CPI,
+        CPIR,
+        CPD,
+        CPDR,
+
+        // arith8
+        ADDAr,
+        ADDAn,
+        ADDAHL,
+        ADDAIXd,
+        ADDAIYd,
+        ADCAr,
+        ADCAn,
+        ADCAHL,
+        ADCAIXd,
+        ADCAIYd,
+        SUBAr,
+        SUBAn,
+        SUBAHL,
+        SUBAIXd,
+        SUBAIYd,
+        SBCAr,
+        SBCAn,
+        SBCAHL,
+        SBCAIXd,
+        SBCAIYd,
+        ANDr,
+        ANDn,
+        ANDHL,
+        ANDIXd,
+        ANDIYd,
+        ORr,
+        ORn,
+        ORHL,
+        ORIXd,
+        ORIYd,
+        XORr,
+        XORn,
+        XORHL,
+        XORIXd,
+        XORIYd,
+        CPr,
+        CPn,
+        CPHL,
+        CPIXd,
+        CPIYd,
+        INCr,
+        INCHL,
+        INCIXd,
+        INCIYd,
+        DECr,
+        DECHL,
+        DECIXd,
+        DECIYd
     )
 
     fun decode(pc: Address): Instruction {

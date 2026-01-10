@@ -1,0 +1,60 @@
+package com.subbyte.subspectrum.proc.instructions.arith8
+
+import com.subbyte.subspectrum.base.Memory
+import com.subbyte.subspectrum.base.Registers
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+
+class ADDAIXdTest {
+    @BeforeTest
+    fun setup() {
+        Memory.memorySet.reset()
+        Registers.registerSet.reset()
+        Registers.specialPurposeRegisters.reset()
+    }
+
+    @Test
+    fun decodeInstruction() {
+        val instruction = ADDAIXd.decode(0xDD8605L, 0x1000u)
+
+        assertEquals(0x1000u, instruction.address)
+        assertEquals(3, instruction.bytes.size)
+        assertEquals(0xDD.toByte(), instruction.bytes[0])
+        assertEquals(0x86.toByte(), instruction.bytes[1])
+        assertEquals(0x05.toByte(), instruction.bytes[2])
+
+        val addAIXd = instruction as ADDAIXd
+        assertEquals(0x05.toByte(), addAIXd.displacement)
+    }
+
+    @Test
+    fun executeAddWithIXOffset() {
+        Registers.registerSet.setA(0x10.toByte())
+        Registers.specialPurposeRegisters.setIX(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x20.toByte())
+
+        val instruction = ADDAIXd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertEquals(0x30.toByte(), Registers.registerSet.getA())
+        assertFalse(Registers.registerSet.getNFlag())
+    }
+
+    @Test
+    fun toStringFormat() {
+        val instruction = ADDAIXd(
+            address = 0x0000u,
+            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        assertEquals("ADD A, (IX + 5)", instruction.toString())
+    }
+}

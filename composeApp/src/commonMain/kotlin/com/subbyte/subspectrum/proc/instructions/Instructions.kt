@@ -3,6 +3,17 @@ package com.subbyte.subspectrum.proc.instructions
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
+import com.subbyte.subspectrum.proc.instructions.arith16.ADCHLss
+import com.subbyte.subspectrum.proc.instructions.arith16.ADDHLss
+import com.subbyte.subspectrum.proc.instructions.arith16.ADDIXss
+import com.subbyte.subspectrum.proc.instructions.arith16.ADDIYss
+import com.subbyte.subspectrum.proc.instructions.arith16.DECIX
+import com.subbyte.subspectrum.proc.instructions.arith16.DECIY
+import com.subbyte.subspectrum.proc.instructions.arith16.DECss
+import com.subbyte.subspectrum.proc.instructions.arith16.INCIX
+import com.subbyte.subspectrum.proc.instructions.arith16.INCIY
+import com.subbyte.subspectrum.proc.instructions.arith16.INCss
+import com.subbyte.subspectrum.proc.instructions.arith16.SBCHLss
 import com.subbyte.subspectrum.proc.instructions.arith8.ADCAHL
 import com.subbyte.subspectrum.proc.instructions.arith8.ADCAIXd
 import com.subbyte.subspectrum.proc.instructions.arith8.ADCAIYd
@@ -235,7 +246,20 @@ object Instructions {
         DECr,
         DECHL,
         DECIXd,
-        DECIYd
+        DECIYd,
+
+        // arith16
+        ADDHLss,
+        ADCHLss,
+        SBCHLss,
+        ADDIXss,
+        ADDIYss,
+        INCss,
+        INCIX,
+        INCIY,
+        DECss,
+        DECIX,
+        DECIY
     )
 
     fun decode(pc: Address): Instruction {

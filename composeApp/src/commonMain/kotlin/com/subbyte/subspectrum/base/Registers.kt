@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-enum class FlagSet(position: Int) {
+enum class FlagSet(val position: Int) {
     C(0),
     N(1),
     PV(2),
@@ -167,39 +167,39 @@ data class RegisterSet(
         invalidate()
     }
 
-    fun getCFlag(): Boolean = F.getBit(FlagSet.C.ordinal)
+    fun getCFlag(): Boolean = F.getBit(FlagSet.C.position)
     fun setCFlag(value: Boolean) {
-        F = F.setBit(FlagSet.C.ordinal, value)
+        F = F.setBit(FlagSet.C.position, value)
         invalidate()
     }
 
-    fun getNFlag(): Boolean = F.getBit(FlagSet.N.ordinal)
+    fun getNFlag(): Boolean = F.getBit(FlagSet.N.position)
     fun setNFlag(value: Boolean) {
-        F = F.setBit(FlagSet.N.ordinal, value)
+        F = F.setBit(FlagSet.N.position, value)
         invalidate()
     }
 
-    fun getPVFlag(): Boolean = F.getBit(FlagSet.PV.ordinal)
+    fun getPVFlag(): Boolean = F.getBit(FlagSet.PV.position)
     fun setPVFlag(value: Boolean) {
-        F = F.setBit(FlagSet.PV.ordinal, value)
+        F = F.setBit(FlagSet.PV.position, value)
         invalidate()
     }
 
-    fun getHFlag(): Boolean = F.getBit(FlagSet.H.ordinal)
+    fun getHFlag(): Boolean = F.getBit(FlagSet.H.position)
     fun setHFlag(value: Boolean) {
-        F = F.setBit(FlagSet.H.ordinal, value)
+        F = F.setBit(FlagSet.H.position, value)
         invalidate()
     }
 
-    fun getZFlag(): Boolean = F.getBit(FlagSet.Z.ordinal)
+    fun getZFlag(): Boolean = F.getBit(FlagSet.Z.position)
     fun setZFlag(value: Boolean) {
-        F = F.setBit(FlagSet.Z.ordinal, value)
+        F = F.setBit(FlagSet.Z.position, value)
         invalidate()
     }
 
-    fun getSFlag(): Boolean = F.getBit(FlagSet.S.ordinal)
+    fun getSFlag(): Boolean = F.getBit(FlagSet.S.position)
     fun setSFlag(value: Boolean) {
-        F = F.setBit(FlagSet.S.ordinal, value)
+        F = F.setBit(FlagSet.S.position, value)
         invalidate()
     }
 

@@ -5,7 +5,6 @@ import com.subbyte.subspectrum.base.Registers
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class CPIXdTest {

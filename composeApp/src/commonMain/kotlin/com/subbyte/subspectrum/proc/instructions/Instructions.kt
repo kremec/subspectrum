@@ -66,6 +66,18 @@ import com.subbyte.subspectrum.proc.instructions.arith8.XORIXd
 import com.subbyte.subspectrum.proc.instructions.arith8.XORIYd
 import com.subbyte.subspectrum.proc.instructions.arith8.XORn
 import com.subbyte.subspectrum.proc.instructions.arith8.XORr
+import com.subbyte.subspectrum.proc.instructions.bit.BITbHL
+import com.subbyte.subspectrum.proc.instructions.bit.BITbIXd
+import com.subbyte.subspectrum.proc.instructions.bit.BITbIYd
+import com.subbyte.subspectrum.proc.instructions.bit.BITbr
+import com.subbyte.subspectrum.proc.instructions.bit.SETbHL
+import com.subbyte.subspectrum.proc.instructions.bit.SETbIXd
+import com.subbyte.subspectrum.proc.instructions.bit.SETbIYd
+import com.subbyte.subspectrum.proc.instructions.bit.SETbr
+import com.subbyte.subspectrum.proc.instructions.bit.RESbHL
+import com.subbyte.subspectrum.proc.instructions.bit.RESbIXd
+import com.subbyte.subspectrum.proc.instructions.bit.RESbIYd
+import com.subbyte.subspectrum.proc.instructions.bit.RESbr
 import com.subbyte.subspectrum.proc.instructions.block.CPD
 import com.subbyte.subspectrum.proc.instructions.block.CPDR
 import com.subbyte.subspectrum.proc.instructions.block.CPI
@@ -329,7 +341,21 @@ object Instructions {
         SRLIXd,
         SRLIYd,
         RLD,
-        RRD
+        RRD,
+
+        // bit
+        BITbr,
+        BITbHL,
+        BITbIXd,
+        BITbIYd,
+        SETbr,
+        SETbHL,
+        SETbIXd,
+        SETbIYd,
+        RESbr,
+        RESbHL,
+        RESbIXd,
+        RESbIYd
     )
 
     fun decode(pc: Address): Instruction {

@@ -29,6 +29,17 @@ enum class RegisterCode(val code: Int) {
     L(0b101),
 }
 
+enum class ConditionCode(val code: Int) {
+    NZ(0b000),
+    Z(0b001),
+    NC(0b010),
+    C(0b011),
+    PO(0b100),
+    PE(0b101),
+    P(0b110),
+    M(0b111)
+}
+
 enum class RegisterPairCode(val code: Int) {
     BC(0b00),
     DE(0b01),
@@ -201,6 +212,19 @@ data class RegisterSet(
     fun setSFlag(value: Boolean) {
         F = F.setBit(FlagSet.S.position, value)
         invalidate()
+    }
+
+    fun checkCondition(condition: ConditionCode): Boolean {
+        return when (condition) {
+            ConditionCode.NZ -> !getZFlag()
+            ConditionCode.Z -> getZFlag()
+            ConditionCode.NC -> !getCFlag()
+            ConditionCode.C -> getCFlag()
+            ConditionCode.PO -> !getPVFlag()
+            ConditionCode.PE -> getPVFlag()
+            ConditionCode.P -> !getSFlag()
+            ConditionCode.M -> getSFlag()
+        }
     }
 
     private val _invalidations = MutableSharedFlow<Unit>(

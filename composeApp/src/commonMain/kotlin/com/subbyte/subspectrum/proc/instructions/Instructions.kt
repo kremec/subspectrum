@@ -78,6 +78,13 @@ import com.subbyte.subspectrum.proc.instructions.bit.RESbHL
 import com.subbyte.subspectrum.proc.instructions.bit.RESbIXd
 import com.subbyte.subspectrum.proc.instructions.bit.RESbIYd
 import com.subbyte.subspectrum.proc.instructions.bit.RESbr
+import com.subbyte.subspectrum.proc.instructions.jump.JPnn
+import com.subbyte.subspectrum.proc.instructions.jump.JPccnn
+import com.subbyte.subspectrum.proc.instructions.jump.JRd
+import com.subbyte.subspectrum.proc.instructions.jump.JRCd
+import com.subbyte.subspectrum.proc.instructions.jump.JRNCd
+import com.subbyte.subspectrum.proc.instructions.jump.JRZd
+import com.subbyte.subspectrum.proc.instructions.jump.JRNZd
 import com.subbyte.subspectrum.proc.instructions.block.CPD
 import com.subbyte.subspectrum.proc.instructions.block.CPDR
 import com.subbyte.subspectrum.proc.instructions.block.CPI
@@ -94,6 +101,10 @@ import com.subbyte.subspectrum.proc.instructions.ex.EXSPIY
 import com.subbyte.subspectrum.proc.instructions.ex.EXX
 import com.subbyte.subspectrum.proc.instructions.general.RLD
 import com.subbyte.subspectrum.proc.instructions.general.RRD
+import com.subbyte.subspectrum.proc.instructions.jump.DJNZd
+import com.subbyte.subspectrum.proc.instructions.jump.JPHL
+import com.subbyte.subspectrum.proc.instructions.jump.JPIX
+import com.subbyte.subspectrum.proc.instructions.jump.JPIY
 import com.subbyte.subspectrum.proc.instructions.load16.LDHLnn
 import com.subbyte.subspectrum.proc.instructions.load16.LDIXMEMnn
 import com.subbyte.subspectrum.proc.instructions.load16.LDIXnn
@@ -355,7 +366,20 @@ object Instructions {
         RESbr,
         RESbHL,
         RESbIXd,
-        RESbIYd
+        RESbIYd,
+
+        // jump
+        JPnn,
+        JPccnn,
+        JRd,
+        JRCd,
+        JRNCd,
+        JRZd,
+        JRNZd,
+        JPHL,
+        JPIX,
+        JPIY,
+        DJNZd
     )
 
     fun decode(pc: Address): Instruction {

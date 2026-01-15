@@ -15,6 +15,10 @@ import com.subbyte.subspectrum.proc.instructions.arith16.INCIY
 import com.subbyte.subspectrum.proc.instructions.arith16.INCss
 import com.subbyte.subspectrum.proc.instructions.arith16.SBCHLss
 import com.subbyte.subspectrum.proc.instructions.arith8.ADCAHL
+import com.subbyte.subspectrum.proc.instructions.shift.RLHL
+import com.subbyte.subspectrum.proc.instructions.shift.RLIXd
+import com.subbyte.subspectrum.proc.instructions.shift.RLIYd
+import com.subbyte.subspectrum.proc.instructions.shift.RLr
 import com.subbyte.subspectrum.proc.instructions.arith8.ADCAIXd
 import com.subbyte.subspectrum.proc.instructions.arith8.ADCAIYd
 import com.subbyte.subspectrum.proc.instructions.arith8.ADCAn
@@ -76,6 +80,8 @@ import com.subbyte.subspectrum.proc.instructions.ex.EXSPHL
 import com.subbyte.subspectrum.proc.instructions.ex.EXSPIX
 import com.subbyte.subspectrum.proc.instructions.ex.EXSPIY
 import com.subbyte.subspectrum.proc.instructions.ex.EXX
+import com.subbyte.subspectrum.proc.instructions.general.RLD
+import com.subbyte.subspectrum.proc.instructions.general.RRD
 import com.subbyte.subspectrum.proc.instructions.load16.LDHLnn
 import com.subbyte.subspectrum.proc.instructions.load16.LDIXMEMnn
 import com.subbyte.subspectrum.proc.instructions.load16.LDIXnn
@@ -117,6 +123,34 @@ import com.subbyte.subspectrum.proc.instructions.load8.LDAI
 import com.subbyte.subspectrum.proc.instructions.load8.LDAR
 import com.subbyte.subspectrum.proc.instructions.load8.LDIA
 import com.subbyte.subspectrum.proc.instructions.load8.LDRA
+import com.subbyte.subspectrum.proc.instructions.shift.RLA
+import com.subbyte.subspectrum.proc.instructions.shift.RLCA
+import com.subbyte.subspectrum.proc.instructions.shift.RLCHL
+import com.subbyte.subspectrum.proc.instructions.shift.RLCIXd
+import com.subbyte.subspectrum.proc.instructions.shift.RLCIYd
+import com.subbyte.subspectrum.proc.instructions.shift.RLCr
+import com.subbyte.subspectrum.proc.instructions.shift.RRA
+import com.subbyte.subspectrum.proc.instructions.shift.RRCA
+import com.subbyte.subspectrum.proc.instructions.shift.RRCHL
+import com.subbyte.subspectrum.proc.instructions.shift.RRCIXd
+import com.subbyte.subspectrum.proc.instructions.shift.RRCIYd
+import com.subbyte.subspectrum.proc.instructions.shift.RRCr
+import com.subbyte.subspectrum.proc.instructions.shift.RRHL
+import com.subbyte.subspectrum.proc.instructions.shift.RRIXd
+import com.subbyte.subspectrum.proc.instructions.shift.RRIYd
+import com.subbyte.subspectrum.proc.instructions.shift.RRr
+import com.subbyte.subspectrum.proc.instructions.shift.SLAHL
+import com.subbyte.subspectrum.proc.instructions.shift.SLAIXd
+import com.subbyte.subspectrum.proc.instructions.shift.SLAIYd
+import com.subbyte.subspectrum.proc.instructions.shift.SLAr
+import com.subbyte.subspectrum.proc.instructions.shift.SRAHL
+import com.subbyte.subspectrum.proc.instructions.shift.SRAIXd
+import com.subbyte.subspectrum.proc.instructions.shift.SRAIYd
+import com.subbyte.subspectrum.proc.instructions.shift.SRAr
+import com.subbyte.subspectrum.proc.instructions.shift.SRLHL
+import com.subbyte.subspectrum.proc.instructions.shift.SRLIXd
+import com.subbyte.subspectrum.proc.instructions.shift.SRLIYd
+import com.subbyte.subspectrum.proc.instructions.shift.SRLr
 
 interface Instruction {
     val address: Address
@@ -259,7 +293,43 @@ object Instructions {
         INCIY,
         DECss,
         DECIX,
-        DECIY
+        DECIY,
+
+        // shift
+        RLCA,
+        RLA,
+        RRCA,
+        RRA,
+        RLCr,
+        RLCHL,
+        RLCIXd,
+        RLCIYd,
+        RLr,
+        RLHL,
+        RLIXd,
+        RLIYd,
+        RRCr,
+        RRCHL,
+        RRCIXd,
+        RRCIYd,
+        RRr,
+        RRHL,
+        RRIXd,
+        RRIYd,
+        SLAr,
+        SLAHL,
+        SLAIXd,
+        SLAIYd,
+        SRAr,
+        SRAHL,
+        SRAIXd,
+        SRAIYd,
+        SRLr,
+        SRLHL,
+        SRLIXd,
+        SRLIYd,
+        RLD,
+        RRD
     )
 
     fun decode(pc: Address): Instruction {

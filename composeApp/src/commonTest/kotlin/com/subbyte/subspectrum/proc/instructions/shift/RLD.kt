@@ -1,4 +1,4 @@
-package com.subbyte.subspectrum.proc.instructions.general
+package com.subbyte.subspectrum.proc.instructions.shift
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers

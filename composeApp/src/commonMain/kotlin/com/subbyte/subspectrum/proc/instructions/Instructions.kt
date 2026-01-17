@@ -106,8 +106,6 @@ import com.subbyte.subspectrum.proc.instructions.ex.EXSPHL
 import com.subbyte.subspectrum.proc.instructions.ex.EXSPIX
 import com.subbyte.subspectrum.proc.instructions.ex.EXSPIY
 import com.subbyte.subspectrum.proc.instructions.ex.EXX
-import com.subbyte.subspectrum.proc.instructions.general.RLD
-import com.subbyte.subspectrum.proc.instructions.general.RRD
 import com.subbyte.subspectrum.proc.instructions.jump.DJNZd
 import com.subbyte.subspectrum.proc.instructions.jump.JPHL
 import com.subbyte.subspectrum.proc.instructions.jump.JPIX
@@ -159,12 +157,14 @@ import com.subbyte.subspectrum.proc.instructions.shift.RLCHL
 import com.subbyte.subspectrum.proc.instructions.shift.RLCIXd
 import com.subbyte.subspectrum.proc.instructions.shift.RLCIYd
 import com.subbyte.subspectrum.proc.instructions.shift.RLCr
+import com.subbyte.subspectrum.proc.instructions.shift.RLD
 import com.subbyte.subspectrum.proc.instructions.shift.RRA
 import com.subbyte.subspectrum.proc.instructions.shift.RRCA
 import com.subbyte.subspectrum.proc.instructions.shift.RRCHL
 import com.subbyte.subspectrum.proc.instructions.shift.RRCIXd
 import com.subbyte.subspectrum.proc.instructions.shift.RRCIYd
 import com.subbyte.subspectrum.proc.instructions.shift.RRCr
+import com.subbyte.subspectrum.proc.instructions.shift.RRD
 import com.subbyte.subspectrum.proc.instructions.shift.RRHL
 import com.subbyte.subspectrum.proc.instructions.shift.RRIXd
 import com.subbyte.subspectrum.proc.instructions.shift.RRIYd

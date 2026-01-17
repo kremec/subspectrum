@@ -14,12 +14,19 @@ data class ADDIXss(
     override fun execute() {
         val ixRegisterPairValue = Registers.specialPurposeRegisters.getIX()
         val sourceValue = Registers.getRegisterPair(sourceRegisterPairCode)
-        val result = ixRegisterPairValue.plus(sourceValue).toShort()
+
+        val ix = ixRegisterPairValue.toUShort().toInt()
+        val source = sourceValue.toUShort().toInt()
+        val sum = ix + source
+        val result = sum.toShort()
+
         Registers.specialPurposeRegisters.setIX(result)
 
-        Registers.registerSet.setHFlag(false) // TODO: H is set if carry from bit 11; otherwise, it is reset
+        val halfCarryFlag = ((ix and 0xFFF) + (source and 0xFFF)) > 0xFFF
+        val carryFlag = sum > 0xFFFF
+        Registers.registerSet.setHFlag(halfCarryFlag)
         Registers.registerSet.setNFlag(false)
-        Registers.registerSet.setCFlag(false) // TODO: C is set if carry from bit 15; otherwise, it is reset
+        Registers.registerSet.setCFlag(carryFlag)
     }
 
     override fun toString(): String = "ADD IX, $sourceRegisterPairCode"

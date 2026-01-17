@@ -15,15 +15,25 @@ data class SBCHLss(
         val hlRegisterPairValue = Registers.registerSet.getHL()
         val sourceValue = Registers.getRegisterPair(sourceRegisterPairCode)
         val carryValue = if (Registers.registerSet.getCFlag()) 1 else 0
-        val result = hlRegisterPairValue.minus(sourceValue).minus(carryValue).toShort()
+
+        val hl = hlRegisterPairValue.toUShort().toInt()
+        val source = sourceValue.toUShort().toInt()
+        val diff = hl - source - carryValue
+        val result = diff.toShort()
+
         Registers.registerSet.setHL(result)
 
-        Registers.registerSet.setSFlag(result < 0)
-        Registers.registerSet.setZFlag(result == 0.toShort())
-        Registers.registerSet.setHFlag(false) // TODO: H is set if borrow from bit 12; otherwise, it is reset
-        Registers.registerSet.setPVFlag(false) // TODO: P/V is set if overflow; otherwise, it is reset
+        val signFlag = result < 0
+        val zeroFlag = result == 0.toShort()
+        val halfCarryFlag = ((hl and 0xFFF) - (source and 0xFFF) - carryValue) < 0
+        val overflowFlag = ((hl xor source) and (hl xor diff) and 0x8000) != 0
+        val carryFlag = diff < 0
+        Registers.registerSet.setSFlag(signFlag)
+        Registers.registerSet.setZFlag(zeroFlag)
+        Registers.registerSet.setHFlag(halfCarryFlag)
+        Registers.registerSet.setPVFlag(overflowFlag)
         Registers.registerSet.setNFlag(true)
-        Registers.registerSet.setCFlag(false) // TODO: C is set if borrow; otherwise, it is reset
+        Registers.registerSet.setCFlag(carryFlag)
     }
 
     override fun toString(): String = "SBC HL, $sourceRegisterPairCode"

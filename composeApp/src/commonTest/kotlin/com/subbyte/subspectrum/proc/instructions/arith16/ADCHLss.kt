@@ -7,6 +7,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ADCHLssTest {
     @BeforeTest
@@ -97,6 +98,168 @@ class ADCHLssTest {
         instruction.execute()
 
         assertEquals(0x1F01.toShort(), Registers.registerSet.getHL())
+        assertFalse(Registers.registerSet.getNFlag())
+    }
+
+    @Test
+    fun testHFlagSet() {
+        // Test H flag set when carry from bit 11 with carry input
+        Registers.registerSet.setHL(0x0FFF.toShort()) // 0x0FFF & 0xFFF = 0xFFF
+        Registers.registerSet.setBC(0x0000.toShort()) // 0x0000 & 0xFFF = 0x000
+        Registers.registerSet.setCFlag(true)          // carry = 1
+
+        val instruction = ADCHLss(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
+            sourceRegisterPairCode = RegisterPairCode.BC
+        )
+
+        instruction.execute()
+
+        assertEquals(0x1000.toShort(), Registers.registerSet.getHL())
+        assertTrue(Registers.registerSet.getHFlag())
+        assertFalse(Registers.registerSet.getCFlag())
+        assertFalse(Registers.registerSet.getNFlag())
+        assertFalse(Registers.registerSet.getSFlag())
+        assertFalse(Registers.registerSet.getZFlag())
+    }
+
+    @Test
+    fun testHFlagReset() {
+        // Test H flag reset when no carry from bit 11
+        Registers.registerSet.setHL(0x0FFE.toShort()) // 0x0FFE & 0xFFF = 0xFFE
+        Registers.registerSet.setBC(0x0000.toShort()) // 0x0000 & 0xFFF = 0x000
+        Registers.registerSet.setCFlag(true)          // carry = 1
+
+        val instruction = ADCHLss(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
+            sourceRegisterPairCode = RegisterPairCode.BC
+        )
+
+        instruction.execute()
+
+        assertEquals(0x0FFF.toShort(), Registers.registerSet.getHL())
+        assertFalse(Registers.registerSet.getHFlag())
+        assertFalse(Registers.registerSet.getCFlag())
+        assertFalse(Registers.registerSet.getNFlag())
+        assertFalse(Registers.registerSet.getSFlag())
+        assertFalse(Registers.registerSet.getZFlag())
+    }
+
+    @Test
+    fun testCFlagSet() {
+        // Test C flag set when carry from bit 15, H flag also set
+        Registers.registerSet.setHL(0xFFFF.toShort()) // 0xFFFF & 0xFFF = 0xFFF
+        Registers.registerSet.setBC(0x0000.toShort()) // 0x0000 & 0xFFF = 0x000
+        Registers.registerSet.setCFlag(true)          // carry = 1
+
+        val instruction = ADCHLss(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
+            sourceRegisterPairCode = RegisterPairCode.BC
+        )
+
+        instruction.execute()
+
+        assertEquals(0x0000.toShort(), Registers.registerSet.getHL())
+        assertTrue(Registers.registerSet.getHFlag())
+        assertTrue(Registers.registerSet.getCFlag())
+        assertFalse(Registers.registerSet.getNFlag())
+        assertFalse(Registers.registerSet.getSFlag())
+        assertTrue(Registers.registerSet.getZFlag())
+    }
+
+    @Test
+    fun testCFlagReset() {
+        // Test C flag reset when no carry from bit 15
+        Registers.registerSet.setHL(0xFFFE.toShort())
+        Registers.registerSet.setBC(0x0000.toShort())
+        Registers.registerSet.setCFlag(true)
+
+        val instruction = ADCHLss(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
+            sourceRegisterPairCode = RegisterPairCode.BC
+        )
+
+        instruction.execute()
+
+        assertEquals(0xFFFF.toShort(), Registers.registerSet.getHL())
+        assertFalse(Registers.registerSet.getHFlag())
+        assertFalse(Registers.registerSet.getCFlag())
+        assertFalse(Registers.registerSet.getNFlag())
+        assertTrue(Registers.registerSet.getSFlag())
+        assertFalse(Registers.registerSet.getZFlag())
+    }
+
+    @Test
+    fun testPVFlagOverflow() {
+        // Test PV flag set for signed overflow
+        // 0x7FFF + 0x0001 + carry(1) = 0x8001 (overflow from positive to negative)
+        Registers.registerSet.setHL(0x7FFF.toShort())
+        Registers.registerSet.setBC(0x0000.toShort())
+        Registers.registerSet.setCFlag(true)
+
+        val instruction = ADCHLss(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
+            sourceRegisterPairCode = RegisterPairCode.BC
+        )
+
+        instruction.execute()
+
+        assertEquals(0x8000.toShort(), Registers.registerSet.getHL())
+        assertTrue(Registers.registerSet.getPVFlag())
+        assertFalse(Registers.registerSet.getCFlag())
+        assertTrue(Registers.registerSet.getSFlag())
+        assertFalse(Registers.registerSet.getZFlag())
+        assertFalse(Registers.registerSet.getNFlag())
+    }
+
+    @Test
+    fun testPVFlagNoOverflow() {
+        // Test PV flag reset when no overflow
+        Registers.registerSet.setHL(0x7FFE.toShort())
+        Registers.registerSet.setBC(0x0000.toShort())
+        Registers.registerSet.setCFlag(true)
+
+        val instruction = ADCHLss(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
+            sourceRegisterPairCode = RegisterPairCode.BC
+        )
+
+        instruction.execute()
+
+        assertEquals(0x7FFF.toShort(), Registers.registerSet.getHL())
+        assertFalse(Registers.registerSet.getPVFlag())
+        assertFalse(Registers.registerSet.getCFlag())
+        assertFalse(Registers.registerSet.getSFlag())
+        assertFalse(Registers.registerSet.getZFlag())
+        assertFalse(Registers.registerSet.getNFlag())
+    }
+
+    @Test
+    fun testZeroFlag() {
+        // Test Z flag set when result is zero
+        Registers.registerSet.setHL(0x0000.toShort())
+        Registers.registerSet.setBC(0x0000.toShort())
+        Registers.registerSet.setCFlag(false)
+
+        val instruction = ADCHLss(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
+            sourceRegisterPairCode = RegisterPairCode.BC
+        )
+
+        instruction.execute()
+
+        assertEquals(0x0000.toShort(), Registers.registerSet.getHL())
+        assertTrue(Registers.registerSet.getZFlag())
+        assertFalse(Registers.registerSet.getSFlag())
+        assertFalse(Registers.registerSet.getPVFlag())
+        assertFalse(Registers.registerSet.getCFlag())
         assertFalse(Registers.registerSet.getNFlag())
     }
 

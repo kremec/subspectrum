@@ -14,12 +14,19 @@ data class ADDIYss(
     override fun execute() {
         val iyRegisterPairValue = Registers.specialPurposeRegisters.getIY()
         val sourceValue = Registers.getRegisterPair(sourceRegisterPairCode)
-        val result = iyRegisterPairValue.plus(sourceValue).toShort()
+
+        val iy = iyRegisterPairValue.toUShort().toInt()
+        val source = sourceValue.toUShort().toInt()
+        val sum = iy + source
+        val result = sum.toShort()
+
         Registers.specialPurposeRegisters.setIY(result)
 
-        Registers.registerSet.setHFlag(false) // TODO: H is set if carry from bit 11; otherwise, it is reset
+        val halfCarryFlag = ((iy and 0xFFF) + (source and 0xFFF)) > 0xFFF
+        val carryFlag = sum > 0xFFFF
+        Registers.registerSet.setHFlag(halfCarryFlag)
         Registers.registerSet.setNFlag(false)
-        Registers.registerSet.setCFlag(false) // TODO: C is set if carry from bit 15; otherwise, it is reset
+        Registers.registerSet.setCFlag(carryFlag)
     }
 
     override fun toString(): String = "ADD IY, $sourceRegisterPairCode"

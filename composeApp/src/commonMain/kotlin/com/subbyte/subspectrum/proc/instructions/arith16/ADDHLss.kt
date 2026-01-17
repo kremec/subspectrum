@@ -14,12 +14,19 @@ data class ADDHLss(
     override fun execute() {
         val hlRegisterPairValue = Registers.registerSet.getHL()
         val sourceValue = Registers.getRegisterPair(sourceRegisterPairCode)
-        val result = hlRegisterPairValue.plus(sourceValue).toShort()
+
+        val hl = hlRegisterPairValue.toUShort().toInt()
+        val source = sourceValue.toUShort().toInt()
+        val sum = hl + source
+        val result = sum.toShort()
+
         Registers.registerSet.setHL(result)
 
-        Registers.registerSet.setHFlag(false) // TODO: H is set if carry from bit 11; otherwise, it is reset
+        val halfCarryFlag = ((hl and 0xFFF) + (source and 0xFFF)) > 0xFFF
+        val carryFlag = sum > 0xFFFF
+        Registers.registerSet.setHFlag(halfCarryFlag)
         Registers.registerSet.setNFlag(false)
-        Registers.registerSet.setCFlag(false) // TODO: C is set if carry from bit 15; otherwise, it is reset
+        Registers.registerSet.setCFlag(carryFlag)
     }
 
     override fun toString(): String = "ADD HL, $sourceRegisterPairCode"

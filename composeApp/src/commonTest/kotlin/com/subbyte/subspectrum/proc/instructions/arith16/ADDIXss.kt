@@ -7,6 +7,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ADDIXssTest {
     @BeforeTest
@@ -94,6 +95,106 @@ class ADDIXssTest {
         instruction.execute()
 
         assertEquals(0x1F00.toShort(), Registers.specialPurposeRegisters.getIX())
+        assertFalse(Registers.registerSet.getNFlag())
+    }
+
+    @Test
+    fun testHFlagSet() {
+        // Test H flag set when carry from bit 11
+        Registers.specialPurposeRegisters.setIX(0x0FFF.toShort()) // 0x0FFF & 0xFFF = 0xFFF
+        Registers.registerSet.setBC(0x0001.toShort())            // 0x0001 & 0xFFF = 0x001
+
+        val instruction = ADDIXss(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xDD.toByte(), 0x09.toByte()),
+            sourceRegisterPairCode = RegisterPairCode.BC
+        )
+
+        instruction.execute()
+
+        assertEquals(0x1000.toShort(), Registers.specialPurposeRegisters.getIX())
+        assertTrue(Registers.registerSet.getHFlag())
+        assertFalse(Registers.registerSet.getCFlag())
+        assertFalse(Registers.registerSet.getNFlag())
+    }
+
+    @Test
+    fun testHFlagReset() {
+        // Test H flag reset when no carry from bit 11
+        Registers.specialPurposeRegisters.setIX(0x0FFE.toShort()) // 0x0FFE & 0xFFF = 0xFFE
+        Registers.registerSet.setBC(0x0001.toShort())            // 0x0001 & 0xFFF = 0x001
+
+        val instruction = ADDIXss(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xDD.toByte(), 0x09.toByte()),
+            sourceRegisterPairCode = RegisterPairCode.BC
+        )
+
+        instruction.execute()
+
+        assertEquals(0x0FFF.toShort(), Registers.specialPurposeRegisters.getIX())
+        assertFalse(Registers.registerSet.getHFlag())
+        assertFalse(Registers.registerSet.getCFlag())
+        assertFalse(Registers.registerSet.getNFlag())
+    }
+
+    @Test
+    fun testCFlagSet() {
+        // Test C flag set when carry from bit 15, H flag reset
+        Registers.specialPurposeRegisters.setIX(0xF000.toShort()) // 0xF000 & 0xFFF = 0x000
+        Registers.registerSet.setBC(0x1000.toShort())            // 0x1000 & 0xFFF = 0x000
+
+        val instruction = ADDIXss(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xDD.toByte(), 0x09.toByte()),
+            sourceRegisterPairCode = RegisterPairCode.BC
+        )
+
+        instruction.execute()
+
+        assertEquals(0x0000.toShort(), Registers.specialPurposeRegisters.getIX())
+        assertFalse(Registers.registerSet.getHFlag())
+        assertTrue(Registers.registerSet.getCFlag())
+        assertFalse(Registers.registerSet.getNFlag())
+    }
+
+    @Test
+    fun testCFlagReset() {
+        // Test C flag reset when no carry from bit 15
+        Registers.specialPurposeRegisters.setIX(0xFFFE.toShort())
+        Registers.registerSet.setBC(0x0001.toShort())
+
+        val instruction = ADDIXss(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xDD.toByte(), 0x09.toByte()),
+            sourceRegisterPairCode = RegisterPairCode.BC
+        )
+
+        instruction.execute()
+
+        assertEquals(0xFFFF.toShort(), Registers.specialPurposeRegisters.getIX())
+        assertFalse(Registers.registerSet.getHFlag())
+        assertFalse(Registers.registerSet.getCFlag())
+        assertFalse(Registers.registerSet.getNFlag())
+    }
+
+    @Test
+    fun testBothFlagsSet() {
+        // Test both H and C flags set
+        Registers.specialPurposeRegisters.setIX(0xFFFF.toShort()) // 0xFFFF & 0xFFF = 0xFFF
+        Registers.registerSet.setBC(0xFFFF.toShort())            // 0xFFFF & 0xFFF = 0xFFF
+
+        val instruction = ADDIXss(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xDD.toByte(), 0x09.toByte()),
+            sourceRegisterPairCode = RegisterPairCode.BC
+        )
+
+        instruction.execute()
+
+        assertEquals(0xFFFE.toShort(), Registers.specialPurposeRegisters.getIX())
+        assertTrue(Registers.registerSet.getHFlag())
+        assertTrue(Registers.registerSet.getCFlag())
         assertFalse(Registers.registerSet.getNFlag())
     }
 

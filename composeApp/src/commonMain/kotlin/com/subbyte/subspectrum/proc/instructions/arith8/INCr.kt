@@ -13,13 +13,21 @@ data class INCr(
 ) : Instruction {
     override fun execute() {
         val sourceRegisterValue = Registers.registerSet.getRegister(sourceRegister)
-        val result = sourceRegisterValue.inc()
+        
+        val source = sourceRegisterValue.toUByte().toInt()
+        val sum = source + 1
+        val result = sum.toByte()
+        
         Registers.registerSet.setRegister(sourceRegister, result)
 
-        Registers.registerSet.setSFlag(result < 0)
-        Registers.registerSet.setZFlag(result == 0.toByte())
-        Registers.registerSet.setHFlag(false) // TODO: H is set if carry from bit 3; otherwise, it is reset
-        Registers.registerSet.setPVFlag(false) // TODO: P/V is set if r was 7Fh before operation; otherwise, it is reset
+        val signFlag = result < 0
+        val zeroFlag = result == 0.toByte()
+        val halfCarryFlag = (source and 0x0F) == 0x0F
+        val overflowFlag = source == 0x7F
+        Registers.registerSet.setSFlag(signFlag)
+        Registers.registerSet.setZFlag(zeroFlag)
+        Registers.registerSet.setHFlag(halfCarryFlag)
+        Registers.registerSet.setPVFlag(overflowFlag)
         Registers.registerSet.setNFlag(false)
     }
 

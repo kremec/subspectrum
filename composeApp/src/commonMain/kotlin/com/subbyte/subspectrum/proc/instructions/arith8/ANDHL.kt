@@ -18,10 +18,13 @@ data class ANDHL(
         val result = aRegisterValue.and(sourceMemoryValue)
         Registers.registerSet.setA(result)
 
-        Registers.registerSet.setSFlag(result < 0)
-        Registers.registerSet.setZFlag(result == 0.toByte())
+        val signFlag = result < 0
+        val zeroFlag = result == 0.toByte()
+        val parityFlag = result.countOneBits() % 2 == 0
+        Registers.registerSet.setSFlag(signFlag)
+        Registers.registerSet.setZFlag(zeroFlag)
         Registers.registerSet.setHFlag(true)
-        Registers.registerSet.setPVFlag(false) // TODO: P/V is set if overflow; otherwise, it is reset
+        Registers.registerSet.setPVFlag(parityFlag)
         Registers.registerSet.setNFlag(false)
         Registers.registerSet.setCFlag(false)
     }

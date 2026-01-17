@@ -16,15 +16,25 @@ data class ADCAIXd(
         val ixRegisterPairValue = Registers.specialPurposeRegisters.getIX()
         val sourceMemoryValue = Memory.memorySet.getMemoryCell(ixRegisterPairValue.plus(displacement).toUShort())
         val carryValue = if (Registers.registerSet.getCFlag()) 1 else 0
-        val result = aRegisterValue.plus(sourceMemoryValue).plus(carryValue).toByte()
+        
+        val a = aRegisterValue.toUByte().toInt()
+        val source = sourceMemoryValue.toUByte().toInt()
+        val sum = a + source + carryValue
+        val result = sum.toByte()
+        
         Registers.registerSet.setA(result)
 
-        Registers.registerSet.setSFlag(result < 0)
-        Registers.registerSet.setZFlag(result == 0.toByte())
-        Registers.registerSet.setHFlag(false) // TODO: H is set if carry from bit 3; otherwise, it is reset
-        Registers.registerSet.setPVFlag(false) // TODO: P/V is set if overflow; otherwise, it is reset
+        val signFlag = result < 0
+        val zeroFlag = result == 0.toByte()
+        val halfCarryFlag = ((a and 0x0F) + (source and 0x0F) + carryValue) > 0x0F
+        val overflowFlag = ((a xor sum) and (source xor sum) and 0x80) != 0
+        val carryFlag = sum > 0xFF
+        Registers.registerSet.setSFlag(signFlag)
+        Registers.registerSet.setZFlag(zeroFlag)
+        Registers.registerSet.setHFlag(halfCarryFlag)
+        Registers.registerSet.setPVFlag(overflowFlag)
         Registers.registerSet.setNFlag(false)
-        Registers.registerSet.setCFlag(false) // TODO: C is set if carry from bit 7; otherwise, it is reset
+        Registers.registerSet.setCFlag(carryFlag)
     }
 
     override fun toString(): String = "ADC A, (IX + ${displacement})"

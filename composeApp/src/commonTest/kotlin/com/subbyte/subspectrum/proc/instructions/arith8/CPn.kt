@@ -6,6 +6,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 
 class CPnTest {
     @BeforeTest
@@ -43,6 +44,120 @@ class CPnTest {
         assertTrue(Registers.registerSet.getZFlag())
         assertTrue(Registers.registerSet.getNFlag())
         assertEquals(0x10.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun testSignFlag() {
+        Registers.registerSet.setA(0x00.toByte())
+
+        val instruction = CPn(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFE.toByte(), 0x01.toByte()),
+            sourceByte = 0x01.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getSFlag())
+        assertTrue(Registers.registerSet.getCFlag())
+        assertEquals(0x00.toByte(), Registers.registerSet.getA()) // A unchanged
+    }
+
+    @Test
+    fun testCarryFlag() {
+        Registers.registerSet.setA(0x10.toByte())
+
+        val instruction = CPn(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFE.toByte(), 0x20.toByte()),
+            sourceByte = 0x20.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getCFlag())
+        assertEquals(0x10.toByte(), Registers.registerSet.getA()) // A unchanged
+    }
+
+    @Test
+    fun testHalfCarryFlag() {
+        Registers.registerSet.setA(0x10.toByte())
+
+        val instruction = CPn(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFE.toByte(), 0x01.toByte()),
+            sourceByte = 0x01.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getHFlag())
+        assertFalse(Registers.registerSet.getCFlag())
+        assertEquals(0x10.toByte(), Registers.registerSet.getA()) // A unchanged
+    }
+
+    @Test
+    fun testOverflowFlag() {
+        Registers.registerSet.setA(0x80.toByte())
+
+        val instruction = CPn(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFE.toByte(), 0x01.toByte()),
+            sourceByte = 0x01.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getPVFlag())
+        assertEquals(0x80.toByte(), Registers.registerSet.getA()) // A unchanged
+    }
+
+    @Test
+    fun testNoOverflow() {
+        Registers.registerSet.setA(0x50.toByte())
+
+        val instruction = CPn(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFE.toByte(), 0x20.toByte()),
+            sourceByte = 0x20.toByte()
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getPVFlag())
+        assertEquals(0x50.toByte(), Registers.registerSet.getA()) // A unchanged
+    }
+
+    @Test
+    fun testNFlagAlwaysSet() {
+        Registers.registerSet.setA(0x30.toByte())
+
+        val instruction = CPn(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFE.toByte(), 0x10.toByte()),
+            sourceByte = 0x10.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getNFlag())
+        assertEquals(0x30.toByte(), Registers.registerSet.getA()) // A unchanged
+    }
+
+    @Test
+    fun testARegisterUnchanged() {
+        val originalA = 0x42.toByte()
+        Registers.registerSet.setA(originalA)
+
+        val instruction = CPn(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFE.toByte(), 0x10.toByte()),
+            sourceByte = 0x10.toByte()
+        )
+
+        instruction.execute()
+
+        assertEquals(originalA, Registers.registerSet.getA())
     }
 
     @Test

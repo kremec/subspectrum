@@ -64,6 +64,104 @@ class INCrTest {
     }
 
     @Test
+    fun testSignFlag() {
+        Registers.registerSet.setRegister(RegisterCode.C, 0x7F.toByte())
+
+        val instruction = INCr(
+            address = 0x1000u,
+            bytes = byteArrayOf(0x0C.toByte()),
+            sourceRegister = RegisterCode.C
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getSFlag())
+        assertEquals(0x80.toByte(), Registers.registerSet.getRegister(RegisterCode.C))
+    }
+
+    @Test
+    fun testHalfCarryFlag() {
+        Registers.registerSet.setRegister(RegisterCode.D, 0x0F.toByte())
+
+        val instruction = INCr(
+            address = 0x1000u,
+            bytes = byteArrayOf(0x14.toByte()),
+            sourceRegister = RegisterCode.D
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getHFlag())
+        assertEquals(0x10.toByte(), Registers.registerSet.getRegister(RegisterCode.D))
+    }
+
+    @Test
+    fun testOverflowFlag() {
+        Registers.registerSet.setRegister(RegisterCode.E, 0x7F.toByte())
+
+        val instruction = INCr(
+            address = 0x1000u,
+            bytes = byteArrayOf(0x1C.toByte()),
+            sourceRegister = RegisterCode.E
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getPVFlag())
+        assertEquals(0x80.toByte(), Registers.registerSet.getRegister(RegisterCode.E))
+    }
+
+    @Test
+    fun testNoOverflow() {
+        Registers.registerSet.setRegister(RegisterCode.H, 0x40.toByte())
+
+        val instruction = INCr(
+            address = 0x1000u,
+            bytes = byteArrayOf(0x24.toByte()),
+            sourceRegister = RegisterCode.H
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getPVFlag())
+        assertEquals(0x41.toByte(), Registers.registerSet.getRegister(RegisterCode.H))
+    }
+
+    @Test
+    fun testNFlagAlwaysReset() {
+        Registers.registerSet.setRegister(RegisterCode.L, 0x10.toByte())
+        Registers.registerSet.setNFlag(true)
+
+        val instruction = INCr(
+            address = 0x1000u,
+            bytes = byteArrayOf(0x2C.toByte()),
+            sourceRegister = RegisterCode.L
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getNFlag())
+        assertEquals(0x11.toByte(), Registers.registerSet.getRegister(RegisterCode.L))
+    }
+
+    @Test
+    fun testCFlagNotAffected() {
+        Registers.registerSet.setRegister(RegisterCode.A, 0x10.toByte())
+        Registers.registerSet.setCFlag(true)
+
+        val instruction = INCr(
+            address = 0x1000u,
+            bytes = byteArrayOf(0x3C.toByte()),
+            sourceRegister = RegisterCode.A
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getCFlag()) // Should remain set
+        assertEquals(0x11.toByte(), Registers.registerSet.getRegister(RegisterCode.A))
+    }
+
+    @Test
     fun toStringFormat() {
         val instruction = INCr(
             address = 0x0000u,

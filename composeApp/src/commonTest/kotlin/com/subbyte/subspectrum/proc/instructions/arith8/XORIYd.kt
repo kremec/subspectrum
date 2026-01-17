@@ -52,6 +52,116 @@ class XORIYdTest {
     }
 
     @Test
+    fun testSignFlag() {
+        Registers.registerSet.setA(0x00.toByte())
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x80.toByte())
+
+        val instruction = XORIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xAE.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getSFlag())
+        assertEquals(0x80.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun testParityEven() {
+        Registers.registerSet.setA(0x0F.toByte())
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x05.toByte())
+
+        val instruction = XORIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xAE.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getPVFlag())
+        assertEquals(0x0A.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun testParityOdd() {
+        Registers.registerSet.setA(0x0F.toByte())
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x0E.toByte())
+
+        val instruction = XORIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xAE.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getPVFlag())
+        assertEquals(0x01.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun testHFlagAlwaysReset() {
+        Registers.registerSet.setA(0xFF.toByte())
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x00.toByte())
+
+        val instruction = XORIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xAE.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getHFlag())
+        assertEquals(0xFF.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun testNFlagAlwaysReset() {
+        Registers.registerSet.setA(0xFF.toByte())
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0xFF.toByte())
+        Registers.registerSet.setNFlag(true)
+
+        val instruction = XORIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xAE.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getNFlag())
+        assertEquals(0x00.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun testCFlagAlwaysReset() {
+        Registers.registerSet.setA(0xFF.toByte())
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0xFF.toByte())
+        Registers.registerSet.setCFlag(true)
+
+        val instruction = XORIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xAE.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getCFlag())
+        assertEquals(0x00.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
     fun toStringFormat() {
         val instruction = XORIYd(
             address = 0x0000u,

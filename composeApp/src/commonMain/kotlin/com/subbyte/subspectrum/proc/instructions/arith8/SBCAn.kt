@@ -13,15 +13,25 @@ data class SBCAn(
     override fun execute() {
         val aRegisterValue = Registers.registerSet.getA()
         val carryValue = if (Registers.registerSet.getCFlag()) 1 else 0
-        val result = aRegisterValue.minus(sourceByte).minus(carryValue).toByte()
+        
+        val a = aRegisterValue.toUByte().toInt()
+        val source = sourceByte.toUByte().toInt()
+        val diff = a - source - carryValue
+        val result = diff.toByte()
+        
         Registers.registerSet.setA(result)
 
-        Registers.registerSet.setSFlag(result < 0)
-        Registers.registerSet.setZFlag(result == 0.toByte())
-        Registers.registerSet.setHFlag(false) // TODO: H is set if borrow from bit 4; otherwise, it is reset
-        Registers.registerSet.setPVFlag(false) // TODO: P/V is set if overflow; otherwise, it is reset
+        val signFlag = result < 0
+        val zeroFlag = result == 0.toByte()
+        val halfCarryFlag = ((a and 0x0F) - (source and 0x0F) - carryValue) < 0
+        val overflowFlag = ((a xor source) and (a xor diff) and 0x80) != 0
+        val carryFlag = diff < 0
+        Registers.registerSet.setSFlag(signFlag)
+        Registers.registerSet.setZFlag(zeroFlag)
+        Registers.registerSet.setHFlag(halfCarryFlag)
+        Registers.registerSet.setPVFlag(overflowFlag)
         Registers.registerSet.setNFlag(true)
-        Registers.registerSet.setCFlag(false) // TODO: C is set if borrow; otherwise, it is reset
+        Registers.registerSet.setCFlag(carryFlag)
     }
 
     override fun toString(): String = "SBC A, $sourceByte"

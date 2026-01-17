@@ -43,6 +43,104 @@ class DECHLTest {
     }
 
     @Test
+    fun testSignFlag() {
+        Registers.registerSet.setHL(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0x81.toByte())
+
+        val instruction = DECHL(
+            address = 0x1000u,
+            bytes = byteArrayOf(0x35.toByte())
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getSFlag())
+        assertEquals(0x80.toByte(), Memory.memorySet.getMemoryCell(0x2000u))
+    }
+
+    @Test
+    fun testHalfCarryFlag() {
+        Registers.registerSet.setHL(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0x10.toByte())
+
+        val instruction = DECHL(
+            address = 0x1000u,
+            bytes = byteArrayOf(0x35.toByte())
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getHFlag())
+        assertEquals(0x0F.toByte(), Memory.memorySet.getMemoryCell(0x2000u))
+    }
+
+    @Test
+    fun testOverflowFlag() {
+        Registers.registerSet.setHL(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0x80.toByte())
+
+        val instruction = DECHL(
+            address = 0x1000u,
+            bytes = byteArrayOf(0x35.toByte())
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getPVFlag())
+        assertEquals(0x7F.toByte(), Memory.memorySet.getMemoryCell(0x2000u))
+    }
+
+    @Test
+    fun testNoOverflow() {
+        Registers.registerSet.setHL(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0x41.toByte())
+
+        val instruction = DECHL(
+            address = 0x1000u,
+            bytes = byteArrayOf(0x35.toByte())
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getPVFlag())
+        assertEquals(0x40.toByte(), Memory.memorySet.getMemoryCell(0x2000u))
+    }
+
+    @Test
+    fun testNFlagAlwaysSet() {
+        Registers.registerSet.setHL(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0x11.toByte())
+        Registers.registerSet.setNFlag(false)
+
+        val instruction = DECHL(
+            address = 0x1000u,
+            bytes = byteArrayOf(0x35.toByte())
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getNFlag())
+        assertEquals(0x10.toByte(), Memory.memorySet.getMemoryCell(0x2000u))
+    }
+
+    @Test
+    fun testCFlagNotAffected() {
+        Registers.registerSet.setHL(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0x11.toByte())
+        Registers.registerSet.setCFlag(true)
+
+        val instruction = DECHL(
+            address = 0x1000u,
+            bytes = byteArrayOf(0x35.toByte())
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getCFlag()) // Should remain set
+        assertEquals(0x10.toByte(), Memory.memorySet.getMemoryCell(0x2000u))
+    }
+
+    @Test
     fun toStringFormat() {
         val instruction = DECHL(
             address = 0x0000u,

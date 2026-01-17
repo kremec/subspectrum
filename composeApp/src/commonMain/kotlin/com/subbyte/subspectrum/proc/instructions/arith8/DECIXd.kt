@@ -14,13 +14,21 @@ data class DECIXd(
     override fun execute() {
         val ixRegisterValue = Registers.specialPurposeRegisters.getIX()
         val sourceMemoryValue = Memory.memorySet.getMemoryCell(ixRegisterValue.plus(displacement).toUShort())
-        val result = sourceMemoryValue.dec()
+        
+        val source = sourceMemoryValue.toUByte().toInt()
+        val diff = source - 1
+        val result = diff.toByte()
+        
         Memory.memorySet.setMemoryCell(ixRegisterValue.plus(displacement).toUShort(), result)
 
-        Registers.registerSet.setSFlag(result < 0)
-        Registers.registerSet.setZFlag(result == 0.toByte())
-        Registers.registerSet.setHFlag(false) // TODO: H is set if borrow from bit 4; otherwise, it is reset
-        Registers.registerSet.setPVFlag(false) // TODO: P/V is set if (IX+d) was 80h before operation; otherwise, it is reset
+        val signFlag = result < 0
+        val zeroFlag = result == 0.toByte()
+        val halfCarryFlag = (source and 0x0F) == 0x00
+        val overflowFlag = source == 0x80
+        Registers.registerSet.setSFlag(signFlag)
+        Registers.registerSet.setZFlag(zeroFlag)
+        Registers.registerSet.setHFlag(halfCarryFlag)
+        Registers.registerSet.setPVFlag(overflowFlag)
         Registers.registerSet.setNFlag(true)
     }
 

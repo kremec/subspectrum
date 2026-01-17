@@ -12,14 +12,23 @@ data class CPn(
 ) : Instruction {
     override fun execute() {
         val aRegisterValue = Registers.registerSet.getA()
-        val comparison = aRegisterValue.minus(sourceByte).toByte()
+        
+        val a = aRegisterValue.toUByte().toInt()
+        val source = sourceByte.toUByte().toInt()
+        val diff = a - source
+        val comparison = diff.toByte()
 
-        Registers.registerSet.setSFlag(comparison < 0)
-        Registers.registerSet.setZFlag(comparison == 0.toByte())
-        Registers.registerSet.setHFlag(false) // TODO: H is set if borrow from bit 4; otherwise, it is reset
-        Registers.registerSet.setPVFlag(false) // TODO: P/V is set if overflow; otherwise, it is reset
+        val signFlag = comparison < 0
+        val zeroFlag = comparison == 0.toByte()
+        val halfCarryFlag = ((a and 0x0F) - (source and 0x0F)) < 0
+        val overflowFlag = ((a xor source) and (a xor diff) and 0x80) != 0
+        val carryFlag = diff < 0
+        Registers.registerSet.setSFlag(signFlag)
+        Registers.registerSet.setZFlag(zeroFlag)
+        Registers.registerSet.setHFlag(halfCarryFlag)
+        Registers.registerSet.setPVFlag(overflowFlag)
         Registers.registerSet.setNFlag(true)
-        Registers.registerSet.setCFlag(false) // TODO: C is set if borrow; otherwise, it is reset
+        Registers.registerSet.setCFlag(carryFlag)
     }
 
     override fun toString(): String = "CP $sourceByte"

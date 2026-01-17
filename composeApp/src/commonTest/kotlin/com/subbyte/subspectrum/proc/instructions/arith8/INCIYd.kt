@@ -6,6 +6,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class INCIYdTest {
     @BeforeTest
@@ -45,6 +46,110 @@ class INCIYdTest {
         assertEquals(0x10.toByte(), Memory.memorySet.getMemoryCell(0x2005u))
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getNFlag())
+    }
+
+    @Test
+    fun testSignFlag() {
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x7F.toByte())
+
+        val instruction = INCIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0x34.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getSFlag())
+        assertEquals(0x80.toByte(), Memory.memorySet.getMemoryCell(0x2005u))
+    }
+
+    @Test
+    fun testHalfCarryFlag() {
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x0F.toByte())
+
+        val instruction = INCIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0x34.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getHFlag())
+        assertEquals(0x10.toByte(), Memory.memorySet.getMemoryCell(0x2005u))
+    }
+
+    @Test
+    fun testOverflowFlag() {
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x7F.toByte())
+
+        val instruction = INCIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0x34.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getPVFlag())
+        assertEquals(0x80.toByte(), Memory.memorySet.getMemoryCell(0x2005u))
+    }
+
+    @Test
+    fun testNoOverflow() {
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x40.toByte())
+
+        val instruction = INCIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0x34.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getPVFlag())
+        assertEquals(0x41.toByte(), Memory.memorySet.getMemoryCell(0x2005u))
+    }
+
+    @Test
+    fun testNFlagAlwaysReset() {
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x10.toByte())
+        Registers.registerSet.setNFlag(true)
+
+        val instruction = INCIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0x34.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getNFlag())
+        assertEquals(0x11.toByte(), Memory.memorySet.getMemoryCell(0x2005u))
+    }
+
+    @Test
+    fun testCFlagNotAffected() {
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x10.toByte())
+        Registers.registerSet.setCFlag(true)
+
+        val instruction = INCIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0x34.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getCFlag()) // Should remain set
+        assertEquals(0x11.toByte(), Memory.memorySet.getMemoryCell(0x2005u))
     }
 
     @Test

@@ -6,6 +6,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ADDAIXdTest {
     @BeforeTest
@@ -44,6 +45,117 @@ class ADDAIXdTest {
         instruction.execute()
 
         assertEquals(0x30.toByte(), Registers.registerSet.getA())
+        assertFalse(Registers.registerSet.getNFlag())
+    }
+
+    @Test
+    fun testZeroFlag() {
+        Registers.registerSet.setA(0x00.toByte())
+        Registers.specialPurposeRegisters.setIX(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x00.toByte())
+
+        val instruction = ADDAIXd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertEquals(0x00.toByte(), Registers.registerSet.getA())
+        assertTrue(Registers.registerSet.getZFlag())
+        assertFalse(Registers.registerSet.getSFlag())
+    }
+
+    @Test
+    fun testSignFlag() {
+        Registers.registerSet.setA(0x7F.toByte())
+        Registers.specialPurposeRegisters.setIX(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x01.toByte())
+
+        val instruction = ADDAIXd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertEquals(0x80.toByte(), Registers.registerSet.getA())
+        assertTrue(Registers.registerSet.getSFlag())
+    }
+
+    @Test
+    fun testCarryFlag() {
+        Registers.registerSet.setA(0xFF.toByte())
+        Registers.specialPurposeRegisters.setIX(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x01.toByte())
+
+        val instruction = ADDAIXd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertEquals(0x00.toByte(), Registers.registerSet.getA())
+        assertTrue(Registers.registerSet.getCFlag())
+        assertTrue(Registers.registerSet.getZFlag())
+    }
+
+    @Test
+    fun testHalfCarryFlag() {
+        Registers.registerSet.setA(0x0F.toByte())
+        Registers.specialPurposeRegisters.setIX(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x01.toByte())
+
+        val instruction = ADDAIXd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertEquals(0x10.toByte(), Registers.registerSet.getA())
+        assertTrue(Registers.registerSet.getHFlag())
+        assertFalse(Registers.registerSet.getCFlag())
+    }
+
+    @Test
+    fun testOverflowFlag() {
+        Registers.registerSet.setA(0x7F.toByte())
+        Registers.specialPurposeRegisters.setIX(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x01.toByte())
+
+        val instruction = ADDAIXd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertEquals(0x80.toByte(), Registers.registerSet.getA())
+        assertTrue(Registers.registerSet.getPVFlag())
+    }
+
+    @Test
+    fun testNFlagAlwaysReset() {
+        Registers.registerSet.setA(0x10.toByte())
+        Registers.specialPurposeRegisters.setIX(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x20.toByte())
+        Registers.registerSet.setNFlag(true)
+
+        val instruction = ADDAIXd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
         assertFalse(Registers.registerSet.getNFlag())
     }
 

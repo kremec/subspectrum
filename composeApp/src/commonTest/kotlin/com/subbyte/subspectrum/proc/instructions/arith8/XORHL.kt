@@ -46,6 +46,110 @@ class XORHLTest {
     }
 
     @Test
+    fun testSignFlag() {
+        Registers.registerSet.setA(0x00.toByte())
+        Registers.registerSet.setHL(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0x80.toByte())
+
+        val instruction = XORHL(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xAE.toByte())
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getSFlag())
+        assertEquals(0x80.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun testParityEven() {
+        Registers.registerSet.setA(0x0F.toByte())
+        Registers.registerSet.setHL(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0x05.toByte())
+
+        val instruction = XORHL(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xAE.toByte())
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getPVFlag())
+        assertEquals(0x0A.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun testParityOdd() {
+        Registers.registerSet.setA(0x0F.toByte())
+        Registers.registerSet.setHL(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0x0E.toByte())
+
+        val instruction = XORHL(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xAE.toByte())
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getPVFlag())
+        assertEquals(0x01.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun testHFlagAlwaysReset() {
+        Registers.registerSet.setA(0xFF.toByte())
+        Registers.registerSet.setHL(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0x00.toByte())
+
+        val instruction = XORHL(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xAE.toByte())
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getHFlag())
+        assertEquals(0xFF.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun testNFlagAlwaysReset() {
+        Registers.registerSet.setA(0xFF.toByte())
+        Registers.registerSet.setHL(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0xFF.toByte())
+        Registers.registerSet.setNFlag(true)
+
+        val instruction = XORHL(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xAE.toByte())
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getNFlag())
+        assertEquals(0x00.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun testCFlagAlwaysReset() {
+        Registers.registerSet.setA(0xFF.toByte())
+        Registers.registerSet.setHL(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0xFF.toByte())
+        Registers.registerSet.setCFlag(true)
+
+        val instruction = XORHL(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xAE.toByte())
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getCFlag())
+        assertEquals(0x00.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
     fun toStringFormat() {
         val instruction = XORHL(
             address = 0x0000u,

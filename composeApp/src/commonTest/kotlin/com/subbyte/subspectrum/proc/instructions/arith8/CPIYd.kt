@@ -6,6 +6,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 
 class CPIYdTest {
     @BeforeTest
@@ -46,6 +47,134 @@ class CPIYdTest {
         assertTrue(Registers.registerSet.getZFlag())
         assertTrue(Registers.registerSet.getNFlag())
         assertEquals(0x10.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun testSignFlag() {
+        Registers.registerSet.setA(0x00.toByte())
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x01.toByte())
+
+        val instruction = CPIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getSFlag())
+        assertTrue(Registers.registerSet.getCFlag())
+        assertEquals(0x00.toByte(), Registers.registerSet.getA()) // A unchanged
+    }
+
+    @Test
+    fun testCarryFlag() {
+        Registers.registerSet.setA(0x10.toByte())
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x20.toByte())
+
+        val instruction = CPIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getCFlag())
+        assertEquals(0x10.toByte(), Registers.registerSet.getA()) // A unchanged
+    }
+
+    @Test
+    fun testHalfCarryFlag() {
+        Registers.registerSet.setA(0x10.toByte())
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x01.toByte())
+
+        val instruction = CPIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getHFlag())
+        assertFalse(Registers.registerSet.getCFlag())
+        assertEquals(0x10.toByte(), Registers.registerSet.getA()) // A unchanged
+    }
+
+    @Test
+    fun testOverflowFlag() {
+        Registers.registerSet.setA(0x80.toByte())
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x01.toByte())
+
+        val instruction = CPIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getPVFlag())
+        assertEquals(0x80.toByte(), Registers.registerSet.getA()) // A unchanged
+    }
+
+    @Test
+    fun testNoOverflow() {
+        Registers.registerSet.setA(0x50.toByte())
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x20.toByte())
+
+        val instruction = CPIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getPVFlag())
+        assertEquals(0x50.toByte(), Registers.registerSet.getA()) // A unchanged
+    }
+
+    @Test
+    fun testNFlagAlwaysSet() {
+        Registers.registerSet.setA(0x30.toByte())
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x10.toByte())
+
+        val instruction = CPIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getNFlag())
+        assertEquals(0x30.toByte(), Registers.registerSet.getA()) // A unchanged
+    }
+
+    @Test
+    fun testARegisterUnchanged() {
+        val originalA = 0x42.toByte()
+        Registers.registerSet.setA(originalA)
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2005u, 0x10.toByte())
+
+        val instruction = CPIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            displacement = 0x05.toByte()
+        )
+
+        instruction.execute()
+
+        assertEquals(originalA, Registers.registerSet.getA())
     }
 
     @Test

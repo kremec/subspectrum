@@ -78,6 +78,13 @@ import com.subbyte.subspectrum.proc.instructions.bit.RESbHL
 import com.subbyte.subspectrum.proc.instructions.bit.RESbIXd
 import com.subbyte.subspectrum.proc.instructions.bit.RESbIYd
 import com.subbyte.subspectrum.proc.instructions.bit.RESbr
+import com.subbyte.subspectrum.proc.instructions.call.CALLccnn
+import com.subbyte.subspectrum.proc.instructions.call.CALLnn
+import com.subbyte.subspectrum.proc.instructions.call.RET
+import com.subbyte.subspectrum.proc.instructions.call.RETcc
+import com.subbyte.subspectrum.proc.instructions.call.RETI
+import com.subbyte.subspectrum.proc.instructions.call.RETN
+import com.subbyte.subspectrum.proc.instructions.call.RSTp
 import com.subbyte.subspectrum.proc.instructions.jump.JPnn
 import com.subbyte.subspectrum.proc.instructions.jump.JPccnn
 import com.subbyte.subspectrum.proc.instructions.jump.JRd
@@ -379,7 +386,16 @@ object Instructions {
         JPHL,
         JPIX,
         JPIY,
-        DJNZd
+        DJNZd,
+
+        // call
+        CALLnn,
+        CALLccnn,
+        RET,
+        RETcc,
+        RETI,
+        RETN,
+        RSTp
     )
 
     fun decode(pc: Address): Instruction {

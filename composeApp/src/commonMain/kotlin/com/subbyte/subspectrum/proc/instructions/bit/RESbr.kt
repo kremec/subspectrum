@@ -17,7 +17,6 @@ data class RESbr(
         val currentValue = Registers.registerSet.getRegister(sourceRegister)
         val newValue = currentValue.setBit(bit, false)
         Registers.registerSet.setRegister(sourceRegister, newValue)
-        // No flags affected
     }
 
     override fun toString(): String = "RES $bit, $sourceRegister"

@@ -7,7 +7,6 @@ import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 import com.subbyte.subspectrum.units.getBit
 import com.subbyte.subspectrum.units.setBit
-import com.subbyte.subspectrum.units.setBit
 
 data class RLHL(
     override val address: Address,
@@ -24,7 +23,7 @@ data class RLHL(
         Registers.registerSet.setSFlag(result < 0)
         Registers.registerSet.setZFlag(result == 0.toByte())
         Registers.registerSet.setHFlag(false)
-        Registers.registerSet.setPVFlag(false) // TODO: P/V is set if parity even; otherwise, it is reset
+        Registers.registerSet.setPVFlag(result.countOneBits() % 2 == 0)
         Registers.registerSet.setNFlag(false)
         Registers.registerSet.setCFlag(carryValue)
     }

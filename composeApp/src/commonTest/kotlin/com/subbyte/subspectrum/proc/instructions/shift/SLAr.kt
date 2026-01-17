@@ -46,7 +46,7 @@ class SLArTest {
         assertFalse(Registers.registerSet.getSFlag())
         assertTrue(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
-        assertFalse(Registers.registerSet.getPVFlag())
+        assertTrue(Registers.registerSet.getPVFlag()) // Result 0x00 has even parity
         assertFalse(Registers.registerSet.getNFlag())
         assertTrue(Registers.registerSet.getCFlag()) // Carry set to bit 7
     }
@@ -88,9 +88,41 @@ class SLArTest {
         assertFalse(Registers.registerSet.getSFlag())
         assertTrue(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
-        assertFalse(Registers.registerSet.getPVFlag())
+        assertTrue(Registers.registerSet.getPVFlag()) // Result 0x00 has even parity
         assertFalse(Registers.registerSet.getNFlag())
         assertFalse(Registers.registerSet.getCFlag())
+    }
+
+    @Test
+    fun testParityEven() {
+        Registers.registerSet.setRegister(RegisterCode.B, 0x0C.toByte()) // 00001100
+
+        val instruction = SLAr(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xCB.toByte(), 0x20.toByte()),
+            sourceRegister = RegisterCode.B
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getPVFlag()) // Result 0x18 has even parity
+        assertEquals(0x18.toByte(), Registers.registerSet.getRegister(RegisterCode.B))
+    }
+
+    @Test
+    fun testParityOdd() {
+        Registers.registerSet.setRegister(RegisterCode.B, 0x08.toByte()) // 00001000
+
+        val instruction = SLAr(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xCB.toByte(), 0x20.toByte()),
+            sourceRegister = RegisterCode.B
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getPVFlag()) // Result 0x10 has odd parity
+        assertEquals(0x10.toByte(), Registers.registerSet.getRegister(RegisterCode.B))
     }
 
     @Test

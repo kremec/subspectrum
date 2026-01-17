@@ -34,9 +34,8 @@ data class RLD(
         Registers.registerSet.setSFlag(finalAValue < 0)
         Registers.registerSet.setZFlag(finalAValue == 0.toByte())
         Registers.registerSet.setHFlag(false)
-        Registers.registerSet.setPVFlag(false) // TODO: P/V is set if parity even; otherwise, it is reset
+        Registers.registerSet.setPVFlag(finalAValue.countOneBits() % 2 == 0)
         Registers.registerSet.setNFlag(false)
-        // C is not affected
     }
 
     override fun toString(): String = "RLD"

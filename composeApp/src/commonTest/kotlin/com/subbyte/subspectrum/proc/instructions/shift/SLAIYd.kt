@@ -48,7 +48,7 @@ class SLAIYdTest {
         assertFalse(Registers.registerSet.getSFlag())
         assertTrue(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
-        assertFalse(Registers.registerSet.getPVFlag())
+        assertTrue(Registers.registerSet.getPVFlag()) // Result 0x00 has even parity
         assertFalse(Registers.registerSet.getNFlag())
         assertTrue(Registers.registerSet.getCFlag()) // Carry set to bit 7
     }
@@ -92,9 +92,43 @@ class SLAIYdTest {
         assertFalse(Registers.registerSet.getSFlag())
         assertTrue(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
-        assertFalse(Registers.registerSet.getPVFlag())
+        assertTrue(Registers.registerSet.getPVFlag()) // Result 0x00 has even parity
         assertFalse(Registers.registerSet.getNFlag())
         assertFalse(Registers.registerSet.getCFlag())
+    }
+
+    @Test
+    fun testParityEven() {
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0x0C.toByte()) // 00001100
+
+        val instruction = SLAIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte()),
+            displacement = 0x00.toByte()
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getPVFlag()) // Result 0x18 has even parity
+        assertEquals(0x18.toByte(), Memory.memorySet.getMemoryCell(0x2000u))
+    }
+
+    @Test
+    fun testParityOdd() {
+        Registers.specialPurposeRegisters.setIY(0x2000.toShort())
+        Memory.memorySet.setMemoryCell(0x2000u, 0x08.toByte()) // 00001000
+
+        val instruction = SLAIYd(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte()),
+            displacement = 0x00.toByte()
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getPVFlag()) // Result 0x10 has odd parity
+        assertEquals(0x10.toByte(), Memory.memorySet.getMemoryCell(0x2000u))
     }
 
     @Test

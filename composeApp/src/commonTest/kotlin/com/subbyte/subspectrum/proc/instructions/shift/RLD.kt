@@ -43,10 +43,11 @@ class RLDTest {
         assertEquals(0x13.toByte(), Registers.registerSet.getA())
         assertEquals(0x42.toByte(), Memory.memorySet.getMemoryCell(0x2000u))
 
-        // Flags: S=false, Z=false, H=false, P/V=?, N=false, C=unchanged
+        // Flags: S=false, Z=false, H=false, P/V=parity of A, N=false, C=unchanged
         assertFalse(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
+        assertFalse(Registers.registerSet.getPVFlag()) // A=0x13 has odd parity
         assertFalse(Registers.registerSet.getNFlag())
         // C flag should be unchanged (was false, should remain false)
     }
@@ -69,6 +70,7 @@ class RLDTest {
 
         // Z flag should be set
         assertTrue(Registers.registerSet.getZFlag())
+        assertTrue(Registers.registerSet.getPVFlag()) // A=0x00 has even parity
     }
 
     @Test
@@ -90,6 +92,41 @@ class RLDTest {
 
         // S flag should be set (negative result)
         assertTrue(Registers.registerSet.getSFlag())
+        assertFalse(Registers.registerSet.getPVFlag()) // A=0x80 has odd parity
+    }
+
+    @Test
+    fun testParityEven() {
+        Registers.registerSet.setHL(0x2000.toShort())
+        Registers.registerSet.setA(0x03.toByte())  // A = 0000 0011
+        Memory.memorySet.setMemoryCell(0x2000u, 0x00.toByte())  // Memory = 0000 0000
+
+        val instruction = RLD(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xED.toByte(), 0x6F.toByte())
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getPVFlag()) // Result A=0x00 has even parity
+        assertEquals(0x00.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun testParityOdd() {
+        Registers.registerSet.setHL(0x2000.toShort())
+        Registers.registerSet.setA(0x10.toByte())  // A = 0001 0000
+        Memory.memorySet.setMemoryCell(0x2000u, 0x00.toByte())  // Memory = 0000 0000
+
+        val instruction = RLD(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xED.toByte(), 0x6F.toByte())
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getPVFlag()) // Result A=0x10 has odd parity
+        assertEquals(0x10.toByte(), Registers.registerSet.getA())
     }
 
     @Test

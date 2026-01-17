@@ -69,7 +69,7 @@ class RRrTest {
         assertFalse(Registers.registerSet.getSFlag())
         assertTrue(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
-        assertFalse(Registers.registerSet.getPVFlag())
+        assertTrue(Registers.registerSet.getPVFlag()) // Result 0x00 has even parity
         assertFalse(Registers.registerSet.getNFlag())
         assertTrue(Registers.registerSet.getCFlag()) // Carry set to bit 0
     }
@@ -91,7 +91,7 @@ class RRrTest {
         assertTrue(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
-        assertFalse(Registers.registerSet.getPVFlag())
+        assertTrue(Registers.registerSet.getPVFlag()) // Result 0x81 has even parity
         assertFalse(Registers.registerSet.getNFlag())
         assertFalse(Registers.registerSet.getCFlag()) // Carry not set because bit 0 was 0
     }
@@ -113,9 +113,43 @@ class RRrTest {
         assertFalse(Registers.registerSet.getSFlag())
         assertTrue(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
-        assertFalse(Registers.registerSet.getPVFlag())
+        assertTrue(Registers.registerSet.getPVFlag()) // Result 0x00 has even parity
         assertFalse(Registers.registerSet.getNFlag())
         assertFalse(Registers.registerSet.getCFlag())
+    }
+
+    @Test
+    fun testParityEven() {
+        Registers.registerSet.setRegister(RegisterCode.B, 0x02.toByte()) // 00000010
+        Registers.registerSet.setCFlag(true)
+
+        val instruction = RRr(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xCB.toByte(), 0x18.toByte()),
+            sourceRegister = RegisterCode.B
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getPVFlag()) // Result 0x81 has even parity
+        assertEquals(0x81.toByte(), Registers.registerSet.getRegister(RegisterCode.B))
+    }
+
+    @Test
+    fun testParityOdd() {
+        Registers.registerSet.setRegister(RegisterCode.B, 0x01.toByte()) // 00000001
+        Registers.registerSet.setCFlag(true)
+
+        val instruction = RRr(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xCB.toByte(), 0x18.toByte()),
+            sourceRegister = RegisterCode.B
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getPVFlag()) // Result 0x80 has odd parity
+        assertEquals(0x80.toByte(), Registers.registerSet.getRegister(RegisterCode.B))
     }
 
     @Test

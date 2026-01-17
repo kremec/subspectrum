@@ -67,9 +67,41 @@ class RLCrTest {
         assertFalse(Registers.registerSet.getSFlag())
         assertTrue(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
-        assertFalse(Registers.registerSet.getPVFlag())
+        assertTrue(Registers.registerSet.getPVFlag()) // Result 0x00 has even parity
         assertFalse(Registers.registerSet.getNFlag())
         assertFalse(Registers.registerSet.getCFlag())
+    }
+
+    @Test
+    fun testParityEven() {
+        Registers.registerSet.setRegister(RegisterCode.B, 0x81.toByte()) // 10000001
+
+        val instruction = RLCr(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xCB.toByte(), 0x00.toByte()),
+            sourceRegister = RegisterCode.B
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getPVFlag()) // Result 0x03 has even parity
+        assertEquals(0x03.toByte(), Registers.registerSet.getRegister(RegisterCode.B))
+    }
+
+    @Test
+    fun testParityOdd() {
+        Registers.registerSet.setRegister(RegisterCode.B, 0x01.toByte()) // 00000001
+
+        val instruction = RLCr(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xCB.toByte(), 0x00.toByte()),
+            sourceRegister = RegisterCode.B
+        )
+
+        instruction.execute()
+
+        assertFalse(Registers.registerSet.getPVFlag()) // Result 0x02 has odd parity
+        assertEquals(0x02.toByte(), Registers.registerSet.getRegister(RegisterCode.B))
     }
 
     @Test

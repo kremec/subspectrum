@@ -17,7 +17,6 @@ data class RESbHL(
         val memoryValue = Memory.memorySet.getMemoryCell(hlValue.toUShort())
         val newValue = memoryValue.setBit(bit, false)
         Memory.memorySet.setMemoryCell(hlValue.toUShort(), newValue)
-        // No flags affected
     }
 
     override fun toString(): String = "RES $bit, (HL)"

@@ -11,32 +11,26 @@ data class RRD(
     override val bytes: ByteArray
 ) : Instruction {
     override fun execute() {
-        val hlValue = Registers.registerSet.getHL()
-        val memoryValue = Memory.memorySet.getMemoryCell(hlValue.toUShort())
-        val aValue = Registers.registerSet.getA()
+        val hlRegisterPairValue = Registers.registerSet.getHL()
+        val sourceMemoryValue = Memory.memorySet.getMemoryCell(hlRegisterPairValue.toUShort())
+        val aRegisterValue = Registers.registerSet.getA()
 
-        // Extract nibbles
-        val memLowNibble = memoryValue.toInt() and 0x0F  // bits 3-0 of memory
-        val memHighNibble = (memoryValue.toInt() shr 4) and 0x0F  // bits 7-4 of memory
-        val aLowNibble = aValue.toInt() and 0x0F  // bits 3-0 of A
-        val aHighNibble = (aValue.toInt() shr 4) and 0x0F  // bits 7-4 of A (unchanged)
+        val memoryLowNibble = sourceMemoryValue.toInt() and 0x0F
+        val memoryHighNibble = (sourceMemoryValue.toInt() shr 4) and 0x0F
+        val aRegisterLowNibble = aRegisterValue.toInt() and 0x0F
+        val aRegisterHighNibble = (aRegisterValue.toInt() shr 4) and 0x0F
 
-        // Perform rotation: memLow -> aLow, aLow -> memHigh, memHigh -> memLow
-        val newMemValue = (aLowNibble shl 4) or memHighNibble  // aLow becomes memHigh, memHigh becomes memLow
-        val newAValue = (aHighNibble shl 4) or memLowNibble     // aHigh unchanged, memLow becomes aLow
+        val memoryResult = ((aRegisterLowNibble shl 4) or memoryHighNibble).toByte()
+        val registerResult = ((aRegisterHighNibble shl 4) or memoryLowNibble).toByte()
 
-        // Update memory and accumulator
-        Memory.memorySet.setMemoryCell(hlValue.toUShort(), newMemValue.toByte())
-        Registers.registerSet.setA(newAValue.toByte())
+        Memory.memorySet.setMemoryCell(hlRegisterPairValue.toUShort(), memoryResult)
+        Registers.registerSet.setA(registerResult)
 
-        // Set flags based on final accumulator value
-        val finalAValue = newAValue.toByte()
-        Registers.registerSet.setSFlag(finalAValue < 0)
-        Registers.registerSet.setZFlag(finalAValue == 0.toByte())
+        Registers.registerSet.setSFlag(registerResult < 0)
+        Registers.registerSet.setZFlag(registerResult == 0.toByte())
         Registers.registerSet.setHFlag(false)
-        Registers.registerSet.setPVFlag(false) // TODO: P/V is set if parity even; otherwise, it is reset
+        Registers.registerSet.setPVFlag(registerResult.countOneBits() % 2 == 0)
         Registers.registerSet.setNFlag(false)
-        // C is not affected
     }
 
     override fun toString(): String = "RRD"

@@ -22,7 +22,7 @@ data class SLAIYd(
         Registers.registerSet.setSFlag(result < 0)
         Registers.registerSet.setZFlag(result == 0.toByte())
         Registers.registerSet.setHFlag(false)
-        Registers.registerSet.setPVFlag(false) // TODO: P/V is set if parity even; otherwise, it is reset
+        Registers.registerSet.setPVFlag(result.countOneBits() % 2 == 0)
         Registers.registerSet.setNFlag(false)
         Registers.registerSet.setCFlag(carryValue)
     }

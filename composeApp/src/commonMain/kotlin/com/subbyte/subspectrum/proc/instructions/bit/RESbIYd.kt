@@ -19,7 +19,6 @@ data class RESbIYd(
         val memoryValue = Memory.memorySet.getMemoryCell(targetAddress)
         val newValue = memoryValue.setBit(bit, false)
         Memory.memorySet.setMemoryCell(targetAddress, newValue)
-        // No flags affected
     }
 
     override fun toString(): String = "RES $bit, (IY + $displacement)"

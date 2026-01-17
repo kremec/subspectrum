@@ -46,6 +46,7 @@ class CPIRTest {
         assertEquals(0x0002, Registers.registerSet.getBC())
         assertFalse(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
+        assertTrue(Registers.registerSet.getHFlag())
         assertTrue(Registers.registerSet.getPVFlag())
         assertTrue(Registers.registerSet.getNFlag())
     }
@@ -70,6 +71,7 @@ class CPIRTest {
         assertEquals(0x0002, Registers.registerSet.getBC())
         assertFalse(Registers.registerSet.getSFlag())
         assertTrue(Registers.registerSet.getZFlag())
+        assertFalse(Registers.registerSet.getHFlag())
         assertTrue(Registers.registerSet.getPVFlag())
     }
 
@@ -91,6 +93,7 @@ class CPIRTest {
         assertEquals(0x0FFE, Registers.specialPurposeRegisters.getPC())
         assertEquals(0x2001, Registers.registerSet.getHL())
         assertEquals(0x0000, Registers.registerSet.getBC())
+        assertTrue(Registers.registerSet.getHFlag())
         assertFalse(Registers.registerSet.getPVFlag())
     }
 
@@ -110,6 +113,24 @@ class CPIRTest {
         instruction.execute()
 
         assertEquals(0x0FFE, Registers.specialPurposeRegisters.getPC())
+        assertFalse(Registers.registerSet.getHFlag())
+    }
+
+    @Test
+    fun testHalfCarryFlag() {
+        Registers.registerSet.setA(0x10.toByte())
+        Registers.registerSet.setHL(0x2000)
+        Memory.memorySet.setMemoryCell(0x2000u, 0x01.toByte())
+        Registers.registerSet.setBC(0x0003)
+
+        val instruction = CPIR(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xED.toByte(), 0xB1.toByte())
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getHFlag())
     }
 
     @Test

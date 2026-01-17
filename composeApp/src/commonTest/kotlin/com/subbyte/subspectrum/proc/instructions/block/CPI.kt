@@ -44,6 +44,7 @@ class CPITest {
         assertEquals(0x0002, Registers.registerSet.getBC())
         assertFalse(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
+        assertTrue(Registers.registerSet.getHFlag())
         assertTrue(Registers.registerSet.getPVFlag())
         assertTrue(Registers.registerSet.getNFlag())
     }
@@ -64,6 +65,7 @@ class CPITest {
 
         assertFalse(Registers.registerSet.getSFlag())
         assertTrue(Registers.registerSet.getZFlag())
+        assertFalse(Registers.registerSet.getHFlag())
         assertTrue(Registers.registerSet.getPVFlag())
     }
 
@@ -83,6 +85,7 @@ class CPITest {
 
         assertTrue(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
+        assertFalse(Registers.registerSet.getHFlag())
     }
 
     @Test
@@ -99,7 +102,25 @@ class CPITest {
 
         instruction.execute()
 
+        assertTrue(Registers.registerSet.getHFlag())
         assertFalse(Registers.registerSet.getPVFlag())
+    }
+
+    @Test
+    fun testHalfCarryFlag() {
+        Registers.registerSet.setA(0x10.toByte())
+        Registers.registerSet.setHL(0x2000)
+        Memory.memorySet.setMemoryCell(0x2000u, 0x01.toByte())
+        Registers.registerSet.setBC(0x0003)
+
+        val instruction = CPI(
+            address = 0x1000u,
+            bytes = byteArrayOf(0xED.toByte(), 0xA1.toByte())
+        )
+
+        instruction.execute()
+
+        assertTrue(Registers.registerSet.getHFlag())
     }
 
     @Test

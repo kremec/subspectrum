@@ -24,7 +24,7 @@ data class CPDR(
 
         Registers.registerSet.setSFlag(comparison < 0.toByte())
         Registers.registerSet.setZFlag(comparison == 0.toByte())
-        Registers.registerSet.setHFlag(false) // TODO: H is set if borrow from bit 4; otherwise, it is reset.
+        Registers.registerSet.setHFlag(((aRegisterValue.toUByte().toInt() and 0x0F) - (sourceMemoryValue.toUByte().toInt() and 0x0F)) < 0)
         Registers.registerSet.setPVFlag(bcRegisterPairValue.dec() != 0.toShort())
         Registers.registerSet.setNFlag(true)
 

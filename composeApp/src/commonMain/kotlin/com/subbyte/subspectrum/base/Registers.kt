@@ -280,6 +280,7 @@ data class SpecialPurposeRegisters(
     fun setPC(value: Word) {
         PC = value
         invalidate()
+        pcInvalidate()
     }
 
     fun reset() {
@@ -290,6 +291,7 @@ data class SpecialPurposeRegisters(
         SP = 0
         PC = 0
         invalidate()
+        pcInvalidate()
     }
 
     private val _invalidations = MutableSharedFlow<Unit>(
@@ -300,6 +302,16 @@ data class SpecialPurposeRegisters(
     val invalidations: SharedFlow<Unit> = _invalidations.asSharedFlow()
     fun invalidate() {
         _invalidations.tryEmit(Unit) // never suspends
+    }
+
+    private val _pcInvalidations = MutableSharedFlow<Unit>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
+    val pcInvalidations: SharedFlow<Unit> = _pcInvalidations.asSharedFlow()
+    fun pcInvalidate() {
+        _pcInvalidations.tryEmit(Unit) // never suspends
     }
 }
 

@@ -3,7 +3,8 @@ package com.subbyte.subspectrum.proc
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instructions
 
-class Processor {
+object Processor {
+    var running = false
     fun step() {
         val pc = Registers.specialPurposeRegisters.getPC()
         val instruction = Instructions.decode(pc.toUShort())
@@ -14,6 +15,22 @@ class Processor {
     }
 
     fun run(steps: Int) {
-        repeat(steps) { step() }
+        running = true
+
+        repeat(steps) {
+            if (!running) return@repeat
+            step()
+        }
+
+        running = false
+    }
+    fun run() {
+        while(running) {
+            step()
+        }
+    }
+
+    fun stop() {
+        running = false
     }
 }

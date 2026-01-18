@@ -1,4 +1,4 @@
-package com.subbyte.subspectrum.ui
+package com.subbyte.subspectrum.ui.panel
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

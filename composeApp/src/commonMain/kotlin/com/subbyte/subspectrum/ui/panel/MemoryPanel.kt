@@ -1,4 +1,4 @@
-package com.subbyte.subspectrum.ui
+package com.subbyte.subspectrum.ui.panel
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
@@ -23,10 +23,16 @@ import kotlinx.coroutines.flow.conflate
 @Composable
 fun MemoryPanel() {
     var version by remember { mutableIntStateOf(0) }
+    var pcVersion by remember { mutableIntStateOf(0) }
     LaunchedEffect(Unit) {
         Memory.memorySet.invalidations
             .conflate() // collapses bursts of changes into fewer recomposes
             .collect { version++ }
+    }
+    LaunchedEffect(Unit) {
+        Registers.specialPurposeRegisters.pcInvalidations
+            .conflate()
+            .collect { pcVersion++ }
     }
 
     Column(
@@ -54,6 +60,17 @@ fun MemoryPanel() {
             val lazyListState = rememberLazyListState()
             val pc = Registers.specialPurposeRegisters.getPC()
             val prevBytesPerRow = remember { mutableStateOf(bytesPerRow) }
+
+            LaunchedEffect(pcVersion) {
+                val pcRowIndex = memoryRows.indexOfLast { row -> row.startAddress < pc.toUShort().toInt() }
+                if (pcRowIndex == -1) return@LaunchedEffect
+
+                val visible = lazyListState.layoutInfo.visibleItemsInfo
+                val isPcRowVisible = visible.any { it.index == pcRowIndex } && visible.indexOfFirst { it.index == pcRowIndex } !in listOf(0, visible.size)
+                if (isPcRowVisible) return@LaunchedEffect
+
+                lazyListState.scrollToItem(pcRowIndex)
+            }
 
             // When bytesPerRow changes, scroll to maintain the same address
             LaunchedEffect(bytesPerRow) {

@@ -3,6 +3,7 @@ package com.subbyte.subspectrum
 import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import com.subbyte.subspectrum.ui.topbar.TopBar
 
 fun main() = application {
     Window(

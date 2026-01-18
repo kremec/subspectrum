@@ -1,4 +1,4 @@
-package com.subbyte.subspectrum.ui
+package com.subbyte.subspectrum.ui.panel
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
@@ -31,10 +31,16 @@ data class DisassemblyRow(
 @Composable
 fun DisassemblyPanel() {
     var version by remember { mutableIntStateOf(0) }
+    var pcVersion by remember { mutableIntStateOf(0) }
     LaunchedEffect(Unit) {
         Memory.memorySet.invalidations
             .conflate()
             .collect { version++ }
+    }
+    LaunchedEffect(Unit) {
+        Registers.specialPurposeRegisters.pcInvalidations
+            .conflate()
+            .collect { pcVersion++ }
     }
 
     Column(
@@ -77,6 +83,17 @@ fun DisassemblyPanel() {
         }
         val lazyListState = rememberLazyListState()
         val pc = Registers.specialPurposeRegisters.getPC()
+
+        LaunchedEffect(pcVersion) {
+            val pcRowIndex = disassemblyRows.indexOfFirst { row -> row.startAddress == pc.toUShort().toInt() }
+            if (pcRowIndex == -1) return@LaunchedEffect
+
+            val visible = lazyListState.layoutInfo.visibleItemsInfo
+            val isPcRowVisible = visible.any { it.index == pcRowIndex } && visible.indexOfFirst { it.index == pcRowIndex } !in listOf(0, visible.size)
+            if (isPcRowVisible) return@LaunchedEffect
+
+            lazyListState.scrollToItem(pcRowIndex)
+        }
 
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(state = lazyListState) {

@@ -7,6 +7,7 @@ import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 import com.subbyte.subspectrum.units.Word
+import com.subbyte.subspectrum.units.fromBytes
 import com.subbyte.subspectrum.units.toBytes
 
 data class LDnnIX(
@@ -16,7 +17,7 @@ data class LDnnIX(
 ) : Instruction {
     override fun execute() {
         val sourceValue = Registers.specialPurposeRegisters.getIX()
-        val (sourceHighValue, sourceLowValue) = sourceValue.toBytes()
+        val (sourceLowValue, sourceHighValue) = sourceValue.toBytes()
         Memory.memorySet.setMemoryCells(destinationWord.toUShort(), byteArrayOf(sourceLowValue, sourceHighValue))
     }
 
@@ -26,11 +27,12 @@ data class LDnnIX(
         override val mCycles: Int = 5
         override val tStates: Int = 16
 
-        override val bitPattern = BitPattern.of("11011101 00100010 nnnnnnnn nnnnnnnn")
+        override val bitPattern = BitPattern.of("11011101 00100010 llllllll hhhhhhhh")
         override fun decode(word: Long, address: Address): Instruction {
-            val n = bitPattern.get(word, 'n')
+            val l = bitPattern.get(word, 'l').toByte()
+            val h = bitPattern.get(word, 'h').toByte()
 
-            val destinationWord = n.toShort()
+            val destinationWord = Pair(h, l).fromBytes()
 
             val bytes = ByteArray(bitPattern.byteCount) { i ->
                 val shift = 8 * (bitPattern.byteCount - 1 - i)

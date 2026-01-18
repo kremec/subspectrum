@@ -25,7 +25,7 @@ class LDnnHLTest {
         assertEquals(0x34.toByte(), instruction.bytes[2])
 
         val ldnn = instruction as LDnnHL
-        assertEquals(0x1234.toShort(), ldnn.destinationWord)
+        assertEquals(0x3412.toShort(), ldnn.destinationWord)
     }
 
     @Test
@@ -34,24 +34,24 @@ class LDnnHLTest {
 
         val instruction = LDnnHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x22, 0x34.toByte(), 0x12.toByte()),
-            destinationWord = 0x1234.toShort()
+            bytes = byteArrayOf(0x22, 0x12.toByte(), 0x34.toByte()),
+            destinationWord = 0x3412.toShort()
         )
 
         instruction.execute()
 
-        assertEquals(0xCD.toByte(), Memory.memorySet.getMemoryCell(0x1234u))
-        assertEquals(0xAB.toByte(), Memory.memorySet.getMemoryCell(0x1235u))
+        assertEquals(0xAB.toByte(), Memory.memorySet.getMemoryCell(0x3412u))
+        assertEquals(0xCD.toByte(), Memory.memorySet.getMemoryCell(0x3413u))
     }
 
     @Test
     fun toStringFormat() {
         val instruction = LDnnHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0x22, 0x34.toByte(), 0x12.toByte()),
-            destinationWord = 0x1234.toShort()
+            bytes = byteArrayOf(0x22, 0x12.toByte(), 0x34.toByte()),
+            destinationWord = 0x3412.toShort()
         )
 
-        assertEquals("LD (1234h), HL", instruction.toString())
+        assertEquals("LD (3412h), HL", instruction.toString())
     }
 }

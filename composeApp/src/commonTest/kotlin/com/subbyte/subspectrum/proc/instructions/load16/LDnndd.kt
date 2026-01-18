@@ -28,7 +28,7 @@ class LDnnddTest {
 
         val ldnn = instruction as LDnndd
         assertEquals(RegisterPairCode.BC, ldnn.sourceRegisterPairCode)
-        assertEquals(0x1234.toShort(), ldnn.destinationWord)
+        assertEquals(0x3412.toShort(), ldnn.destinationWord)
     }
 
     @Test
@@ -38,15 +38,15 @@ class LDnnddTest {
 
         val instruction = LDnndd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x43.toByte(), 0x34.toByte(), 0x12.toByte()),
-            destinationWord = 0x1234.toShort(),
+            bytes = byteArrayOf(0xED.toByte(), 0x43.toByte(), 0x12.toByte(), 0x34.toByte()),
+            destinationWord = 0x3412.toShort(),
             sourceRegisterPairCode = RegisterPairCode.BC
         )
 
         instruction.execute()
 
-        assertEquals(0xCD.toByte(), Memory.memorySet.getMemoryCell(0x1234u))
-        assertEquals(0xAB.toByte(), Memory.memorySet.getMemoryCell(0x1235u))
+        assertEquals(0xAB.toByte(), Memory.memorySet.getMemoryCell(0x3412u))
+        assertEquals(0xCD.toByte(), Memory.memorySet.getMemoryCell(0x3413u))
     }
 
     @Test
@@ -63,8 +63,8 @@ class LDnnddTest {
 
         instruction.execute()
 
-        assertEquals(0x34.toByte(), Memory.memorySet.getMemoryCell(0x2000u))
-        assertEquals(0x12.toByte(), Memory.memorySet.getMemoryCell(0x2001u))
+        assertEquals(0x12.toByte(), Memory.memorySet.getMemoryCell(0x2000u))
+        assertEquals(0x34.toByte(), Memory.memorySet.getMemoryCell(0x2001u))
     }
 
     @Test
@@ -81,8 +81,8 @@ class LDnnddTest {
 
         instruction.execute()
 
-        assertEquals(0xDC.toByte(), Memory.memorySet.getMemoryCell(0x3000u))
-        assertEquals(0xFE.toByte(), Memory.memorySet.getMemoryCell(0x3001u))
+        assertEquals(0xFE.toByte(), Memory.memorySet.getMemoryCell(0x3000u))
+        assertEquals(0xDC.toByte(), Memory.memorySet.getMemoryCell(0x3001u))
     }
 
     @Test
@@ -106,11 +106,11 @@ class LDnnddTest {
     fun toStringFormat() {
         val instruction = LDnndd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x43.toByte(), 0x34.toByte(), 0x12.toByte()),
-            destinationWord = 0x1234.toShort(),
+            bytes = byteArrayOf(0xED.toByte(), 0x43.toByte(), 0x12.toByte(), 0x34.toByte()),
+            destinationWord = 0x3412.toShort(),
             sourceRegisterPairCode = RegisterPairCode.BC
         )
 
-        assertEquals("LD (1234h), BC", instruction.toString())
+        assertEquals("LD (3412h), BC", instruction.toString())
     }
 }

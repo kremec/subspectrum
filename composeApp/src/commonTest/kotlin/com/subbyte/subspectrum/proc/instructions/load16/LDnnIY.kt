@@ -26,7 +26,7 @@ class LDnnIYTest {
         assertEquals(0x34.toByte(), instruction.bytes[3])
 
         val ldnn = instruction as LDnnIY
-        assertEquals(0x1234.toShort(), ldnn.destinationWord)
+        assertEquals(0x3412.toShort(), ldnn.destinationWord)
     }
 
     @Test
@@ -35,24 +35,24 @@ class LDnnIYTest {
 
         val instruction = LDnnIY(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0x22.toByte(), 0x34.toByte(), 0x12.toByte()),
-            destinationWord = 0x1234.toShort()
+            bytes = byteArrayOf(0xFD.toByte(), 0x22.toByte(), 0x12.toByte(), 0x34.toByte()),
+            destinationWord = 0x3412.toShort()
         )
 
         instruction.execute()
 
-        assertEquals(0xCD.toByte(), Memory.memorySet.getMemoryCell(0x1234u))
-        assertEquals(0xAB.toByte(), Memory.memorySet.getMemoryCell(0x1235u))
+        assertEquals(0xAB.toByte(), Memory.memorySet.getMemoryCell(0x3412u))
+        assertEquals(0xCD.toByte(), Memory.memorySet.getMemoryCell(0x3413u))
     }
 
     @Test
     fun toStringFormat() {
         val instruction = LDnnIY(
             address = 0x0000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0x22.toByte(), 0x34.toByte(), 0x12.toByte()),
-            destinationWord = 0x1234.toShort()
+            bytes = byteArrayOf(0xFD.toByte(), 0x22.toByte(), 0x12.toByte(), 0x34.toByte()),
+            destinationWord = 0x3412.toShort()
         )
 
-        assertEquals("LD (1234h), IY", instruction.toString())
+        assertEquals("LD (3412h), IY", instruction.toString())
     }
 }

@@ -413,7 +413,12 @@ object Instructions {
             }
 
             if (pattern.matches(word)) {
-                return def.decode(word, pc)
+                try {
+                    return def.decode(word, pc)
+                } catch (_: NoSuchElementException) {
+                    // Decoding failed (e.g., invalid register code), try next definition
+                    continue
+                }
             }
         }
 

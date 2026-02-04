@@ -118,6 +118,18 @@ import com.subbyte.subspectrum.proc.instructions.ex.EXSPHL
 import com.subbyte.subspectrum.proc.instructions.ex.EXSPIX
 import com.subbyte.subspectrum.proc.instructions.ex.EXSPIY
 import com.subbyte.subspectrum.proc.instructions.ex.EXX
+import com.subbyte.subspectrum.proc.instructions.io.INAn
+import com.subbyte.subspectrum.proc.instructions.io.IND
+import com.subbyte.subspectrum.proc.instructions.io.INDR
+import com.subbyte.subspectrum.proc.instructions.io.INI
+import com.subbyte.subspectrum.proc.instructions.io.INIR
+import com.subbyte.subspectrum.proc.instructions.io.INrC
+import com.subbyte.subspectrum.proc.instructions.io.OTDR
+import com.subbyte.subspectrum.proc.instructions.io.OTIR
+import com.subbyte.subspectrum.proc.instructions.io.OUTCr
+import com.subbyte.subspectrum.proc.instructions.io.OUTD
+import com.subbyte.subspectrum.proc.instructions.io.OUTI
+import com.subbyte.subspectrum.proc.instructions.io.OUTnA
 import com.subbyte.subspectrum.proc.instructions.jump.DJNZd
 import com.subbyte.subspectrum.proc.instructions.jump.JPHL
 import com.subbyte.subspectrum.proc.instructions.jump.JPIX
@@ -421,7 +433,21 @@ object Instructions {
         EI,
         IM0,
         IM1,
-        IM2
+        IM2,
+
+        // io
+        INAn,
+        INrC,
+        INI,
+        INIR,
+        IND,
+        INDR,
+        OUTnA,
+        OUTCr,
+        OUTI,
+        OTIR,
+        OUTD,
+        OTDR
     )
 
     fun decode(pc: Address): Instruction {

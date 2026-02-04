@@ -100,6 +100,18 @@ import com.subbyte.subspectrum.proc.instructions.block.LDD
 import com.subbyte.subspectrum.proc.instructions.block.LDDR
 import com.subbyte.subspectrum.proc.instructions.block.LDI
 import com.subbyte.subspectrum.proc.instructions.block.LDIR
+import com.subbyte.subspectrum.proc.instructions.control.CCF
+import com.subbyte.subspectrum.proc.instructions.control.CPL
+import com.subbyte.subspectrum.proc.instructions.control.DAA
+import com.subbyte.subspectrum.proc.instructions.control.DI
+import com.subbyte.subspectrum.proc.instructions.control.EI
+import com.subbyte.subspectrum.proc.instructions.control.HALT
+import com.subbyte.subspectrum.proc.instructions.control.IM0
+import com.subbyte.subspectrum.proc.instructions.control.IM1
+import com.subbyte.subspectrum.proc.instructions.control.IM2
+import com.subbyte.subspectrum.proc.instructions.control.NEG
+import com.subbyte.subspectrum.proc.instructions.control.NOP
+import com.subbyte.subspectrum.proc.instructions.control.SCF
 import com.subbyte.subspectrum.proc.instructions.ex.EXAFAF
 import com.subbyte.subspectrum.proc.instructions.ex.EXDEHL
 import com.subbyte.subspectrum.proc.instructions.ex.EXSPHL
@@ -395,7 +407,21 @@ object Instructions {
         RETcc,
         RETI,
         RETN,
-        RSTp
+        RSTp,
+
+        // control
+        DAA,
+        CPL,
+        NEG,
+        CCF,
+        SCF,
+        NOP,
+        HALT,
+        DI,
+        EI,
+        IM0,
+        IM1,
+        IM2
     )
 
     fun decode(pc: Address): Instruction {

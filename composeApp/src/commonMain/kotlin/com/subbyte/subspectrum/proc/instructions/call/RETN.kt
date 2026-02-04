@@ -4,6 +4,7 @@ import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 import com.subbyte.subspectrum.units.fromBytes
@@ -17,8 +18,8 @@ data class RETN(
         val bytes = Memory.memorySet.getMemoryCells(spRegisterValue.toUShort(), spRegisterValue.plus(1).toUShort())
         Registers.specialPurposeRegisters.setSP(spRegisterValue.plus(2).toShort())
         Registers.specialPurposeRegisters.setPC(Pair(bytes[1], bytes[0]).fromBytes())
-        
-        // TODO: Copy state of IFF2 back to IFF1 to restore maskable interrupt enable state
+
+        Processor.IFF1 = Processor.IFF2
     }
 
     override fun toString(): String = "RETN"

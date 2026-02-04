@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.load8
 
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
@@ -16,7 +17,7 @@ data class LDAR(
         Registers.registerSet.setSFlag(rRegisterValue < 0)
         Registers.registerSet.setZFlag(rRegisterValue == 0.toByte())
         Registers.registerSet.setHFlag(false)
-        // TODO: P/V contains contents of IFF2
+        Registers.registerSet.setPVFlag(Processor.IFF2)
         Registers.registerSet.setNFlag(false)
         // TODO: If an interrupt occurs during execution of this instruction, the Parity flag contains a 0
     }

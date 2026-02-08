@@ -1,6 +1,7 @@
 package com.subbyte.subspectrum.proc.instructions.ex
 
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -28,7 +29,7 @@ class EXAFAFTest {
 
         val instruction = EXAFAF(
             address = 0x1000u,
-            bytes = byteArrayOf(0x08)
+            bytes = DataByteArray(byteArrayOf(0x08))
         )
 
         instruction.execute()
@@ -41,7 +42,7 @@ class EXAFAFTest {
     fun toStringFormat() {
         val instruction = EXAFAF(
             address = 0x0000u,
-            bytes = byteArrayOf(0x08)
+            bytes = DataByteArray(byteArrayOf(0x08))
         )
 
         assertEquals("EX AF, AF'", instruction.toString())

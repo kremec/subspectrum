@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class XORnTest {
     @BeforeTest
@@ -26,7 +23,7 @@ class XORnTest {
         assertEquals(0xAB.toByte(), instruction.bytes[1])
 
         val xorn = instruction as XORn
-        assertEquals(0xAB.toByte(), xorn.sourceByte)
+        assertEquals(0xAB.toUByte(), xorn.sourceUByte)
     }
 
     @Test
@@ -35,8 +32,8 @@ class XORnTest {
 
         val instruction = XORn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xEE.toByte(), 0x0F.toByte()),
-            sourceByte = 0x0F.toByte()
+            bytes = DataByteArray(byteArrayOf(0xEE.toByte(), 0x0F.toByte())),
+            sourceUByte = 0x0F.toUByte()
         )
 
         instruction.execute()
@@ -54,8 +51,8 @@ class XORnTest {
 
         val instruction = XORn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xEE.toByte(), 0x80.toByte()),
-            sourceByte = 0x80.toByte()
+            bytes = DataByteArray(byteArrayOf(0xEE.toByte(), 0x80.toByte())),
+            sourceUByte = 0x80.toUByte()
         )
 
         instruction.execute()
@@ -70,8 +67,8 @@ class XORnTest {
 
         val instruction = XORn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xEE.toByte(), 0x05.toByte()),
-            sourceByte = 0x05.toByte()
+            bytes = DataByteArray(byteArrayOf(0xEE.toByte(), 0x05.toByte())),
+            sourceUByte = 0x05.toUByte()
         )
 
         instruction.execute()
@@ -86,8 +83,8 @@ class XORnTest {
 
         val instruction = XORn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xEE.toByte(), 0x0E.toByte()),
-            sourceByte = 0x0E.toByte()
+            bytes = DataByteArray(byteArrayOf(0xEE.toByte(), 0x0E.toByte())),
+            sourceUByte = 0x0E.toUByte()
         )
 
         instruction.execute()
@@ -102,8 +99,8 @@ class XORnTest {
 
         val instruction = XORn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xEE.toByte(), 0x00.toByte()),
-            sourceByte = 0x00.toByte()
+            bytes = DataByteArray(byteArrayOf(0xEE.toByte(), 0x00.toByte())),
+            sourceUByte = 0x00.toUByte()
         )
 
         instruction.execute()
@@ -119,8 +116,8 @@ class XORnTest {
 
         val instruction = XORn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xEE.toByte(), 0xFF.toByte()),
-            sourceByte = 0xFF.toByte()
+            bytes = DataByteArray(byteArrayOf(0xEE.toByte(), 0xFF.toByte())),
+            sourceUByte = 0xFF.toUByte()
         )
 
         instruction.execute()
@@ -136,8 +133,8 @@ class XORnTest {
 
         val instruction = XORn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xEE.toByte(), 0xFF.toByte()),
-            sourceByte = 0xFF.toByte()
+            bytes = DataByteArray(byteArrayOf(0xEE.toByte(), 0xFF.toByte())),
+            sourceUByte = 0xFF.toUByte()
         )
 
         instruction.execute()
@@ -150,10 +147,10 @@ class XORnTest {
     fun toStringFormat() {
         val instruction = XORn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xEE.toByte(), 0xAB.toByte()),
-            sourceByte = 0xAB.toByte()
+            bytes = DataByteArray(byteArrayOf(0xEE.toByte(), 0xAB.toByte())),
+            sourceUByte = 0xAB.toUByte()
         )
 
-        assertEquals("XOR -85", instruction.toString())
+        assertEquals("XOR ABh", instruction.toString())
     }
 }

@@ -1,41 +1,37 @@
 package com.subbyte.subspectrum.proc.instructions.load8
 
+import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
+import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.displayString
 
 data class LDrn(
     override val address: Address,
-    override val bytes: ByteArray,
+    override val bytes: DataByteArray,
     val destinationRegister: RegisterCode,
-    val sourceByte: Byte
+    val sourceUByte: UByte
 ) : Instruction {
+    override fun getTStates(): Int = 7
+
     override fun execute() {
-        Registers.registerSet.setRegister(destinationRegister, sourceByte)
+        Registers.registerSet.setRegister(destinationRegister, sourceUByte)
     }
 
-    override fun toString(): String = "LD $destinationRegister, ${sourceByte.toHexString(HexFormat.UpperCase)}h"
+    override fun toString(): String = "LD $destinationRegister, ${sourceUByte.displayString()}"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 2
-        override val tStates: Int = 7
-
         override val bitPattern = BitPattern.of("00rrr110 nnnnnnnn")
         override fun decode(word: Long, address: Address): Instruction {
-            val r = bitPattern.get(word, 'r')
-            val n = bitPattern.get(word, 'n')
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val destinationRegister = RegisterCode.entries.first { it.code == r }
-            val sourceByte = n.toByte()
+            val destinationRegister = bitPattern.getRegisterCode(word, 'r')
+            val sourceUByte = bitPattern.getUByte(word, 'n')
 
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
-
-            return LDrn(address, bytes, destinationRegister, sourceByte)
+            return LDrn(address, bytes, destinationRegister, sourceUByte)
         }
     }
 }

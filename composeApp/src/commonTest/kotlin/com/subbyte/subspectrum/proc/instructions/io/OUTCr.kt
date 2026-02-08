@@ -4,6 +4,7 @@ import com.subbyte.subspectrum.base.IO
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -54,7 +55,7 @@ class OUTCrTest {
 
         val instruction = OUTCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x79.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x79.toByte())),
             sourceRegister = RegisterCode.A
         )
 
@@ -71,7 +72,7 @@ class OUTCrTest {
 
         val instruction = OUTCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x41.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x41.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -88,7 +89,7 @@ class OUTCrTest {
 
         val instruction = OUTCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x51.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x51.toByte())),
             sourceRegister = RegisterCode.D
         )
 
@@ -101,7 +102,7 @@ class OUTCrTest {
     fun toStringFormat() {
         val instruction = OUTCr(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x79.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x79.toByte())),
             sourceRegister = RegisterCode.A
         )
 

@@ -3,11 +3,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class XORrTest {
     @BeforeTest
@@ -36,7 +33,7 @@ class XORrTest {
 
         val instruction = XORr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xA9.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xA9.toByte())),
             sourceRegister = RegisterCode.C
         )
 
@@ -56,7 +53,7 @@ class XORrTest {
 
         val instruction = XORr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xA8.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xA8.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -73,7 +70,7 @@ class XORrTest {
 
         val instruction = XORr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xA9.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xA9.toByte())),
             sourceRegister = RegisterCode.C
         )
 
@@ -90,7 +87,7 @@ class XORrTest {
 
         val instruction = XORr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xAA.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xAA.toByte())),
             sourceRegister = RegisterCode.D
         )
 
@@ -107,7 +104,7 @@ class XORrTest {
 
         val instruction = XORr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xAB.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xAB.toByte())),
             sourceRegister = RegisterCode.E
         )
 
@@ -125,7 +122,7 @@ class XORrTest {
 
         val instruction = XORr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xAC.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xAC.toByte())),
             sourceRegister = RegisterCode.H
         )
 
@@ -143,7 +140,7 @@ class XORrTest {
 
         val instruction = XORr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xAD.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xAD.toByte())),
             sourceRegister = RegisterCode.L
         )
 
@@ -157,7 +154,7 @@ class XORrTest {
     fun toStringFormat() {
         val instruction = XORr(
             address = 0x0000u,
-            bytes = byteArrayOf(0xA9.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xA9.toByte())),
             sourceRegister = RegisterCode.C
         )
 

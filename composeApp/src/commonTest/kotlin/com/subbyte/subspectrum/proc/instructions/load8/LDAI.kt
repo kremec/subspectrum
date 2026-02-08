@@ -2,11 +2,10 @@ package com.subbyte.subspectrum.proc.instructions.load8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.base.ULA
+import com.subbyte.subspectrum.proc.Processor
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class LDAITest {
     @BeforeTest
@@ -33,7 +32,7 @@ class LDAITest {
 
         val instruction = LDAI(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x57.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x57.toByte()))
         )
 
         instruction.execute()
@@ -50,7 +49,7 @@ class LDAITest {
 
         val instruction = LDAI(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x57.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x57.toByte()))
         )
 
         instruction.execute()
@@ -62,10 +61,36 @@ class LDAITest {
     }
 
     @Test
+    fun executeLoadIToAInterruptClearsPV() {
+        Memory.memorySet.reset()
+        Registers.registerSet.reset()
+        Registers.specialPurposeRegisters.reset()
+        ULA.reset()
+
+        Registers.specialPurposeRegisters.setI(0x01.toByte())
+        Registers.specialPurposeRegisters.setPC(0x0000)
+        Memory.memorySet.setMemoryCells(
+            0x0000u,
+            byteArrayOf(0xED.toByte(), 0x57.toByte())
+        )
+
+        Processor.NMI_FF = false
+        Processor.IFF1 = true
+        Processor.IFF2 = true
+        Processor.afterEIDI = false
+
+        ULA.advanceCycles(ULA.T_STATES_PER_FRAME - 9)
+
+        Processor.step()
+
+        assertFalse(Registers.registerSet.getPVFlag())
+    }
+
+    @Test
     fun toStringFormat() {
         val instruction = LDAI(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x57.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x57.toByte()))
         )
 
         assertEquals("LD A, I", instruction.toString())

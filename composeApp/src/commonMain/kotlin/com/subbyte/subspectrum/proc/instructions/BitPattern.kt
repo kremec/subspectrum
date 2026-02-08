@@ -1,4 +1,9 @@
-data class BitPattern private constructor(
+import com.subbyte.subspectrum.base.*
+import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.UWord
+import com.subbyte.subspectrum.units.uWordFromBytes
+
+data class BitPattern constructor(
     val text: String,
     val bitCount: Int,
     val byteCount: Int,
@@ -12,7 +17,7 @@ data class BitPattern private constructor(
      * Extract captured bits for [name] in the same left-to-right order
      * as they appear in the pattern.
      */
-    fun get(word: Long, name: Char): Int {
+    private fun get(word: Long, name: Char): Int {
         val positions =
             fields[name] ?: error("Field '$name' not present in pattern: $text")
 
@@ -23,11 +28,77 @@ data class BitPattern private constructor(
         return out
     }
 
-    fun u8(word: Long, name: Char): Int = get(word, name) and 0xFF
+    fun getRegisterCode(word: Long, name: Char): RegisterCode {
+        val bitValue = get(word, name)
+        return RegisterCode.entries.first { it.code == bitValue }
+    }
 
-    fun s8(word: Long, name: Char): Int {
-        val v = u8(word, name)
-        return if (v and 0x80 != 0) v - 0x100 else v
+    fun getRegisterPairSSCode(word: Long, name: Char): RegisterPairSSCode {
+        val bitValue = get(word, name)
+        return RegisterPairSSCode.entries.first { it.code == bitValue }
+    }
+    fun getRegisterPairQQCode(word: Long, name: Char): RegisterPairQQCode {
+        val bitValue = get(word, name)
+        return RegisterPairQQCode.entries.first { it.code == bitValue }
+    }
+    fun getRegisterPairPPCode(word: Long, name: Char): RegisterPairPPCode {
+        val bitValue = get(word, name)
+        return RegisterPairPPCode.entries.first { it.code == bitValue }
+    }
+    fun getRegisterPairRRCode(word: Long, name: Char): RegisterPairRRCode {
+        val bitValue = get(word, name)
+        return RegisterPairRRCode.entries.first { it.code == bitValue }
+    }
+
+    fun getConditionCode(word: Long, name: Char): ConditionCode {
+        val bitValue = get(word, name)
+        return ConditionCode.entries.first { it.code == bitValue }
+    }
+
+    fun getByte(word: Long, name: Char): Byte {
+        val bitValue = get(word, name)
+        return bitValue.toByte()
+    }
+    fun getUByte(word: Long, name: Char): UByte {
+        val bitValue = get(word, name)
+        return bitValue.toUByte()
+    }
+
+    fun getUWord(word: Long, lowName: Char, highName: Char): UWord {
+        val bitLowValue = get(word, lowName).toByte()
+        val bitHighValue = get(word, highName).toByte()
+        return Pair(bitHighValue, bitLowValue).uWordFromBytes()
+    }
+
+    fun getBitPosition(word: Long, name: Char): Int {
+        return get(word, name)
+    }
+
+    fun getRSTOffset(word: Long, name: Char): UByte {
+        val bitValue = get(word, name)
+        return (bitValue shl 3).toUByte()
+    }
+
+    fun getOpcodeFetchCount(): Int {
+        val cleaned = text.filterNot { it == ' ' || it == '_' }
+        val bytes = cleaned.chunked(8)
+        var count = 0
+        for (byte in bytes) {
+            val first = byte.firstOrNull() ?: continue
+            val isImmediateByte = byte.all { it == first && it != '0' && it != '1' && it != '.' }
+            if (!isImmediateByte) {
+                count++
+            }
+        }
+        return count
+    }
+
+    fun toInstructionByteArray(word: Long): DataByteArray {
+        val byteArray = ByteArray(byteCount) { i ->
+            val shift = 8 * (byteCount - 1 - i)
+            ((word shr shift) and 0xFF).toByte()
+        }
+        return DataByteArray(byteArray)
     }
 
     companion object Companion {

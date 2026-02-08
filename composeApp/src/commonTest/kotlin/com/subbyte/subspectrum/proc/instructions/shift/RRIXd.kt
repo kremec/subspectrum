@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.shift
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class RRIXdTest {
     @BeforeTest
@@ -39,7 +36,7 @@ class RRIXdTest {
 
         val instruction = RRIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -62,7 +59,7 @@ class RRIXdTest {
 
         val instruction = RRIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -85,7 +82,7 @@ class RRIXdTest {
 
         val instruction = RRIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -108,7 +105,7 @@ class RRIXdTest {
 
         val instruction = RRIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -131,7 +128,7 @@ class RRIXdTest {
 
         val instruction = RRIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -149,7 +146,7 @@ class RRIXdTest {
 
         val instruction = RRIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -163,10 +160,10 @@ class RRIXdTest {
     fun toStringFormat() {
         val instruction = RRIXd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x1E.toByte())),
             displacement = 0x00.toByte()
         )
 
-        assertEquals("RR (IX + 0)", instruction.toString())
+        assertEquals("RR (IX+00h)", instruction.toString())
     }
 }

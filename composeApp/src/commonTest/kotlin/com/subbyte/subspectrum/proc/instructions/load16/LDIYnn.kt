@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.load16
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,15 +27,15 @@ class LDIYnnTest {
         assertEquals(0xAB.toByte(), instruction.bytes[3])
 
         val ldnn = instruction as LDIYnn
-        assertEquals(0xABCD.toShort(), ldnn.sourceWord)
+        assertEquals(0xABCD.toUShort(), ldnn.sourceUWord)
     }
 
     @Test
     fun executeLoadImmediateToIY() {
         val instruction = LDIYnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0x21.toByte(), 0xCD.toByte(), 0xAB.toByte()),
-            sourceWord = 0xABCD.toShort()
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0x21.toByte(), 0xCD.toByte(), 0xAB.toByte())),
+            sourceUWord = 0xABCD.toUShort()
         )
 
         instruction.execute()
@@ -46,8 +47,8 @@ class LDIYnnTest {
     fun toStringFormat() {
         val instruction = LDIYnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0x21.toByte(), 0xCD.toByte(), 0xAB.toByte()),
-            sourceWord = 0xABCD.toShort()
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0x21.toByte(), 0xCD.toByte(), 0xAB.toByte())),
+            sourceUWord = 0xABCD.toUShort()
         )
 
         assertEquals("LD IY, ABCDh", instruction.toString())

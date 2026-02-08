@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.proc.instructions
 
+import BitPattern
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -22,8 +23,8 @@ class BitPatternTest {
         val pattern = BitPattern.of("01xxxyyy")
         // 01 101 010 = 0x6A
         val word = 0x6AL
-        assertEquals(0b101, pattern.get(word, 'x'))
-        assertEquals(0b010, pattern.get(word, 'y'))
+        assertEquals(0b101, pattern.getBitPosition(word, 'x'))
+        assertEquals(0b010, pattern.getBitPosition(word, 'y'))
     }
 
     @Test
@@ -32,8 +33,8 @@ class BitPatternTest {
         // 00 101 110 = 0x2E, n = 0x34
         val word = 0x2E34L
         assertTrue(pattern.matches(word))
-        assertEquals(0b101, pattern.get(word, 'x'))
-        assertEquals(0x34, pattern.u8(word, 'n'))
+        assertEquals(0b101, pattern.getBitPosition(word, 'x'))
+        assertEquals(0x34.toUByte(), pattern.getUByte(word, 'n'))
     }
 
     @Test
@@ -42,8 +43,8 @@ class BitPatternTest {
         // DD, 56, FE (-2 as signed)
         val word = 0xDD56FEL
         assertTrue(pattern.matches(word))
-        assertEquals(0b010, pattern.get(word, 'r'))
-        assertEquals(-2, pattern.s8(word, 'd'))
+        assertEquals(0b010, pattern.getBitPosition(word, 'r'))
+        assertEquals((-2).toByte(), pattern.getByte(word, 'd'))
     }
 
     @Test
@@ -51,7 +52,7 @@ class BitPatternTest {
         val pattern = BitPattern.of("11011101 01rrr110 dddddddd")
         // DD, 56, 7F (+127)
         val word = 0xDD567FL
-        assertEquals(127, pattern.s8(word, 'd'))
+        assertEquals(127.toByte(), pattern.getByte(word, 'd'))
     }
 
     @Test
@@ -69,7 +70,7 @@ class BitPatternTest {
         val pattern2 = BitPattern.of("01xxx yyy")
         val word = 0x6AL
         assertEquals(pattern1.matches(word), pattern2.matches(word))
-        assertEquals(pattern1.get(word, 'x'), pattern2.get(word, 'x'))
+        assertEquals(pattern1.getBitPosition(word, 'x'), pattern2.getBitPosition(word, 'x'))
     }
 
     @Test

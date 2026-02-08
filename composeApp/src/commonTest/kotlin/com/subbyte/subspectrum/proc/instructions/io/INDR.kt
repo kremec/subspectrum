@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.io
 import com.subbyte.subspectrum.base.IO
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -42,7 +43,7 @@ class INDRTest {
 
         val instruction = INDR(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xBA.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xBA.toByte()))
         )
 
         instruction.execute()
@@ -76,7 +77,7 @@ class INDRTest {
 
         val instruction = INDR(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xBA.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xBA.toByte()))
         )
 
         instruction.execute()
@@ -99,7 +100,7 @@ class INDRTest {
     fun toStringFormat() {
         val instruction = INDR(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xBA.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xBA.toByte()))
         )
 
         assertEquals("INDR", instruction.toString())

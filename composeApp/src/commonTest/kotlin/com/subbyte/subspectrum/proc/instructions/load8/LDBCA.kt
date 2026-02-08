@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.load8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -30,7 +31,7 @@ class LDBCCTest {
 
         val instruction = LDBCA(
             address = 0x1000u,
-            bytes = byteArrayOf(0x02)
+            bytes = DataByteArray(byteArrayOf(0x02))
         )
 
         instruction.execute()
@@ -42,7 +43,7 @@ class LDBCCTest {
     fun toStringFormat() {
         val instruction = LDBCA(
             address = 0x0000u,
-            bytes = byteArrayOf(0x02)
+            bytes = DataByteArray(byteArrayOf(0x02))
         )
 
         assertEquals("LD (BC), A", instruction.toString())

@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.io
 import com.subbyte.subspectrum.base.IO
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,7 +27,7 @@ class OUTnATest {
         assertEquals(0xA5.toByte(), instruction.bytes[1])
 
         val outna = instruction as OUTnA
-        assertEquals(0xA5.toByte(), outna.destinationByte)
+        assertEquals(0xA5.toUByte(), outna.destinationByte)
     }
 
     @Test
@@ -36,8 +37,8 @@ class OUTnATest {
 
         val instruction = OUTnA(
             address = 0x1000u,
-            bytes = byteArrayOf(0xD3.toByte(), 0xA5.toByte()),
-            destinationByte = 0xA5.toByte()
+            bytes = DataByteArray(byteArrayOf(0xD3.toByte(), 0xA5.toByte())),
+            destinationByte = 0xA5.toUByte()
         )
 
         instruction.execute()
@@ -52,8 +53,8 @@ class OUTnATest {
 
         val instruction = OUTnA(
             address = 0x1000u,
-            bytes = byteArrayOf(0xD3.toByte(), 0x00.toByte()),
-            destinationByte = 0x00.toByte()
+            bytes = DataByteArray(byteArrayOf(0xD3.toByte(), 0x00.toByte())),
+            destinationByte = 0x00.toUByte()
         )
 
         instruction.execute()
@@ -65,8 +66,8 @@ class OUTnATest {
     fun toStringFormat() {
         val instruction = OUTnA(
             address = 0x0000u,
-            bytes = byteArrayOf(0xD3.toByte(), 0xA5.toByte()),
-            destinationByte = 0xA5.toByte()
+            bytes = DataByteArray(byteArrayOf(0xD3.toByte(), 0xA5.toByte())),
+            destinationByte = 0xA5.toUByte()
         )
 
         assertEquals("OUT (A5h), A", instruction.toString())

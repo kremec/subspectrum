@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.jump
 import com.subbyte.subspectrum.base.ConditionCode
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,7 +28,7 @@ class JPccnnTest {
         assertEquals(0x34.toByte(), instruction.bytes[2])
 
         val jpccnn = instruction as JPccnn
-        assertEquals(ConditionCode.NZ, jpccnn.condition)
+        assertEquals(ConditionCode.NZ, jpccnn.conditionCode)
         assertEquals(0x3412u, jpccnn.targetAddress)
     }
 
@@ -37,7 +38,7 @@ class JPccnnTest {
         val instruction = JPccnn.decode(word, 0x1000u)
 
         val jpccnn = instruction as JPccnn
-        assertEquals(ConditionCode.Z, jpccnn.condition)
+        assertEquals(ConditionCode.Z, jpccnn.conditionCode)
         assertEquals(0x7856u, jpccnn.targetAddress)
     }
 
@@ -47,7 +48,7 @@ class JPccnnTest {
         val instruction = JPccnn.decode(word, 0x1000u)
 
         val jpccnn = instruction as JPccnn
-        assertEquals(ConditionCode.NC, jpccnn.condition)
+        assertEquals(ConditionCode.NC, jpccnn.conditionCode)
         assertEquals(0xBC9Au, jpccnn.targetAddress)
     }
 
@@ -57,7 +58,7 @@ class JPccnnTest {
         val instruction = JPccnn.decode(word, 0x1000u)
 
         val jpccnn = instruction as JPccnn
-        assertEquals(ConditionCode.C, jpccnn.condition)
+        assertEquals(ConditionCode.C, jpccnn.conditionCode)
         assertEquals(0xF0DEu, jpccnn.targetAddress)
     }
 
@@ -68,8 +69,8 @@ class JPccnnTest {
 
         val instruction = JPccnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xC2.toByte(), 0x56.toByte(), 0x78.toByte()),
-            condition = ConditionCode.NZ,
+            bytes = DataByteArray(byteArrayOf(0xC2.toByte(), 0x56.toByte(), 0x78.toByte())),
+            conditionCode = ConditionCode.NZ,
             targetAddress = 0x5678u
         )
 
@@ -85,8 +86,8 @@ class JPccnnTest {
 
         val instruction = JPccnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xC2.toByte(), 0x56.toByte(), 0x78.toByte()),
-            condition = ConditionCode.NZ,
+            bytes = DataByteArray(byteArrayOf(0xC2.toByte(), 0x56.toByte(), 0x78.toByte())),
+            conditionCode = ConditionCode.NZ,
             targetAddress = 0x5678u
         )
 
@@ -102,8 +103,8 @@ class JPccnnTest {
 
         val instruction = JPccnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCA.toByte(), 0x12.toByte(), 0x34.toByte()),
-            condition = ConditionCode.Z,
+            bytes = DataByteArray(byteArrayOf(0xCA.toByte(), 0x12.toByte(), 0x34.toByte())),
+            conditionCode = ConditionCode.Z,
             targetAddress = 0x1234u
         )
 
@@ -119,8 +120,8 @@ class JPccnnTest {
 
         val instruction = JPccnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCA.toByte(), 0x12.toByte(), 0x34.toByte()),
-            condition = ConditionCode.Z,
+            bytes = DataByteArray(byteArrayOf(0xCA.toByte(), 0x12.toByte(), 0x34.toByte())),
+            conditionCode = ConditionCode.Z,
             targetAddress = 0x1234u
         )
 
@@ -136,8 +137,8 @@ class JPccnnTest {
 
         val instruction = JPccnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDA.toByte(), 0xAB.toByte(), 0xCD.toByte()),
-            condition = ConditionCode.C,
+            bytes = DataByteArray(byteArrayOf(0xDA.toByte(), 0xAB.toByte(), 0xCD.toByte())),
+            conditionCode = ConditionCode.C,
             targetAddress = 0xABCDu
         )
 
@@ -153,8 +154,8 @@ class JPccnnTest {
 
         val instruction = JPccnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xD2.toByte(), 0xEF.toByte(), 0x01.toByte()),
-            condition = ConditionCode.NC,
+            bytes = DataByteArray(byteArrayOf(0xD2.toByte(), 0xEF.toByte(), 0x01.toByte())),
+            conditionCode = ConditionCode.NC,
             targetAddress = 0xEF01u
         )
 
@@ -170,8 +171,8 @@ class JPccnnTest {
 
         val instruction = JPccnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xF2.toByte(), 0x23.toByte(), 0x45.toByte()),
-            condition = ConditionCode.P,
+            bytes = DataByteArray(byteArrayOf(0xF2.toByte(), 0x23.toByte(), 0x45.toByte())),
+            conditionCode = ConditionCode.P,
             targetAddress = 0x2345u
         )
 
@@ -187,8 +188,8 @@ class JPccnnTest {
 
         val instruction = JPccnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFA.toByte(), 0x67.toByte(), 0x89.toByte()),
-            condition = ConditionCode.M,
+            bytes = DataByteArray(byteArrayOf(0xFA.toByte(), 0x67.toByte(), 0x89.toByte())),
+            conditionCode = ConditionCode.M,
             targetAddress = 0x6789u
         )
 
@@ -204,8 +205,8 @@ class JPccnnTest {
 
         val instruction = JPccnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xEA.toByte(), 0xBC.toByte(), 0xDE.toByte()),
-            condition = ConditionCode.PE,
+            bytes = DataByteArray(byteArrayOf(0xEA.toByte(), 0xBC.toByte(), 0xDE.toByte())),
+            conditionCode = ConditionCode.PE,
             targetAddress = 0xBCDEu
         )
 
@@ -221,8 +222,8 @@ class JPccnnTest {
 
         val instruction = JPccnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE2.toByte(), 0xF0.toByte(), 0x12.toByte()),
-            condition = ConditionCode.PO,
+            bytes = DataByteArray(byteArrayOf(0xE2.toByte(), 0xF0.toByte(), 0x12.toByte())),
+            conditionCode = ConditionCode.PO,
             targetAddress = 0xF012u
         )
 
@@ -235,8 +236,8 @@ class JPccnnTest {
     fun toStringFormat() {
         val instruction = JPccnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xC2.toByte(), 0x12.toByte(), 0x34.toByte()),
-            condition = ConditionCode.NZ,
+            bytes = DataByteArray(byteArrayOf(0xC2.toByte(), 0x12.toByte(), 0x34.toByte())),
+            conditionCode = ConditionCode.NZ,
             targetAddress = 0x1234u
         )
 
@@ -247,8 +248,8 @@ class JPccnnTest {
     fun toStringFormatZCondition() {
         val instruction = JPccnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCA.toByte(), 0x56.toByte(), 0x78.toByte()),
-            condition = ConditionCode.Z,
+            bytes = DataByteArray(byteArrayOf(0xCA.toByte(), 0x56.toByte(), 0x78.toByte())),
+            conditionCode = ConditionCode.Z,
             targetAddress = 0x5678u
         )
 

@@ -6,10 +6,13 @@ import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
+import com.subbyte.subspectrum.units.DataByteArray
 data class DAA(
     override val address: Address,
-    override val bytes: ByteArray
+    override val bytes: DataByteArray
 ) : Instruction {
+    override fun getTStates(): Int = 4
+
     override fun execute() {
         val aRegisterValue = Registers.registerSet.getA().toInt() and 0xFF
         val isSubtraction = Registers.registerSet.getNFlag()
@@ -45,15 +48,9 @@ data class DAA(
     override fun toString(): String = "DAA"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 1
-        override val tStates: Int = 4
-
         override val bitPattern = BitPattern.of("00100111")
         override fun decode(word: Long, address: Address): Instruction {
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
+            val bytes = bitPattern.toInstructionByteArray(word)
 
             return DAA(address, bytes)
         }

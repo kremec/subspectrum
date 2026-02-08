@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.call
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -37,7 +38,7 @@ class CALLnnTest {
 
         val instruction = CALLnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x56.toByte(), 0x78.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x56.toByte(), 0x78.toByte())),
             targetAddress = 0x5678u
         )
 
@@ -45,10 +46,10 @@ class CALLnnTest {
 
         // PC should jump to target address
         assertEquals(0x5678, Registers.specialPurposeRegisters.getPC())
-        
+
         // SP should be decremented by 2
         assertEquals(0xFFFC.toShort(), Registers.specialPurposeRegisters.getSP())
-        
+
         // Return address (0x1003) should be pushed onto stack
         // Low byte at SP (0xFFFC), high byte at SP+1 (0xFFFD)
         assertEquals<Byte>(0x03.toByte(), Memory.memorySet.getMemoryCell(0xFFFCu))
@@ -62,7 +63,7 @@ class CALLnnTest {
 
         val instruction = CALLnn(
             address = 0x2000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x00.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x00.toByte())),
             targetAddress = 0x0000u
         )
 
@@ -70,7 +71,7 @@ class CALLnnTest {
 
         assertEquals(0x0000, Registers.specialPurposeRegisters.getPC())
         assertEquals(0x7FFE.toShort(), Registers.specialPurposeRegisters.getSP())
-        
+
         // Return address 0x2003 on stack
         assertEquals<Byte>(0x03.toByte(), Memory.memorySet.getMemoryCell(0x7FFEu))
         assertEquals<Byte>(0x20.toByte(), Memory.memorySet.getMemoryCell(0x7FFFu))
@@ -83,7 +84,7 @@ class CALLnnTest {
 
         val instruction = CALLnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0xFF.toByte(), 0xFF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0xFF.toByte(), 0xFF.toByte())),
             targetAddress = 0xFFFFu
         )
 
@@ -91,7 +92,7 @@ class CALLnnTest {
 
         assertEquals(0xFFFF.toShort(), Registers.specialPurposeRegisters.getPC())
         assertEquals(0xBFFE.toShort(), Registers.specialPurposeRegisters.getSP())
-        
+
         // Return address 0x0003 on stack
         assertEquals<Byte>(0x03.toByte(), Memory.memorySet.getMemoryCell(0xBFFEu))
         assertEquals<Byte>(0x00.toByte(), Memory.memorySet.getMemoryCell(0xBFFFu))
@@ -106,7 +107,7 @@ class CALLnnTest {
         // First CALL
         val call1 = CALLnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x20.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x20.toByte())),
             targetAddress = 0x2000u
         )
         call1.execute()
@@ -120,14 +121,14 @@ class CALLnnTest {
         Registers.specialPurposeRegisters.setPC(0x2003) // After second CALL instruction
         val call2 = CALLnn(
             address = 0x2000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x30.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x30.toByte())),
             targetAddress = 0x3000u
         )
         call2.execute()
 
         assertEquals(0x3000, Registers.specialPurposeRegisters.getPC())
         assertEquals(0xFFFA.toShort(), Registers.specialPurposeRegisters.getSP())
-        
+
         // Stack should have both return addresses
         assertEquals<Byte>(0x03.toByte(), Memory.memorySet.getMemoryCell(0xFFFAu)) // 0x2003 low
         assertEquals<Byte>(0x20.toByte(), Memory.memorySet.getMemoryCell(0xFFFBu)) // 0x2003 high
@@ -139,7 +140,7 @@ class CALLnnTest {
     fun toStringFormat() {
         val instruction = CALLnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x34.toByte(), 0x12.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x34.toByte(), 0x12.toByte())),
             targetAddress = 0x1234u
         )
 
@@ -150,7 +151,7 @@ class CALLnnTest {
     fun toStringFormatZero() {
         val instruction = CALLnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x00.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x00.toByte())),
             targetAddress = 0x0000u
         )
 
@@ -161,7 +162,7 @@ class CALLnnTest {
     fun toStringFormatHighAddress() {
         val instruction = CALLnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0xFF.toByte(), 0xFF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0xFF.toByte(), 0xFF.toByte())),
             targetAddress = 0xFFFFu
         )
 

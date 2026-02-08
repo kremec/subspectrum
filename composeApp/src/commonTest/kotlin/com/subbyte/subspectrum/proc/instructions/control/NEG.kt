@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.control
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class NEGTest {
     @BeforeTest
@@ -32,7 +29,7 @@ class NEGTest {
 
         val instruction = NEG(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x44.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x44.toByte()))
         )
 
         instruction.execute()
@@ -52,7 +49,7 @@ class NEGTest {
 
         val instruction = NEG(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x44.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x44.toByte()))
         )
 
         instruction.execute()
@@ -72,7 +69,7 @@ class NEGTest {
 
         val instruction = NEG(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x44.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x44.toByte()))
         )
 
         instruction.execute()
@@ -92,7 +89,7 @@ class NEGTest {
 
         val instruction = NEG(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x44.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x44.toByte()))
         )
 
         instruction.execute()
@@ -112,7 +109,7 @@ class NEGTest {
 
         val instruction = NEG(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x44.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x44.toByte()))
         )
 
         instruction.execute()
@@ -132,7 +129,7 @@ class NEGTest {
 
         val instruction = NEG(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x44.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x44.toByte()))
         )
 
         instruction.execute()
@@ -150,7 +147,7 @@ class NEGTest {
     fun toStringFormat() {
         val instruction = NEG(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x44.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x44.toByte()))
         )
 
         assertEquals("NEG", instruction.toString())

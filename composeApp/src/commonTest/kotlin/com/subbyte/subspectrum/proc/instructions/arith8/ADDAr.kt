@@ -3,11 +3,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class ADDArTest {
     @BeforeTest
@@ -36,7 +33,7 @@ class ADDArTest {
 
         val instruction = ADDAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x81.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x81.toByte())),
             sourceRegister = RegisterCode.C
         )
 
@@ -53,7 +50,7 @@ class ADDArTest {
 
         val instruction = ADDAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -71,7 +68,7 @@ class ADDArTest {
 
         val instruction = ADDAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -89,7 +86,7 @@ class ADDArTest {
 
         val instruction = ADDAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -107,7 +104,7 @@ class ADDArTest {
 
         val instruction = ADDAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -125,7 +122,7 @@ class ADDArTest {
 
         val instruction = ADDAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -142,7 +139,7 @@ class ADDArTest {
 
         val instruction = ADDAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -160,7 +157,7 @@ class ADDArTest {
 
         val instruction = ADDAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -173,7 +170,7 @@ class ADDArTest {
     fun toStringFormat() {
         val instruction = ADDAr(
             address = 0x0000u,
-            bytes = byteArrayOf(0x81.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x81.toByte())),
             sourceRegister = RegisterCode.C
         )
 

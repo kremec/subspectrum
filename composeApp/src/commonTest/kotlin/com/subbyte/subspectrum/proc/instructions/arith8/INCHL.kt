@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class INCHLTest {
     @BeforeTest
@@ -32,7 +29,7 @@ class INCHLTest {
 
         val instruction = INCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x34.toByte())
+            bytes = DataByteArray(byteArrayOf(0x34.toByte()))
         )
 
         instruction.execute()
@@ -49,7 +46,7 @@ class INCHLTest {
 
         val instruction = INCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x34.toByte())
+            bytes = DataByteArray(byteArrayOf(0x34.toByte()))
         )
 
         instruction.execute()
@@ -65,7 +62,7 @@ class INCHLTest {
 
         val instruction = INCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x34.toByte())
+            bytes = DataByteArray(byteArrayOf(0x34.toByte()))
         )
 
         instruction.execute()
@@ -81,7 +78,7 @@ class INCHLTest {
 
         val instruction = INCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x34.toByte())
+            bytes = DataByteArray(byteArrayOf(0x34.toByte()))
         )
 
         instruction.execute()
@@ -97,7 +94,7 @@ class INCHLTest {
 
         val instruction = INCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x34.toByte())
+            bytes = DataByteArray(byteArrayOf(0x34.toByte()))
         )
 
         instruction.execute()
@@ -114,7 +111,7 @@ class INCHLTest {
 
         val instruction = INCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x34.toByte())
+            bytes = DataByteArray(byteArrayOf(0x34.toByte()))
         )
 
         instruction.execute()
@@ -131,7 +128,7 @@ class INCHLTest {
 
         val instruction = INCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x34.toByte())
+            bytes = DataByteArray(byteArrayOf(0x34.toByte()))
         )
 
         instruction.execute()
@@ -144,7 +141,7 @@ class INCHLTest {
     fun toStringFormat() {
         val instruction = INCHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0x34.toByte())
+            bytes = DataByteArray(byteArrayOf(0x34.toByte()))
         )
 
         assertEquals("INC (HL)", instruction.toString())

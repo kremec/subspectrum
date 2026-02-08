@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.assertFalse
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class SBCAnTest {
     @BeforeTest
@@ -26,7 +23,7 @@ class SBCAnTest {
         assertEquals(0xAB.toByte(), instruction.bytes[1])
 
         val sbcAn = instruction as SBCAn
-        assertEquals(0xAB.toByte(), sbcAn.sourceByte)
+        assertEquals(0xAB.toUByte(), sbcAn.sourceUByte)
     }
 
     @Test
@@ -36,8 +33,8 @@ class SBCAnTest {
 
         val instruction = SBCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDE.toByte(), 0x10.toByte()),
-            sourceByte = 0x10.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDE.toByte(), 0x10.toByte())),
+            sourceUByte = 0x10.toUByte()
         )
 
         instruction.execute()
@@ -53,8 +50,8 @@ class SBCAnTest {
 
         val instruction = SBCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDE.toByte(), 0x10.toByte()),
-            sourceByte = 0x10.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDE.toByte(), 0x10.toByte())),
+            sourceUByte = 0x10.toUByte()
         )
 
         instruction.execute()
@@ -72,8 +69,8 @@ class SBCAnTest {
 
         val instruction = SBCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDE.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDE.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -90,8 +87,8 @@ class SBCAnTest {
 
         val instruction = SBCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDE.toByte(), 0x20.toByte()),
-            sourceByte = 0x20.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDE.toByte(), 0x20.toByte())),
+            sourceUByte = 0x20.toUByte()
         )
 
         instruction.execute()
@@ -107,8 +104,8 @@ class SBCAnTest {
 
         val instruction = SBCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDE.toByte(), 0x10.toByte()),
-            sourceByte = 0x10.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDE.toByte(), 0x10.toByte())),
+            sourceUByte = 0x10.toUByte()
         )
 
         instruction.execute()
@@ -125,8 +122,8 @@ class SBCAnTest {
 
         val instruction = SBCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDE.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDE.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -143,8 +140,8 @@ class SBCAnTest {
 
         val instruction = SBCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDE.toByte(), 0x00.toByte()),
-            sourceByte = 0x00.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDE.toByte(), 0x00.toByte())),
+            sourceUByte = 0x00.toUByte()
         )
 
         instruction.execute()
@@ -161,8 +158,8 @@ class SBCAnTest {
 
         val instruction = SBCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDE.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDE.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -178,8 +175,8 @@ class SBCAnTest {
 
         val instruction = SBCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDE.toByte(), 0x20.toByte()),
-            sourceByte = 0x20.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDE.toByte(), 0x20.toByte())),
+            sourceUByte = 0x20.toUByte()
         )
 
         instruction.execute()
@@ -195,8 +192,8 @@ class SBCAnTest {
 
         val instruction = SBCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDE.toByte(), 0x10.toByte()),
-            sourceByte = 0x10.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDE.toByte(), 0x10.toByte())),
+            sourceUByte = 0x10.toUByte()
         )
 
         instruction.execute()
@@ -208,10 +205,10 @@ class SBCAnTest {
     fun toStringFormat() {
         val instruction = SBCAn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDE.toByte(), 0xAB.toByte()),
-            sourceByte = 0xAB.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDE.toByte(), 0xAB.toByte())),
+            sourceUByte = 0xAB.toUByte()
         )
 
-        assertEquals("SBC A, -85", instruction.toString())
+        assertEquals("SBC A, ABh", instruction.toString())
     }
 }

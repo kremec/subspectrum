@@ -7,7 +7,7 @@ class WordTest {
     @Test
     fun wordFromBytes() {
         val bytes: Pair<Byte, Byte> = Pair(0x12, 0x34)
-        val word: Word = bytes.fromBytes()
+        val word: Word = bytes.wordFromBytes()
         assertEquals(word, 0x1234)
     }
 

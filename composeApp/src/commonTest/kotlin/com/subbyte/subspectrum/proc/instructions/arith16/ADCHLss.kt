@@ -1,13 +1,10 @@
 package com.subbyte.subspectrum.proc.instructions.arith16
 
 import com.subbyte.subspectrum.base.Memory
-import com.subbyte.subspectrum.base.RegisterPairCode
+import com.subbyte.subspectrum.base.RegisterPairSSCode
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class ADCHLssTest {
     @BeforeTest
@@ -27,7 +24,7 @@ class ADCHLssTest {
         assertEquals(0x4A.toByte(), instruction.bytes[1])
 
         val adcHlss = instruction as ADCHLss
-        assertEquals(RegisterPairCode.BC, adcHlss.sourceRegisterPairCode)
+        assertEquals(RegisterPairSSCode.BC, adcHlss.sourceRegisterPairCode)
     }
 
     @Test
@@ -38,8 +35,8 @@ class ADCHLssTest {
 
         val instruction = ADCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4A.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -56,8 +53,8 @@ class ADCHLssTest {
 
         val instruction = ADCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x5A.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.DE
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x5A.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.DE
         )
 
         instruction.execute()
@@ -73,8 +70,8 @@ class ADCHLssTest {
 
         val instruction = ADCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x6A.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.HL
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x6A.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.HL
         )
 
         instruction.execute()
@@ -91,8 +88,8 @@ class ADCHLssTest {
 
         val instruction = ADCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x7A.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.SP
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x7A.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.SP
         )
 
         instruction.execute()
@@ -110,8 +107,8 @@ class ADCHLssTest {
 
         val instruction = ADCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4A.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -133,8 +130,8 @@ class ADCHLssTest {
 
         val instruction = ADCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4A.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -156,8 +153,8 @@ class ADCHLssTest {
 
         val instruction = ADCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4A.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -179,8 +176,8 @@ class ADCHLssTest {
 
         val instruction = ADCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4A.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -203,8 +200,8 @@ class ADCHLssTest {
 
         val instruction = ADCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4A.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -226,8 +223,8 @@ class ADCHLssTest {
 
         val instruction = ADCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4A.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -249,8 +246,8 @@ class ADCHLssTest {
 
         val instruction = ADCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4A.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -267,8 +264,8 @@ class ADCHLssTest {
     fun toStringFormat() {
         val instruction = ADCHLss(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4A.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4A.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         assertEquals("ADC HL, BC", instruction.toString())

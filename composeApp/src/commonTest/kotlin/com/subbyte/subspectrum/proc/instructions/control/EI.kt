@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.control
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.Processor
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -36,7 +37,7 @@ class EITest {
 
         val instruction = EI(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFB.toByte())
+            bytes = DataByteArray(byteArrayOf(0xFB.toByte()))
         )
 
         instruction.execute()
@@ -54,7 +55,7 @@ class EITest {
 
         val instruction = EI(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFB.toByte())
+            bytes = DataByteArray(byteArrayOf(0xFB.toByte()))
         )
 
         instruction.execute()
@@ -68,7 +69,7 @@ class EITest {
     fun toStringFormat() {
         val instruction = EI(
             address = 0x0000u,
-            bytes = byteArrayOf(0xFB.toByte())
+            bytes = DataByteArray(byteArrayOf(0xFB.toByte()))
         )
 
         assertEquals("EI", instruction.toString())

@@ -6,10 +6,14 @@ import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
+import com.subbyte.subspectrum.units.DataByteArray
+
 data class LDSPIY(
     override val address: Address,
-    override val bytes: ByteArray
+    override val bytes: DataByteArray
 ) : Instruction {
+    override fun getTStates(): Int = 10
+
     override fun execute() {
         val sourceValue = Registers.specialPurposeRegisters.getIY()
         Registers.specialPurposeRegisters.setSP(sourceValue)
@@ -18,15 +22,9 @@ data class LDSPIY(
     override fun toString(): String = "LD SP, IY"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 2
-        override val tStates: Int = 10
-
         override val bitPattern = BitPattern.of("11111101 11111001")
         override fun decode(word: Long, address: Address): Instruction {
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
+            val bytes = bitPattern.toInstructionByteArray(word)
 
             return LDSPIY(address, bytes)
         }

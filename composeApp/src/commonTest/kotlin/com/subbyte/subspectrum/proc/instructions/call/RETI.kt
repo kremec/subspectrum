@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.call
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,7 +34,7 @@ class RETITest {
 
         val instruction = RETI(
             address = 0x0038u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4D.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4D.toByte()))
         )
 
         instruction.execute()
@@ -50,7 +51,7 @@ class RETITest {
 
         val instruction = RETI(
             address = 0x0038u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4D.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4D.toByte()))
         )
 
         instruction.execute()
@@ -67,7 +68,7 @@ class RETITest {
 
         val instruction = RETI(
             address = 0x0038u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4D.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4D.toByte()))
         )
 
         instruction.execute()
@@ -83,7 +84,7 @@ class RETITest {
 
         val call1 = CALLnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x38.toByte(), 0x00.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x38.toByte(), 0x00.toByte())),
             targetAddress = 0x0038u
         )
         call1.execute()
@@ -94,7 +95,7 @@ class RETITest {
         Registers.specialPurposeRegisters.setPC(0x003B.toShort())
         val call2 = CALLnn(
             address = 0x0038u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x66.toByte(), 0x00.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x66.toByte(), 0x00.toByte())),
             targetAddress = 0x0066u
         )
         call2.execute()
@@ -104,7 +105,7 @@ class RETITest {
 
         val reti1 = RETI(
             address = 0x0066u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4D.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4D.toByte()))
         )
         reti1.execute()
 
@@ -113,7 +114,7 @@ class RETITest {
 
         val reti2 = RETI(
             address = 0x003Bu,
-            bytes = byteArrayOf(0xED.toByte(), 0x4D.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4D.toByte()))
         )
         reti2.execute()
 
@@ -132,23 +133,23 @@ class RETITest {
 
         for ((address, expected) in testCases) {
             setup()
-            
+
             val sp = 0xE000.toShort()
             Registers.specialPurposeRegisters.setSP(sp)
-            
+
             val lowByte = (address.toInt() and 0xFF).toByte()
             val highByte = ((address.toInt() shr 8) and 0xFF).toByte()
-            
+
             Memory.memorySet.setMemoryCell(sp.toUShort(), lowByte)
             Memory.memorySet.setMemoryCell((sp + 1).toUShort(), highByte)
 
             val instruction = RETI(
                 address = 0x0038u,
-                bytes = byteArrayOf(0xED.toByte(), 0x4D.toByte())
+                bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4D.toByte()))
             )
-            
+
             instruction.execute()
-            
+
             assertEquals(expected, Registers.specialPurposeRegisters.getPC())
             assertEquals((sp + 2).toShort(), Registers.specialPurposeRegisters.getSP())
         }
@@ -158,7 +159,7 @@ class RETITest {
     fun toStringFormat() {
         val instruction = RETI(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4D.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4D.toByte()))
         )
 
         assertEquals("RETI", instruction.toString())

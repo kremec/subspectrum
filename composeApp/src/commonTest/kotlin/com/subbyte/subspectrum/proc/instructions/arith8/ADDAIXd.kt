@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class ADDAIXdTest {
     @BeforeTest
@@ -38,7 +35,7 @@ class ADDAIXdTest {
 
         val instruction = ADDAIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -56,7 +53,7 @@ class ADDAIXdTest {
 
         val instruction = ADDAIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -75,7 +72,7 @@ class ADDAIXdTest {
 
         val instruction = ADDAIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -93,7 +90,7 @@ class ADDAIXdTest {
 
         val instruction = ADDAIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -112,7 +109,7 @@ class ADDAIXdTest {
 
         val instruction = ADDAIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -131,7 +128,7 @@ class ADDAIXdTest {
 
         val instruction = ADDAIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -150,7 +147,7 @@ class ADDAIXdTest {
 
         val instruction = ADDAIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -163,10 +160,10 @@ class ADDAIXdTest {
     fun toStringFormat() {
         val instruction = ADDAIXd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x86.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
-        assertEquals("ADD A, (IX + 5)", instruction.toString())
+        assertEquals("ADD A, (IX+05h)", instruction.toString())
     }
 }

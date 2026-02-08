@@ -6,32 +6,29 @@ import com.subbyte.subspectrum.base.IO
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
+import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.displayString
 
 data class OUTnA(
     override val address: Address,
-    override val bytes: ByteArray,
-    val destinationByte: Byte
+    override val bytes: DataByteArray,
+    val destinationByte: UByte
 ) : Instruction {
+    override fun getTStates(): Int = 11
+
     override fun execute() {
         val aRegisterValue = Registers.registerSet.getA()
-        IO.ioPortSet.setIOPort(destinationByte.toUByte(), aRegisterValue)
+        IO.ioPortSet.setIOPort(destinationByte, aRegisterValue)
     }
 
-    override fun toString(): String = "OUT (${destinationByte.toHexString(HexFormat.UpperCase)}h), A"
+    override fun toString(): String = "OUT (${destinationByte.displayString()}), A"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 3
-        override val tStates: Int = 11
-
         override val bitPattern = BitPattern.of("11010011 nnnnnnnn")
         override fun decode(word: Long, address: Address): Instruction {
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val n = bitPattern.get(word, 'n')
-            val destinationByte = n.toByte()
+            val destinationByte = bitPattern.getUByte(word, 'n')
 
             return OUTnA(address, bytes, destinationByte)
         }

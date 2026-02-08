@@ -1,22 +1,27 @@
 package com.subbyte.subspectrum.proc.instructions.bit
 
+import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
+import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.displayStringDisplacement
 import com.subbyte.subspectrum.units.getBit
 
 data class BITbIYd(
     override val address: Address,
-    override val bytes: ByteArray,
-    val bit: Int,
+    override val bytes: DataByteArray,
+    val bitPosition: Int,
     val displacement: Byte
 ) : Instruction {
+    override fun getTStates(): Int = 20
+
     override fun execute() {
         val iyValue = Registers.specialPurposeRegisters.getIY()
         val sourceValue = Memory.memorySet.getMemoryCell(iyValue.plus(displacement).toUShort())
-        val bitValue = sourceValue.getBit(bit)
+        val bitValue = sourceValue.getBit(bitPosition)
 
         Registers.registerSet.setZFlag(!bitValue)
         Registers.registerSet.setHFlag(true)
@@ -24,26 +29,17 @@ data class BITbIYd(
         // S, P/V unknown
     }
 
-    override fun toString(): String = "BIT $bit, (IY + $displacement)"
+    override fun toString(): String = "BIT $bitPosition, (IY${displacement.displayStringDisplacement()})"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 5
-        override val tStates: Int = 20
-
         override val bitPattern = BitPattern.of("11111101 11001011 dddddddd 01bbb110")
         override fun decode(word: Long, address: Address): Instruction {
-            val b = bitPattern.get(word, 'b')
-            val d = bitPattern.get(word, 'd')
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val bit = b
-            val displacement = d.toByte()
+            val bitPosition = bitPattern.getBitPosition(word, 'b')
+            val displacement = bitPattern.getByte(word, 'd')
 
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
-
-            return BITbIYd(address, bytes, bit, displacement)
+            return BITbIYd(address, bytes, bitPosition, displacement)
         }
     }
 }

@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.control
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class CCFTest {
     @BeforeTest
@@ -37,7 +34,7 @@ class CCFTest {
 
         val instruction = CCF(
             address = 0x1000u,
-            bytes = byteArrayOf(0x3F.toByte())
+            bytes = DataByteArray(byteArrayOf(0x3F.toByte()))
         )
 
         instruction.execute()
@@ -64,7 +61,7 @@ class CCFTest {
 
         val instruction = CCF(
             address = 0x1000u,
-            bytes = byteArrayOf(0x3F.toByte())
+            bytes = DataByteArray(byteArrayOf(0x3F.toByte()))
         )
 
         instruction.execute()
@@ -83,7 +80,7 @@ class CCFTest {
     fun toStringFormat() {
         val instruction = CCF(
             address = 0x0000u,
-            bytes = byteArrayOf(0x3F.toByte())
+            bytes = DataByteArray(byteArrayOf(0x3F.toByte()))
         )
 
         assertEquals("CCF", instruction.toString())

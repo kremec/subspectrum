@@ -1,20 +1,25 @@
 package com.subbyte.subspectrum.proc.instructions.arith8
 
+import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
+import com.subbyte.subspectrum.units.DataByteArray
+
 data class CPr(
     override val address: Address,
-    override val bytes: ByteArray,
+    override val bytes: DataByteArray,
     val sourceRegister: RegisterCode
 ) : Instruction {
+    override fun getTStates(): Int = 4
+
     override fun execute() {
         val aRegisterValue = Registers.registerSet.getA()
         val sourceValue = Registers.registerSet.getRegister(sourceRegister)
-        
+
         val a = aRegisterValue.toUByte().toInt()
         val source = sourceValue.toUByte().toInt()
         val diff = a - source
@@ -36,19 +41,11 @@ data class CPr(
     override fun toString(): String = "CP $sourceRegister"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 1
-        override val tStates: Int = 4
-
         override val bitPattern = BitPattern.of("10111rrr")
         override fun decode(word: Long, address: Address): Instruction {
-            val r = bitPattern.get(word, 'r')
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val sourceRegister = RegisterCode.entries.first { it.code == r }
-
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
+            val sourceRegister = bitPattern.getRegisterCode(word, 'r')
 
             return CPr(address, bytes, sourceRegister)
         }

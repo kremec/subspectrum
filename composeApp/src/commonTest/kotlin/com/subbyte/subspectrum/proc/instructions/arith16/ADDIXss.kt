@@ -1,13 +1,10 @@
 package com.subbyte.subspectrum.proc.instructions.arith16
 
 import com.subbyte.subspectrum.base.Memory
-import com.subbyte.subspectrum.base.RegisterPairCode
+import com.subbyte.subspectrum.base.RegisterPairPPCode
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class ADDIXssTest {
     @BeforeTest
@@ -19,15 +16,15 @@ class ADDIXssTest {
 
     @Test
     fun decodeInstruction() {
-        val instruction = ADDIXss.decode(0xDD09L, 0x1000u)
+        val instruction = ADDIXpp.decode(0xDD09L, 0x1000u)
 
         assertEquals(0x1000u, instruction.address)
         assertEquals(2, instruction.bytes.size)
         assertEquals(0xDD.toByte(), instruction.bytes[0])
         assertEquals(0x09.toByte(), instruction.bytes[1])
 
-        val addIxss = instruction as ADDIXss
-        assertEquals(RegisterPairCode.BC, addIxss.sourceRegisterPairCode)
+        val addIxss = instruction as ADDIXpp
+        assertEquals(RegisterPairPPCode.BC, addIxss.sourceRegisterPairCode)
     }
 
     @Test
@@ -35,10 +32,10 @@ class ADDIXssTest {
         Registers.specialPurposeRegisters.setIX(0x1000.toShort())
         Registers.registerSet.setBC(0x0F00.toShort())
 
-        val instruction = ADDIXss(
+        val instruction = ADDIXpp(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x09.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x09.toByte())),
+            sourceRegisterPairCode = RegisterPairPPCode.BC
         )
 
         instruction.execute()
@@ -52,10 +49,10 @@ class ADDIXssTest {
         Registers.specialPurposeRegisters.setIX(0x1000.toShort())
         Registers.registerSet.setDE(0x0F00.toShort())
 
-        val instruction = ADDIXss(
+        val instruction = ADDIXpp(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x19.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.DE
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x19.toByte())),
+            sourceRegisterPairCode = RegisterPairPPCode.DE
         )
 
         instruction.execute()
@@ -65,19 +62,18 @@ class ADDIXssTest {
     }
 
     @Test
-    fun executeAddIXHL() {
+    fun executeAddIXIX() {
         Registers.specialPurposeRegisters.setIX(0x1000.toShort())
-        Registers.registerSet.setHL(0x0F00.toShort())
 
-        val instruction = ADDIXss(
+        val instruction = ADDIXpp(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x29.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.HL
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x29.toByte())),
+            sourceRegisterPairCode = RegisterPairPPCode.IX
         )
 
         instruction.execute()
 
-        assertEquals(0x1F00.toShort(), Registers.specialPurposeRegisters.getIX())
+        assertEquals(0x2000.toShort(), Registers.specialPurposeRegisters.getIX())
         assertFalse(Registers.registerSet.getNFlag())
     }
 
@@ -86,10 +82,10 @@ class ADDIXssTest {
         Registers.specialPurposeRegisters.setIX(0x1000.toShort())
         Registers.specialPurposeRegisters.setSP(0x0F00.toShort())
 
-        val instruction = ADDIXss(
+        val instruction = ADDIXpp(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x39.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.SP
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x39.toByte())),
+            sourceRegisterPairCode = RegisterPairPPCode.SP
         )
 
         instruction.execute()
@@ -104,10 +100,10 @@ class ADDIXssTest {
         Registers.specialPurposeRegisters.setIX(0x0FFF.toShort()) // 0x0FFF & 0xFFF = 0xFFF
         Registers.registerSet.setBC(0x0001.toShort())            // 0x0001 & 0xFFF = 0x001
 
-        val instruction = ADDIXss(
+        val instruction = ADDIXpp(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x09.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x09.toByte())),
+            sourceRegisterPairCode = RegisterPairPPCode.BC
         )
 
         instruction.execute()
@@ -124,10 +120,10 @@ class ADDIXssTest {
         Registers.specialPurposeRegisters.setIX(0x0FFE.toShort()) // 0x0FFE & 0xFFF = 0xFFE
         Registers.registerSet.setBC(0x0001.toShort())            // 0x0001 & 0xFFF = 0x001
 
-        val instruction = ADDIXss(
+        val instruction = ADDIXpp(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x09.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x09.toByte())),
+            sourceRegisterPairCode = RegisterPairPPCode.BC
         )
 
         instruction.execute()
@@ -144,10 +140,10 @@ class ADDIXssTest {
         Registers.specialPurposeRegisters.setIX(0xF000.toShort()) // 0xF000 & 0xFFF = 0x000
         Registers.registerSet.setBC(0x1000.toShort())            // 0x1000 & 0xFFF = 0x000
 
-        val instruction = ADDIXss(
+        val instruction = ADDIXpp(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x09.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x09.toByte())),
+            sourceRegisterPairCode = RegisterPairPPCode.BC
         )
 
         instruction.execute()
@@ -164,10 +160,10 @@ class ADDIXssTest {
         Registers.specialPurposeRegisters.setIX(0xFFFE.toShort())
         Registers.registerSet.setBC(0x0001.toShort())
 
-        val instruction = ADDIXss(
+        val instruction = ADDIXpp(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x09.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x09.toByte())),
+            sourceRegisterPairCode = RegisterPairPPCode.BC
         )
 
         instruction.execute()
@@ -184,10 +180,10 @@ class ADDIXssTest {
         Registers.specialPurposeRegisters.setIX(0xFFFF.toShort()) // 0xFFFF & 0xFFF = 0xFFF
         Registers.registerSet.setBC(0xFFFF.toShort())            // 0xFFFF & 0xFFF = 0xFFF
 
-        val instruction = ADDIXss(
+        val instruction = ADDIXpp(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x09.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x09.toByte())),
+            sourceRegisterPairCode = RegisterPairPPCode.BC
         )
 
         instruction.execute()
@@ -200,10 +196,10 @@ class ADDIXssTest {
 
     @Test
     fun toStringFormat() {
-        val instruction = ADDIXss(
+        val instruction = ADDIXpp(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x09.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x09.toByte())),
+            sourceRegisterPairCode = RegisterPairPPCode.BC
         )
 
         assertEquals("ADD IX, BC", instruction.toString())

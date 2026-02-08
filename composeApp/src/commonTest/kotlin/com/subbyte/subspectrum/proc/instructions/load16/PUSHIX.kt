@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.load16
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,8 +23,6 @@ class PUSHIXTest {
         assertEquals(2, instruction.bytes.size)
         assertEquals(0xDD.toByte(), instruction.bytes[0])
         assertEquals(0xE5.toByte(), instruction.bytes[1])
-
-        val instructionTyped = instruction as PUSHIX
     }
 
     @Test
@@ -33,7 +32,7 @@ class PUSHIXTest {
 
         val instruction = PUSHIX(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xE5.toByte())
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xE5.toByte()))
         )
 
         instruction.execute()
@@ -47,7 +46,7 @@ class PUSHIXTest {
     fun toStringFormat() {
         val instruction = PUSHIX(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xE5.toByte())
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xE5.toByte()))
         )
 
         assertEquals("PUSH IX", instruction.toString())

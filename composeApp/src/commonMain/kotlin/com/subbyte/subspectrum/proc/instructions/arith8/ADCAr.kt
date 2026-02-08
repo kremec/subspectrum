@@ -1,26 +1,31 @@
 package com.subbyte.subspectrum.proc.instructions.arith8
 
+import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
+import com.subbyte.subspectrum.units.DataByteArray
+
 data class ADCAr(
     override val address: Address,
-    override val bytes: ByteArray,
+    override val bytes: DataByteArray,
     val sourceRegister: RegisterCode
 ) : Instruction {
+    override fun getTStates(): Int = 4
+
     override fun execute() {
         val aRegisterValue = Registers.registerSet.getA()
         val sourceValue = Registers.registerSet.getRegister(sourceRegister)
         val carryValue = if (Registers.registerSet.getCFlag()) 1 else 0
-        
+
         val a = aRegisterValue.toUByte().toInt()
         val source = sourceValue.toUByte().toInt()
         val sum = a + source + carryValue
         val result = sum.toByte()
-        
+
         Registers.registerSet.setA(result)
 
         val signFlag = result < 0
@@ -39,19 +44,11 @@ data class ADCAr(
     override fun toString(): String = "ADC A, $sourceRegister"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 1
-        override val tStates: Int = 4
-
         override val bitPattern = BitPattern.of("10001rrr")
         override fun decode(word: Long, address: Address): Instruction {
-            val r = bitPattern.get(word, 'r')
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val sourceRegister = RegisterCode.entries.first { it.code == r }
-
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
+            val sourceRegister = bitPattern.getRegisterCode(word, 'r')
 
             return ADCAr(address, bytes, sourceRegister)
         }

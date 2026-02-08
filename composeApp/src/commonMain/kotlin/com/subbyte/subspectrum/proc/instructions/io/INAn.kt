@@ -6,35 +6,31 @@ import com.subbyte.subspectrum.base.IO
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
+import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.displayString
 
 data class INAn(
     override val address: Address,
-    override val bytes: ByteArray,
-    val sourceByte: Byte
+    override val bytes: DataByteArray,
+    val sourceUByte: UByte
 ) : Instruction {
+    override fun getTStates(): Int = 11
+
     override fun execute() {
-        val sourceIOPortValue = IO.ioPortSet.getIOPort(sourceByte.toUByte())
+        val sourceIOPortValue = IO.ioPortSet.getIOPort(sourceUByte)
         Registers.registerSet.setA(sourceIOPortValue)
     }
 
-    override fun toString(): String = "IN A, (${sourceByte.toHexString(HexFormat.UpperCase)}h)"
+    override fun toString(): String = "IN A, (${sourceUByte.displayString()})"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 3
-        override val tStates: Int = 11
-
         override val bitPattern = BitPattern.of("11011011 nnnnnnnn")
         override fun decode(word: Long, address: Address): Instruction {
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val n = bitPattern.get(word, 'n')
+            val sourceUByte = bitPattern.getUByte(word, 'n')
 
-            val sourceByte = n.toByte()
-
-            return INAn(address, bytes, sourceByte)
+            return INAn(address, bytes, sourceUByte)
         }
     }
 }

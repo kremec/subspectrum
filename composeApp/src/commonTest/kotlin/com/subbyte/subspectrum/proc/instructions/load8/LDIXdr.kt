@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.load8
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -37,7 +38,7 @@ class LDIXdrTest {
 
         val instruction = LDIXdr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x70.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x70.toByte(), 0x05.toByte())),
             sourceRegister = RegisterCode.B,
             displacement = 0x05.toByte()
         )
@@ -51,7 +52,7 @@ class LDIXdrTest {
     fun toStringFormat() {
         val instruction = LDIXdr(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x70.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x70.toByte(), 0x05.toByte())),
             sourceRegister = RegisterCode.B,
             displacement = 0x05.toByte()
         )

@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.shift
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class RRCHLTest {
     @BeforeTest
@@ -33,7 +30,7 @@ class RRCHLTest {
 
         val instruction = RRCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x0E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x0E.toByte()))
         )
 
         instruction.execute()
@@ -54,12 +51,15 @@ class RRCHLTest {
 
         val instruction = RRCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x0E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x0E.toByte()))
         )
 
         instruction.execute()
 
-        assertEquals(0x01.toByte(), Memory.memorySet.getMemoryCell(0x2000u)) // 00000001 (shifted right, bit 0 becomes bit 7)
+        assertEquals(
+            0x01.toByte(),
+            Memory.memorySet.getMemoryCell(0x2000u)
+        ) // 00000001 (shifted right, bit 0 becomes bit 7)
         assertFalse(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
@@ -75,7 +75,7 @@ class RRCHLTest {
 
         val instruction = RRCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x0E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x0E.toByte()))
         )
 
         instruction.execute()
@@ -96,7 +96,7 @@ class RRCHLTest {
 
         val instruction = RRCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x0E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x0E.toByte()))
         )
 
         instruction.execute()
@@ -112,7 +112,7 @@ class RRCHLTest {
 
         val instruction = RRCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x0E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x0E.toByte()))
         )
 
         instruction.execute()
@@ -125,7 +125,7 @@ class RRCHLTest {
     fun toStringFormat() {
         val instruction = RRCHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x0E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x0E.toByte()))
         )
 
         assertEquals("RRC (HL)", instruction.toString())

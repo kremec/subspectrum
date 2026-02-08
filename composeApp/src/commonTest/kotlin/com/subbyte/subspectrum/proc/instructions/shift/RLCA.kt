@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.shift
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class RLCATest {
     @BeforeTest
@@ -31,7 +28,7 @@ class RLCATest {
 
         val instruction = RLCA(
             address = 0x1000u,
-            bytes = byteArrayOf(0x07.toByte())
+            bytes = DataByteArray(byteArrayOf(0x07.toByte()))
         )
 
         instruction.execute()
@@ -48,7 +45,7 @@ class RLCATest {
 
         val instruction = RLCA(
             address = 0x1000u,
-            bytes = byteArrayOf(0x07.toByte())
+            bytes = DataByteArray(byteArrayOf(0x07.toByte()))
         )
 
         instruction.execute()
@@ -63,7 +60,7 @@ class RLCATest {
     fun toStringFormat() {
         val instruction = RLCA(
             address = 0x0000u,
-            bytes = byteArrayOf(0x07.toByte())
+            bytes = DataByteArray(byteArrayOf(0x07.toByte()))
         )
 
         assertEquals("RLCA", instruction.toString())

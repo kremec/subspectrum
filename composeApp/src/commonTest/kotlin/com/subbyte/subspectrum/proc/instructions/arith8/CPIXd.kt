@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.assertFalse
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class CPIXdTest {
     @BeforeTest
@@ -38,7 +35,7 @@ class CPIXdTest {
 
         val instruction = CPIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -57,7 +54,7 @@ class CPIXdTest {
 
         val instruction = CPIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -76,7 +73,7 @@ class CPIXdTest {
 
         val instruction = CPIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -94,7 +91,7 @@ class CPIXdTest {
 
         val instruction = CPIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -113,7 +110,7 @@ class CPIXdTest {
 
         val instruction = CPIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -131,7 +128,7 @@ class CPIXdTest {
 
         val instruction = CPIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -149,7 +146,7 @@ class CPIXdTest {
 
         val instruction = CPIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -168,7 +165,7 @@ class CPIXdTest {
 
         val instruction = CPIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
@@ -181,10 +178,10 @@ class CPIXdTest {
     fun toStringFormat() {
         val instruction = CPIXd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xBE.toByte(), 0x05.toByte())),
             displacement = 0x05.toByte()
         )
 
-        assertEquals("CP (IX + 5)", instruction.toString())
+        assertEquals("CP (IX+05h)", instruction.toString())
     }
 }

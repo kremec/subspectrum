@@ -1,21 +1,25 @@
 package com.subbyte.subspectrum.proc.instructions.bit
 
+import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
+import com.subbyte.subspectrum.units.DataByteArray
 import com.subbyte.subspectrum.units.getBit
 
 data class BITbHL(
     override val address: Address,
-    override val bytes: ByteArray,
-    val bit: Int
+    override val bytes: DataByteArray,
+    val bitPosition: Int
 ) : Instruction {
+    override fun getTStates(): Int = 12
+
     override fun execute() {
         val hlValue = Registers.registerSet.getHL()
         val memoryValue = Memory.memorySet.getMemoryCell(hlValue.toUShort())
-        val bitValue = memoryValue.getBit(bit)
+        val bitValue = memoryValue.getBit(bitPosition)
 
         Registers.registerSet.setZFlag(!bitValue)
         Registers.registerSet.setHFlag(true)
@@ -23,24 +27,16 @@ data class BITbHL(
         // S, P/V unknown
     }
 
-    override fun toString(): String = "BIT $bit, (HL)"
+    override fun toString(): String = "BIT $bitPosition, (HL)"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 3
-        override val tStates: Int = 12
-
         override val bitPattern = BitPattern.of("11001011 01bbb110")
         override fun decode(word: Long, address: Address): Instruction {
-            val b = bitPattern.get(word, 'b')
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val bit = b
+            val bitPosition = bitPattern.getBitPosition(word, 'b')
 
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
-
-            return BITbHL(address, bytes, bit)
+            return BITbHL(address, bytes, bitPosition)
         }
     }
 }

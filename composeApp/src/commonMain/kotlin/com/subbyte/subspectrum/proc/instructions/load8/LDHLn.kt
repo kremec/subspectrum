@@ -1,39 +1,36 @@
 package com.subbyte.subspectrum.proc.instructions.load8
 
+import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
+import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.displayString
 
 data class LDHLn(
     override val address: Address,
-    override val bytes: ByteArray,
-    val sourceByte: Byte
+    override val bytes: DataByteArray,
+    val sourceUByte: UByte
 ) : Instruction {
+    override fun getTStates(): Int = 10
+
     override fun execute() {
-        val hlRegisterValue = Registers.registerSet.getHL()
-        Memory.memorySet.setMemoryCell(hlRegisterValue.toUShort(), sourceByte)
+        val hlRegisterPairValue = Registers.registerSet.getHL()
+        Memory.memorySet.setMemoryCell(hlRegisterPairValue.toUShort(), sourceUByte)
     }
 
-    override fun toString(): String = "LD (HL), ${sourceByte.toHexString(HexFormat.UpperCase)}h"
+    override fun toString(): String = "LD (HL), ${sourceUByte.displayString()}"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 3
-        override val tStates: Int = 10
-
         override val bitPattern = BitPattern.of("00110110 nnnnnnnn")
         override fun decode(word: Long, address: Address): Instruction {
-            val n = bitPattern.get(word, 'n')
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val sourceByte = n.toByte()
+            val sourceUByte = bitPattern.getUByte(word, 'n')
 
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
-
-            return LDHLn(address, bytes, sourceByte)
+            return LDHLn(address, bytes, sourceUByte)
         }
     }
 }

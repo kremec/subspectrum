@@ -1,8 +1,9 @@
 package com.subbyte.subspectrum.proc.instructions.load16
 
 import com.subbyte.subspectrum.base.Memory
-import com.subbyte.subspectrum.base.RegisterPairStackCode
+import com.subbyte.subspectrum.base.RegisterPairQQCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,7 +25,7 @@ class PUSHqqTest {
         assertEquals(0xC5.toByte(), instruction.bytes[0])
 
         val instructionTyped = instruction as PUSHqq
-        assertEquals(RegisterPairStackCode.BC, instructionTyped.sourceRegisterPairCode)
+        assertEquals(RegisterPairQQCode.BC, instructionTyped.sourceRegisterPairCode)
     }
 
     @Test
@@ -35,8 +36,8 @@ class PUSHqqTest {
 
         val instruction = PUSHqq(
             address = 0x1000u,
-            bytes = byteArrayOf(0xC5.toByte()),
-            sourceRegisterPairCode = RegisterPairStackCode.BC
+            bytes = DataByteArray(byteArrayOf(0xC5.toByte())),
+            sourceRegisterPairCode = RegisterPairQQCode.BC
         )
 
         instruction.execute()
@@ -54,8 +55,8 @@ class PUSHqqTest {
 
         val instruction = PUSHqq(
             address = 0x1000u,
-            bytes = byteArrayOf(0xD5.toByte()),
-            sourceRegisterPairCode = RegisterPairStackCode.DE
+            bytes = DataByteArray(byteArrayOf(0xD5.toByte())),
+            sourceRegisterPairCode = RegisterPairQQCode.DE
         )
 
         instruction.execute()
@@ -73,8 +74,8 @@ class PUSHqqTest {
 
         val instruction = PUSHqq(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE5.toByte()),
-            sourceRegisterPairCode = RegisterPairStackCode.HL
+            bytes = DataByteArray(byteArrayOf(0xE5.toByte())),
+            sourceRegisterPairCode = RegisterPairQQCode.HL
         )
 
         instruction.execute()
@@ -92,8 +93,8 @@ class PUSHqqTest {
 
         val instruction = PUSHqq(
             address = 0x1000u,
-            bytes = byteArrayOf(0xF5.toByte()),
-            sourceRegisterPairCode = RegisterPairStackCode.AF
+            bytes = DataByteArray(byteArrayOf(0xF5.toByte())),
+            sourceRegisterPairCode = RegisterPairQQCode.AF
         )
 
         instruction.execute()
@@ -107,8 +108,8 @@ class PUSHqqTest {
     fun toStringFormat() {
         val instruction = PUSHqq(
             address = 0x0000u,
-            bytes = byteArrayOf(0xC5.toByte()),
-            sourceRegisterPairCode = RegisterPairStackCode.BC
+            bytes = DataByteArray(byteArrayOf(0xC5.toByte())),
+            sourceRegisterPairCode = RegisterPairQQCode.BC
         )
 
         assertEquals("PUSH BC", instruction.toString())

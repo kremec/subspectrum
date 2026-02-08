@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.arith16
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,7 +32,7 @@ class INCIYTest {
 
         val instruction = INCIY(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0x00.toByte(), 0x23.toByte())
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0x00.toByte(), 0x23.toByte()))
         )
 
         instruction.execute()
@@ -43,7 +44,7 @@ class INCIYTest {
     fun toStringFormat() {
         val instruction = INCIY(
             address = 0x0000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0x00.toByte(), 0x23.toByte())
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0x00.toByte(), 0x23.toByte()))
         )
 
         assertEquals("INC IY", instruction.toString())

@@ -1,8 +1,9 @@
 package com.subbyte.subspectrum.proc.instructions.load16
 
 import com.subbyte.subspectrum.base.Memory
-import com.subbyte.subspectrum.base.RegisterPairCode
+import com.subbyte.subspectrum.base.RegisterPairSSCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,8 +28,8 @@ class LDnnddTest {
         assertEquals(0x34.toByte(), instruction.bytes[3])
 
         val ldnn = instruction as LDnndd
-        assertEquals(RegisterPairCode.BC, ldnn.sourceRegisterPairCode)
-        assertEquals(0x3412.toShort(), ldnn.destinationWord)
+        assertEquals(RegisterPairSSCode.BC, ldnn.sourceRegisterPairCode)
+        assertEquals(0x3412.toUShort(), ldnn.destinationUWord)
     }
 
     @Test
@@ -38,9 +39,9 @@ class LDnnddTest {
 
         val instruction = LDnndd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x43.toByte(), 0x12.toByte(), 0x34.toByte()),
-            destinationWord = 0x3412.toShort(),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x43.toByte(), 0x12.toByte(), 0x34.toByte())),
+            destinationUWord = 0x3412.toUShort(),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -56,9 +57,9 @@ class LDnnddTest {
 
         val instruction = LDnndd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x53.toByte(), 0x00.toByte(), 0x20.toByte()),
-            destinationWord = 0x2000.toShort(),
-            sourceRegisterPairCode = RegisterPairCode.DE
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x53.toByte(), 0x00.toByte(), 0x20.toByte())),
+            destinationUWord = 0x2000.toUShort(),
+            sourceRegisterPairCode = RegisterPairSSCode.DE
         )
 
         instruction.execute()
@@ -74,9 +75,9 @@ class LDnnddTest {
 
         val instruction = LDnndd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x63.toByte(), 0x00.toByte(), 0x30.toByte()),
-            destinationWord = 0x3000.toShort(),
-            sourceRegisterPairCode = RegisterPairCode.HL
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x63.toByte(), 0x00.toByte(), 0x30.toByte())),
+            destinationUWord = 0x3000.toUShort(),
+            sourceRegisterPairCode = RegisterPairSSCode.HL
         )
 
         instruction.execute()
@@ -91,9 +92,9 @@ class LDnnddTest {
 
         val instruction = LDnndd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x73.toByte(), 0x00.toByte(), 0x40.toByte()),
-            destinationWord = 0x4000.toShort(),
-            sourceRegisterPairCode = RegisterPairCode.SP
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x73.toByte(), 0x00.toByte(), 0x40.toByte())),
+            destinationUWord = 0x4000.toUShort(),
+            sourceRegisterPairCode = RegisterPairSSCode.SP
         )
 
         instruction.execute()
@@ -106,9 +107,9 @@ class LDnnddTest {
     fun toStringFormat() {
         val instruction = LDnndd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x43.toByte(), 0x12.toByte(), 0x34.toByte()),
-            destinationWord = 0x3412.toShort(),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x43.toByte(), 0x12.toByte(), 0x34.toByte())),
+            destinationUWord = 0x3412.toUShort(),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         assertEquals("LD (3412h), BC", instruction.toString())

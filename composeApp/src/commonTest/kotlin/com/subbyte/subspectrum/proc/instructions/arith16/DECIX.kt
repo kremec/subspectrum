@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.arith16
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,7 +32,7 @@ class DECIXTest {
 
         val instruction = DECIX(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x00.toByte(), 0x2B.toByte())
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x00.toByte(), 0x2B.toByte()))
         )
 
         instruction.execute()
@@ -43,7 +44,7 @@ class DECIXTest {
     fun toStringFormat() {
         val instruction = DECIX(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x00.toByte(), 0x2B.toByte())
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x00.toByte(), 0x2B.toByte()))
         )
 
         assertEquals("DEC IX", instruction.toString())

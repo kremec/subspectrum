@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.block
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class LDIRTest {
     @BeforeTest
@@ -37,7 +34,7 @@ class LDIRTest {
 
         val instruction = LDIR(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xB0.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xB0.toByte()))
         )
 
         instruction.execute()
@@ -62,7 +59,7 @@ class LDIRTest {
 
         val instruction = LDIR(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xB0.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xB0.toByte()))
         )
 
         instruction.execute()
@@ -81,7 +78,7 @@ class LDIRTest {
 
         val instruction = LDIR(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xB0.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xB0.toByte()))
         )
 
         instruction.execute()
@@ -93,7 +90,7 @@ class LDIRTest {
     fun toStringFormat() {
         val instruction = LDIR(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xB0.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xB0.toByte()))
         )
 
         assertEquals("LDIR", instruction.toString())

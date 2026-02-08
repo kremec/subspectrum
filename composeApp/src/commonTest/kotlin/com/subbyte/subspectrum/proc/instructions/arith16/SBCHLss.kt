@@ -1,13 +1,10 @@
 package com.subbyte.subspectrum.proc.instructions.arith16
 
 import com.subbyte.subspectrum.base.Memory
-import com.subbyte.subspectrum.base.RegisterPairCode
+import com.subbyte.subspectrum.base.RegisterPairSSCode
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.assertFalse
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class SBCHLssTest {
     @BeforeTest
@@ -27,7 +24,7 @@ class SBCHLssTest {
         assertEquals(0x42.toByte(), instruction.bytes[1])
 
         val sbcHlss = instruction as SBCHLss
-        assertEquals(RegisterPairCode.BC, sbcHlss.sourceRegisterPairCode)
+        assertEquals(RegisterPairSSCode.BC, sbcHlss.sourceRegisterPairCode)
     }
 
     @Test
@@ -38,8 +35,8 @@ class SBCHLssTest {
 
         val instruction = SBCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x42.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x42.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -56,8 +53,8 @@ class SBCHLssTest {
 
         val instruction = SBCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x52.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.DE
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x52.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.DE
         )
 
         instruction.execute()
@@ -73,8 +70,8 @@ class SBCHLssTest {
 
         val instruction = SBCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x62.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.HL
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x62.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.HL
         )
 
         instruction.execute()
@@ -91,8 +88,8 @@ class SBCHLssTest {
 
         val instruction = SBCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x72.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.SP
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x72.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.SP
         )
 
         instruction.execute()
@@ -110,8 +107,8 @@ class SBCHLssTest {
 
         val instruction = SBCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x42.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x42.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -133,8 +130,8 @@ class SBCHLssTest {
 
         val instruction = SBCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x42.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x42.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -156,8 +153,8 @@ class SBCHLssTest {
 
         val instruction = SBCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x42.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x42.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -179,8 +176,8 @@ class SBCHLssTest {
 
         val instruction = SBCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x42.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x42.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -203,8 +200,8 @@ class SBCHLssTest {
 
         val instruction = SBCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x42.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x42.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -226,8 +223,8 @@ class SBCHLssTest {
 
         val instruction = SBCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x42.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x42.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -249,8 +246,8 @@ class SBCHLssTest {
 
         val instruction = SBCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x42.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x42.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -272,8 +269,8 @@ class SBCHLssTest {
 
         val instruction = SBCHLss(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x42.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x42.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -290,8 +287,8 @@ class SBCHLssTest {
     fun toStringFormat() {
         val instruction = SBCHLss(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x42.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x42.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         assertEquals("SBC HL, BC", instruction.toString())

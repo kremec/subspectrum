@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.bit
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,7 +26,7 @@ class SETbHLTest {
         assertEquals(0xC6.toByte(), instruction.bytes[1])
 
         val setbHL = instruction as SETbHL
-        assertEquals(0, setbHL.bit)
+        assertEquals(0, setbHL.bitPosition)
     }
 
     @Test
@@ -33,7 +34,7 @@ class SETbHLTest {
         val instruction = SETbHL.decode(0xCBFFL, 0x1000u)
 
         val setbHL = instruction as SETbHL
-        assertEquals(7, setbHL.bit)
+        assertEquals(7, setbHL.bitPosition)
     }
 
     @Test
@@ -43,8 +44,8 @@ class SETbHLTest {
 
         val instruction = SETbHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0xC6.toByte()),
-            bit = 0
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0xC6.toByte())),
+            bitPosition = 0
         )
 
         instruction.execute()
@@ -59,8 +60,8 @@ class SETbHLTest {
 
         val instruction = SETbHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0xC6.toByte()),
-            bit = 0
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0xC6.toByte())),
+            bitPosition = 0
         )
 
         instruction.execute()
@@ -75,8 +76,8 @@ class SETbHLTest {
 
         val instruction = SETbHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0xFE.toByte()),
-            bit = 7
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0xFE.toByte())),
+            bitPosition = 7
         )
 
         instruction.execute()
@@ -95,8 +96,8 @@ class SETbHLTest {
 
         val instruction = SETbHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0xC6.toByte()),
-            bit = 0
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0xC6.toByte())),
+            bitPosition = 0
         )
 
         instruction.execute()
@@ -116,8 +117,8 @@ class SETbHLTest {
 
             val instruction = SETbHL(
                 address = 0x1000u,
-                bytes = byteArrayOf(0xCB.toByte(), (0xC6 or (bit shl 3)).toByte()),
-                bit = bit
+                bytes = DataByteArray(byteArrayOf(0xCB.toByte(), (0xC6 or (bit shl 3)).toByte())),
+                bitPosition = bit
             )
 
             instruction.execute()
@@ -131,8 +132,8 @@ class SETbHLTest {
     fun toStringFormat() {
         val instruction = SETbHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0xC6.toByte()),
-            bit = 0
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0xC6.toByte())),
+            bitPosition = 0
         )
 
         assertEquals("SET 0, (HL)", instruction.toString())

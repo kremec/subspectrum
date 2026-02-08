@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class ANDnTest {
     @BeforeTest
@@ -26,7 +23,7 @@ class ANDnTest {
         assertEquals(0xAB.toByte(), instruction.bytes[1])
 
         val andn = instruction as ANDn
-        assertEquals(0xAB.toByte(), andn.sourceByte)
+        assertEquals(0xAB.toUByte(), andn.sourceUByte)
     }
 
     @Test
@@ -35,8 +32,8 @@ class ANDnTest {
 
         val instruction = ANDn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE6.toByte(), 0x0F.toByte()),
-            sourceByte = 0x0F.toByte()
+            bytes = DataByteArray(byteArrayOf(0xE6.toByte(), 0x0F.toByte())),
+            sourceUByte = 0x0F.toUByte()
         )
 
         instruction.execute()
@@ -53,8 +50,8 @@ class ANDnTest {
 
         val instruction = ANDn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE6.toByte(), 0x0F.toByte()),
-            sourceByte = 0x0F.toByte()
+            bytes = DataByteArray(byteArrayOf(0xE6.toByte(), 0x0F.toByte())),
+            sourceUByte = 0x0F.toUByte()
         )
 
         instruction.execute()
@@ -72,8 +69,8 @@ class ANDnTest {
 
         val instruction = ANDn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE6.toByte(), 0xFF.toByte()),
-            sourceByte = 0xFF.toByte()
+            bytes = DataByteArray(byteArrayOf(0xE6.toByte(), 0xFF.toByte())),
+            sourceUByte = 0xFF.toUByte()
         )
 
         instruction.execute()
@@ -88,8 +85,8 @@ class ANDnTest {
 
         val instruction = ANDn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE6.toByte(), 0x0A.toByte()),
-            sourceByte = 0x0A.toByte()
+            bytes = DataByteArray(byteArrayOf(0xE6.toByte(), 0x0A.toByte())),
+            sourceUByte = 0x0A.toUByte()
         )
 
         instruction.execute()
@@ -104,8 +101,8 @@ class ANDnTest {
 
         val instruction = ANDn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE6.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xE6.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -120,8 +117,8 @@ class ANDnTest {
 
         val instruction = ANDn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE6.toByte(), 0x00.toByte()),
-            sourceByte = 0x00.toByte()
+            bytes = DataByteArray(byteArrayOf(0xE6.toByte(), 0x00.toByte())),
+            sourceUByte = 0x00.toUByte()
         )
 
         instruction.execute()
@@ -137,8 +134,8 @@ class ANDnTest {
 
         val instruction = ANDn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE6.toByte(), 0xFF.toByte()),
-            sourceByte = 0xFF.toByte()
+            bytes = DataByteArray(byteArrayOf(0xE6.toByte(), 0xFF.toByte())),
+            sourceUByte = 0xFF.toUByte()
         )
 
         instruction.execute()
@@ -154,8 +151,8 @@ class ANDnTest {
 
         val instruction = ANDn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE6.toByte(), 0xFF.toByte()),
-            sourceByte = 0xFF.toByte()
+            bytes = DataByteArray(byteArrayOf(0xE6.toByte(), 0xFF.toByte())),
+            sourceUByte = 0xFF.toUByte()
         )
 
         instruction.execute()
@@ -168,10 +165,10 @@ class ANDnTest {
     fun toStringFormat() {
         val instruction = ANDn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xE6.toByte(), 0xAB.toByte()),
-            sourceByte = 0xAB.toByte()
+            bytes = DataByteArray(byteArrayOf(0xE6.toByte(), 0xAB.toByte())),
+            sourceUByte = 0xAB.toUByte()
         )
 
-        assertEquals("AND -85", instruction.toString())
+        assertEquals("AND ABh", instruction.toString())
     }
 }

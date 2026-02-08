@@ -3,11 +3,8 @@ package com.subbyte.subspectrum.proc.instructions.bit
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class BITbrTest {
     @BeforeTest
@@ -27,7 +24,7 @@ class BITbrTest {
         assertEquals(0x40.toByte(), instruction.bytes[1])
 
         val bitbr = instruction as BITbr
-        assertEquals(0, bitbr.bit)
+        assertEquals(0, bitbr.bitPosition)
         assertEquals(RegisterCode.B, bitbr.sourceRegister)
     }
 
@@ -37,8 +34,8 @@ class BITbrTest {
 
         val instruction = BITbr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x40.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x40.toByte())),
+            bitPosition = 0,
             sourceRegister = RegisterCode.B
         )
 
@@ -55,8 +52,8 @@ class BITbrTest {
 
         val instruction = BITbr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x40.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x40.toByte())),
+            bitPosition = 0,
             sourceRegister = RegisterCode.B
         )
 
@@ -73,8 +70,8 @@ class BITbrTest {
 
         val instruction = BITbr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x78.toByte()),
-            bit = 7,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x78.toByte())),
+            bitPosition = 7,
             sourceRegister = RegisterCode.B
         )
 
@@ -89,8 +86,8 @@ class BITbrTest {
     fun toStringFormat() {
         val instruction = BITbr(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x40.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x40.toByte())),
+            bitPosition = 0,
             sourceRegister = RegisterCode.B
         )
 

@@ -3,11 +3,8 @@ package com.subbyte.subspectrum.proc.instructions.shift
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class SRLrTest {
     @BeforeTest
@@ -36,13 +33,16 @@ class SRLrTest {
 
         val instruction = SRLr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x38.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x38.toByte())),
             sourceRegister = RegisterCode.B
         )
 
         instruction.execute()
 
-        assertEquals(0x01.toByte(), Registers.registerSet.getRegister(RegisterCode.B)) // 00000001 (shifted right, MSB set to 0)
+        assertEquals(
+            0x01.toByte(),
+            Registers.registerSet.getRegister(RegisterCode.B)
+        ) // 00000001 (shifted right, MSB set to 0)
         assertFalse(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
@@ -57,13 +57,16 @@ class SRLrTest {
 
         val instruction = SRLr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x38.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x38.toByte())),
             sourceRegister = RegisterCode.B
         )
 
         instruction.execute()
 
-        assertEquals(0x02.toByte(), Registers.registerSet.getRegister(RegisterCode.B)) // 00000010 (shifted right, MSB set to 0)
+        assertEquals(
+            0x02.toByte(),
+            Registers.registerSet.getRegister(RegisterCode.B)
+        ) // 00000010 (shifted right, MSB set to 0)
         assertFalse(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
@@ -78,13 +81,16 @@ class SRLrTest {
 
         val instruction = SRLr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x38.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x38.toByte())),
             sourceRegister = RegisterCode.B
         )
 
         instruction.execute()
 
-        assertEquals(0x42.toByte(), Registers.registerSet.getRegister(RegisterCode.B)) // 01000010 (shifted right, MSB set to 0, becomes positive)
+        assertEquals(
+            0x42.toByte(),
+            Registers.registerSet.getRegister(RegisterCode.B)
+        ) // 01000010 (shifted right, MSB set to 0, becomes positive)
         assertFalse(Registers.registerSet.getSFlag()) // S flag reset
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
@@ -99,7 +105,7 @@ class SRLrTest {
 
         val instruction = SRLr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x38.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x38.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -120,7 +126,7 @@ class SRLrTest {
 
         val instruction = SRLr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x38.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x38.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -136,7 +142,7 @@ class SRLrTest {
 
         val instruction = SRLr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x38.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x38.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -150,7 +156,7 @@ class SRLrTest {
     fun toStringFormat() {
         val instruction = SRLr(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x38.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x38.toByte())),
             sourceRegister = RegisterCode.B
         )
 

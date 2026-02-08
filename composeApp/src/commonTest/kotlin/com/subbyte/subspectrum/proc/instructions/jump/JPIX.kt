@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.jump
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -34,7 +35,7 @@ class JPIXTest {
 
         val instruction = JPIX(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xE9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xE9.toByte()))
         )
 
         instruction.execute()
@@ -48,7 +49,7 @@ class JPIXTest {
 
         val instruction = JPIX(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xE9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xE9.toByte()))
         )
 
         instruction.execute()
@@ -62,7 +63,7 @@ class JPIXTest {
 
         val instruction = JPIX(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xE9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xE9.toByte()))
         )
 
         instruction.execute()
@@ -81,7 +82,7 @@ class JPIXTest {
 
         val instruction = JPIX(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xE9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xE9.toByte()))
         )
 
         instruction.execute()
@@ -97,7 +98,7 @@ class JPIXTest {
     fun toStringFormat() {
         val instruction = JPIX(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xE9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xE9.toByte()))
         )
 
         assertEquals("JP (IX)", instruction.toString())

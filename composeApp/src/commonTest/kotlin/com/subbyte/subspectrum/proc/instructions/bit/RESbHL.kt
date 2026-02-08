@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.bit
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,7 +26,7 @@ class RESbHLTest {
         assertEquals(0x86.toByte(), instruction.bytes[1])
 
         val resbHL = instruction as RESbHL
-        assertEquals(0, resbHL.bit)
+        assertEquals(0, resbHL.bitPosition)
     }
 
     @Test
@@ -33,7 +34,7 @@ class RESbHLTest {
         val instruction = RESbHL.decode(0xCBBEL, 0x1000u)
 
         val resbHL = instruction as RESbHL
-        assertEquals(7, resbHL.bit)
+        assertEquals(7, resbHL.bitPosition)
     }
 
     @Test
@@ -43,8 +44,8 @@ class RESbHLTest {
 
         val instruction = RESbHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x86.toByte()),
-            bit = 0
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x86.toByte())),
+            bitPosition = 0
         )
 
         instruction.execute()
@@ -59,8 +60,8 @@ class RESbHLTest {
 
         val instruction = RESbHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x86.toByte()),
-            bit = 0
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x86.toByte())),
+            bitPosition = 0
         )
 
         instruction.execute()
@@ -75,8 +76,8 @@ class RESbHLTest {
 
         val instruction = RESbHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0xBE.toByte()),
-            bit = 7
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0xBE.toByte())),
+            bitPosition = 7
         )
 
         instruction.execute()
@@ -95,8 +96,8 @@ class RESbHLTest {
 
         val instruction = RESbHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x86.toByte()),
-            bit = 0
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x86.toByte())),
+            bitPosition = 0
         )
 
         instruction.execute()
@@ -116,8 +117,8 @@ class RESbHLTest {
 
             val instruction = RESbHL(
                 address = 0x1000u,
-                bytes = byteArrayOf(0xCB.toByte(), (0x86 or (bit shl 3)).toByte()),
-                bit = bit
+                bytes = DataByteArray(byteArrayOf(0xCB.toByte(), (0x86 or (bit shl 3)).toByte())),
+                bitPosition = bit
             )
 
             instruction.execute()
@@ -131,8 +132,8 @@ class RESbHLTest {
     fun toStringFormat() {
         val instruction = RESbHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x86.toByte()),
-            bit = 0
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x86.toByte())),
+            bitPosition = 0
         )
 
         assertEquals("RES 0, (HL)", instruction.toString())

@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.jump
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -35,7 +36,7 @@ class JPnnTest {
 
         val instruction = JPnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xC3.toByte(), 0x56.toByte(), 0x78.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xC3.toByte(), 0x56.toByte(), 0x78.toByte())),
             targetAddress = 0x5678u
         )
 
@@ -50,7 +51,7 @@ class JPnnTest {
 
         val instruction = JPnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xC3.toByte(), 0x00.toByte(), 0x00.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xC3.toByte(), 0x00.toByte(), 0x00.toByte())),
             targetAddress = 0x0000u
         )
 
@@ -65,7 +66,7 @@ class JPnnTest {
 
         val instruction = JPnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xC3.toByte(), 0xFF.toByte(), 0xFF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xC3.toByte(), 0xFF.toByte(), 0xFF.toByte())),
             targetAddress = 0xFFFFu
         )
 
@@ -78,7 +79,7 @@ class JPnnTest {
     fun toStringFormat() {
         val instruction = JPnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xC3.toByte(), 0x12.toByte(), 0x34.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xC3.toByte(), 0x12.toByte(), 0x34.toByte())),
             targetAddress = 0x1234u
         )
 
@@ -89,7 +90,7 @@ class JPnnTest {
     fun toStringFormatZero() {
         val instruction = JPnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xC3.toByte(), 0x00.toByte(), 0x00.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xC3.toByte(), 0x00.toByte(), 0x00.toByte())),
             targetAddress = 0x0000u
         )
 

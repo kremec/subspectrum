@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.bit
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -28,7 +29,7 @@ class RESbIYdTest {
         assertEquals(0x86.toByte(), instruction.bytes[3])
 
         val resbIYd = instruction as RESbIYd
-        assertEquals(0, resbIYd.bit)
+        assertEquals(0, resbIYd.bitPosition)
         assertEquals(5.toByte(), resbIYd.displacement)
     }
 
@@ -38,7 +39,7 @@ class RESbIYdTest {
         val instruction = RESbIYd.decode(word, 0x1000u)
 
         val resbIYd = instruction as RESbIYd
-        assertEquals(7, resbIYd.bit)
+        assertEquals(7, resbIYd.bitPosition)
         assertEquals(10.toByte(), resbIYd.displacement)
     }
 
@@ -50,8 +51,8 @@ class RESbIYdTest {
 
         val instruction = RESbIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x86.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x86.toByte())),
+            bitPosition = 0,
             displacement = 5
         )
 
@@ -68,8 +69,8 @@ class RESbIYdTest {
 
         val instruction = RESbIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x86.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x86.toByte())),
+            bitPosition = 0,
             displacement = 5
         )
 
@@ -86,8 +87,8 @@ class RESbIYdTest {
 
         val instruction = RESbIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x0A.toByte(), 0xBE.toByte()),
-            bit = 7,
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x0A.toByte(), 0xBE.toByte())),
+            bitPosition = 7,
             displacement = 10
         )
 
@@ -108,8 +109,8 @@ class RESbIYdTest {
 
         val instruction = RESbIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x86.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x86.toByte())),
+            bitPosition = 0,
             displacement = 5
         )
 
@@ -131,8 +132,15 @@ class RESbIYdTest {
 
             val instruction = RESbIYd(
                 address = 0x1000u,
-                bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x02.toByte(), (0x86 or (bit shl 3)).toByte()),
-                bit = bit,
+                bytes = DataByteArray(
+                    byteArrayOf(
+                        0xFD.toByte(),
+                        0xCB.toByte(),
+                        0x02.toByte(),
+                        (0x86 or (bit shl 3)).toByte()
+                    )
+                ),
+                bitPosition = bit,
                 displacement = 2
             )
 
@@ -151,8 +159,8 @@ class RESbIYdTest {
 
         val instruction = RESbIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0xFB.toByte(), 0x86.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0xFB.toByte(), 0x86.toByte())),
+            bitPosition = 0,
             displacement = -5
         )
 
@@ -165,23 +173,23 @@ class RESbIYdTest {
     fun toStringFormat() {
         val instruction = RESbIYd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x86.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x86.toByte())),
+            bitPosition = 0,
             displacement = 5
         )
 
-        assertEquals("RES 0, (IY + 5)", instruction.toString())
+        assertEquals("RES 0, (IY+05h)", instruction.toString())
     }
 
     @Test
     fun toStringFormatNegativeDisplacement() {
         val instruction = RESbIYd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0xFB.toByte(), 0x86.toByte()),
-            bit = 3,
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0xFB.toByte(), 0x86.toByte())),
+            bitPosition = 3,
             displacement = -5
         )
 
-        assertEquals("RES 3, (IY + -5)", instruction.toString())
+        assertEquals("RES 3, (IY-05h)", instruction.toString())
     }
 }

@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.call
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -97,7 +98,7 @@ class RSTpTest {
 
         val instruction = RSTp(
             address = 0x15B3u,
-            bytes = byteArrayOf(0xC7.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xC7.toByte())),
             restartAddress = 0x00u
         )
 
@@ -116,7 +117,7 @@ class RSTpTest {
 
         val instruction = RSTp(
             address = 0x1234u,
-            bytes = byteArrayOf(0xCF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCF.toByte())),
             restartAddress = 0x08u
         )
 
@@ -135,7 +136,7 @@ class RSTpTest {
 
         val instruction = RSTp(
             address = 0xABCDu,
-            bytes = byteArrayOf(0xD7.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xD7.toByte())),
             restartAddress = 0x10u
         )
 
@@ -154,7 +155,7 @@ class RSTpTest {
 
         val instruction = RSTp(
             address = 0x15B3u,
-            bytes = byteArrayOf(0xDF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDF.toByte())),
             restartAddress = 0x18u
         )
 
@@ -173,7 +174,7 @@ class RSTpTest {
 
         val instruction = RSTp(
             address = 0x5678u,
-            bytes = byteArrayOf(0xE7.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xE7.toByte())),
             restartAddress = 0x20u
         )
 
@@ -192,7 +193,7 @@ class RSTpTest {
 
         val instruction = RSTp(
             address = 0x9ABCu,
-            bytes = byteArrayOf(0xEF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xEF.toByte())),
             restartAddress = 0x28u
         )
 
@@ -211,7 +212,7 @@ class RSTpTest {
 
         val instruction = RSTp(
             address = 0xDEF0u,
-            bytes = byteArrayOf(0xF7.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xF7.toByte())),
             restartAddress = 0x30u
         )
 
@@ -230,7 +231,7 @@ class RSTpTest {
 
         val instruction = RSTp(
             address = 0xFEDCu,
-            bytes = byteArrayOf(0xFF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFF.toByte())),
             restartAddress = 0x38u
         )
 
@@ -249,7 +250,7 @@ class RSTpTest {
 
         val rst = RSTp(
             address = 0x2000u,
-            bytes = byteArrayOf(0xDF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDF.toByte())),
             restartAddress = 0x18u
         )
         rst.execute()
@@ -259,7 +260,7 @@ class RSTpTest {
 
         val ret = RET(
             address = 0x0018u,
-            bytes = byteArrayOf(0xC9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xC9.toByte()))
         )
         ret.execute()
 
@@ -271,7 +272,7 @@ class RSTpTest {
     fun toStringFormat00() {
         val instruction = RSTp(
             address = 0x0000u,
-            bytes = byteArrayOf(0xC7.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xC7.toByte())),
             restartAddress = 0x00u
         )
 
@@ -282,7 +283,7 @@ class RSTpTest {
     fun toStringFormat18() {
         val instruction = RSTp(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDF.toByte())),
             restartAddress = 0x18u
         )
 
@@ -293,7 +294,7 @@ class RSTpTest {
     fun toStringFormat38() {
         val instruction = RSTp(
             address = 0x0000u,
-            bytes = byteArrayOf(0xFF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFF.toByte())),
             restartAddress = 0x38u
         )
 

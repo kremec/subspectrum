@@ -8,7 +8,7 @@ class MemoryTest {
     @Test
     fun getInitialMemoryCellValue() {
         val memoryCellValue = Memory.memorySet.getMemoryCell(0x0000u)
-        assertEquals( 0x00, memoryCellValue)
+        assertEquals(0x00, memoryCellValue)
     }
 
     @Test

@@ -1,8 +1,9 @@
 package com.subbyte.subspectrum.proc.instructions.load16
 
 import com.subbyte.subspectrum.base.Memory
-import com.subbyte.subspectrum.base.RegisterPairCode
+import com.subbyte.subspectrum.base.RegisterPairSSCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,17 +27,17 @@ class LDddnnTest {
         assertEquals(0xAB.toByte(), instruction.bytes[2])
 
         val ldnn = instruction as LDddnn
-        assertEquals(RegisterPairCode.BC, ldnn.destinationRegisterPair)
-        assertEquals(0xABCD.toShort(), ldnn.sourceWord)
+        assertEquals(RegisterPairSSCode.BC, ldnn.destinationRegisterPair)
+        assertEquals(0xABCD.toUShort(), ldnn.sourceUWord)
     }
 
     @Test
     fun executeLoadImmediateToBC() {
         val instruction = LDddnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0x01, 0xCD.toByte(), 0xAB.toByte()),
-            destinationRegisterPair = RegisterPairCode.BC,
-            sourceWord = 0xABCD.toShort()
+            bytes = DataByteArray(byteArrayOf(0x01, 0xCD.toByte(), 0xAB.toByte())),
+            destinationRegisterPair = RegisterPairSSCode.BC,
+            sourceUWord = 0xABCD.toUShort()
         )
 
         instruction.execute()
@@ -49,9 +50,9 @@ class LDddnnTest {
     fun executeLoadImmediateToDE() {
         val instruction = LDddnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0x11, 0x34.toByte(), 0x12.toByte()),
-            destinationRegisterPair = RegisterPairCode.DE,
-            sourceWord = 0x1234.toShort()
+            bytes = DataByteArray(byteArrayOf(0x11, 0x34.toByte(), 0x12.toByte())),
+            destinationRegisterPair = RegisterPairSSCode.DE,
+            sourceUWord = 0x1234.toUShort()
         )
 
         instruction.execute()
@@ -64,9 +65,9 @@ class LDddnnTest {
     fun executeLoadImmediateToHL() {
         val instruction = LDddnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0x21, 0xFE.toByte(), 0xDC.toByte()),
-            destinationRegisterPair = RegisterPairCode.HL,
-            sourceWord = 0xFEDC.toShort()
+            bytes = DataByteArray(byteArrayOf(0x21, 0xFE.toByte(), 0xDC.toByte())),
+            destinationRegisterPair = RegisterPairSSCode.HL,
+            sourceUWord = 0xFEDC.toUShort()
         )
 
         instruction.execute()
@@ -79,9 +80,9 @@ class LDddnnTest {
     fun executeLoadImmediateToSP() {
         val instruction = LDddnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0x31, 0xFF.toByte(), 0xFF.toByte()),
-            destinationRegisterPair = RegisterPairCode.SP,
-            sourceWord = 0xFFFF.toShort()
+            bytes = DataByteArray(byteArrayOf(0x31, 0xFF.toByte(), 0xFF.toByte())),
+            destinationRegisterPair = RegisterPairSSCode.SP,
+            sourceUWord = 0xFFFF.toUShort()
         )
 
         instruction.execute()
@@ -93,9 +94,9 @@ class LDddnnTest {
     fun toStringFormat() {
         val instruction = LDddnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0x01, 0xCD.toByte(), 0xAB.toByte()),
-            destinationRegisterPair = RegisterPairCode.BC,
-            sourceWord = 0xABCD.toShort()
+            bytes = DataByteArray(byteArrayOf(0x01, 0xCD.toByte(), 0xAB.toByte())),
+            destinationRegisterPair = RegisterPairSSCode.BC,
+            sourceUWord = 0xABCD.toUShort()
         )
 
         assertEquals("LD BC, ABCDh", instruction.toString())

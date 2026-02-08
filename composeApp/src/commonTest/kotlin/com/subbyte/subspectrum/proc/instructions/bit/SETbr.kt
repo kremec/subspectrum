@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.bit
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,7 +27,7 @@ class SETbrTest {
         assertEquals(0xC0.toByte(), instruction.bytes[1])
 
         val setbr = instruction as SETbr
-        assertEquals(0, setbr.bit)
+        assertEquals(0, setbr.bitPosition)
         assertEquals(RegisterCode.B, setbr.sourceRegister)
     }
 
@@ -35,7 +36,7 @@ class SETbrTest {
         val instruction = SETbr.decode(0xCBFFL, 0x1000u)
 
         val setbr = instruction as SETbr
-        assertEquals(7, setbr.bit)
+        assertEquals(7, setbr.bitPosition)
         assertEquals(RegisterCode.A, setbr.sourceRegister)
     }
 
@@ -45,8 +46,8 @@ class SETbrTest {
 
         val instruction = SETbr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0xC0.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0xC0.toByte())),
+            bitPosition = 0,
             sourceRegister = RegisterCode.B
         )
 
@@ -61,8 +62,8 @@ class SETbrTest {
 
         val instruction = SETbr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0xC0.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0xC0.toByte())),
+            bitPosition = 0,
             sourceRegister = RegisterCode.B
         )
 
@@ -77,8 +78,8 @@ class SETbrTest {
 
         val instruction = SETbr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0xFF.toByte()),
-            bit = 7,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0xFF.toByte())),
+            bitPosition = 7,
             sourceRegister = RegisterCode.A
         )
 
@@ -97,8 +98,8 @@ class SETbrTest {
 
         val instruction = SETbr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0xC0.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0xC0.toByte())),
+            bitPosition = 0,
             sourceRegister = RegisterCode.B
         )
 
@@ -117,8 +118,8 @@ class SETbrTest {
 
             val instruction = SETbr(
                 address = 0x1000u,
-                bytes = byteArrayOf(0xCB.toByte(), (0xC0 or (bit shl 3)).toByte()),
-                bit = bit,
+                bytes = DataByteArray(byteArrayOf(0xCB.toByte(), (0xC0 or (bit shl 3)).toByte())),
+                bitPosition = bit,
                 sourceRegister = RegisterCode.C
             )
 
@@ -133,8 +134,8 @@ class SETbrTest {
     fun toStringFormat() {
         val instruction = SETbr(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0xC0.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0xC0.toByte())),
+            bitPosition = 0,
             sourceRegister = RegisterCode.B
         )
 

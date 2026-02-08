@@ -7,17 +7,20 @@ import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
-import com.subbyte.subspectrum.units.fromBytes
+import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.wordFromBytes
 
 data class RETN(
     override val address: Address,
-    override val bytes: ByteArray
+    override val bytes: DataByteArray
 ) : Instruction {
+    override fun getTStates(): Int = 14
+
     override fun execute() {
         val spRegisterValue = Registers.specialPurposeRegisters.getSP()
         val bytes = Memory.memorySet.getMemoryCells(spRegisterValue.toUShort(), spRegisterValue.plus(1).toUShort())
         Registers.specialPurposeRegisters.setSP(spRegisterValue.plus(2).toShort())
-        Registers.specialPurposeRegisters.setPC(Pair(bytes[1], bytes[0]).fromBytes())
+        Registers.specialPurposeRegisters.setPC(Pair(bytes[1], bytes[0]).wordFromBytes())
 
         Processor.IFF1 = Processor.IFF2
     }
@@ -25,15 +28,9 @@ data class RETN(
     override fun toString(): String = "RETN"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 4
-        override val tStates: Int = 14
-
         override val bitPattern = BitPattern.of("11101101 01000101")
         override fun decode(word: Long, address: Address): Instruction {
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
+            val bytes = bitPattern.toInstructionByteArray(word)
 
             return RETN(address, bytes)
         }

@@ -3,11 +3,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class ANDrTest {
     @BeforeTest
@@ -36,7 +33,7 @@ class ANDrTest {
 
         val instruction = ANDr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xA1.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xA1.toByte())),
             sourceRegister = RegisterCode.C
         )
 
@@ -55,7 +52,7 @@ class ANDrTest {
 
         val instruction = ANDr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xA0.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xA0.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -75,7 +72,7 @@ class ANDrTest {
 
         val instruction = ANDr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xA1.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xA1.toByte())),
             sourceRegister = RegisterCode.C
         )
 
@@ -92,7 +89,7 @@ class ANDrTest {
 
         val instruction = ANDr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xA2.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xA2.toByte())),
             sourceRegister = RegisterCode.D
         )
 
@@ -109,7 +106,7 @@ class ANDrTest {
 
         val instruction = ANDr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xA3.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xA3.toByte())),
             sourceRegister = RegisterCode.E
         )
 
@@ -126,7 +123,7 @@ class ANDrTest {
 
         val instruction = ANDr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xA4.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xA4.toByte())),
             sourceRegister = RegisterCode.H
         )
 
@@ -144,7 +141,7 @@ class ANDrTest {
 
         val instruction = ANDr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xA5.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xA5.toByte())),
             sourceRegister = RegisterCode.L
         )
 
@@ -162,7 +159,7 @@ class ANDrTest {
 
         val instruction = ANDr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xA7.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xA7.toByte())),
             sourceRegister = RegisterCode.A
         )
 
@@ -176,7 +173,7 @@ class ANDrTest {
     fun toStringFormat() {
         val instruction = ANDr(
             address = 0x0000u,
-            bytes = byteArrayOf(0xA1.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xA1.toByte())),
             sourceRegister = RegisterCode.C
         )
 

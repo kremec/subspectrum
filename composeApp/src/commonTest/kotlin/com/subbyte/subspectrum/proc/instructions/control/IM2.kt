@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.control
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.Processor
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,7 +33,7 @@ class IM2Test {
 
         val instruction = IM2(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x5E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x5E.toByte()))
         )
 
         instruction.execute()
@@ -46,7 +47,7 @@ class IM2Test {
 
         val instruction = IM2(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x5E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x5E.toByte()))
         )
 
         instruction.execute()
@@ -60,7 +61,7 @@ class IM2Test {
 
         val instruction = IM2(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x5E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x5E.toByte()))
         )
 
         instruction.execute()
@@ -72,7 +73,7 @@ class IM2Test {
     fun toStringFormat() {
         val instruction = IM2(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x5E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x5E.toByte()))
         )
 
         assertEquals("IM 2", instruction.toString())

@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.assertFalse
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class SUBAnTest {
     @BeforeTest
@@ -26,7 +23,7 @@ class SUBAnTest {
         assertEquals(0xAB.toByte(), instruction.bytes[1])
 
         val subAn = instruction as SUBAn
-        assertEquals(0xAB.toByte(), subAn.sourceByte)
+        assertEquals(0xAB.toUByte(), subAn.sourceUByte)
     }
 
     @Test
@@ -35,8 +32,8 @@ class SUBAnTest {
 
         val instruction = SUBAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xD6.toByte(), 0x10.toByte()),
-            sourceByte = 0x10.toByte()
+            bytes = DataByteArray(byteArrayOf(0xD6.toByte(), 0x10.toByte())),
+            sourceUByte = 0x10.toUByte()
         )
 
         instruction.execute()
@@ -51,8 +48,8 @@ class SUBAnTest {
 
         val instruction = SUBAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xD6.toByte(), 0x10.toByte()),
-            sourceByte = 0x10.toByte()
+            bytes = DataByteArray(byteArrayOf(0xD6.toByte(), 0x10.toByte())),
+            sourceUByte = 0x10.toUByte()
         )
 
         instruction.execute()
@@ -69,8 +66,8 @@ class SUBAnTest {
 
         val instruction = SUBAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xD6.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xD6.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -86,8 +83,8 @@ class SUBAnTest {
 
         val instruction = SUBAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xD6.toByte(), 0x20.toByte()),
-            sourceByte = 0x20.toByte()
+            bytes = DataByteArray(byteArrayOf(0xD6.toByte(), 0x20.toByte())),
+            sourceUByte = 0x20.toUByte()
         )
 
         instruction.execute()
@@ -102,8 +99,8 @@ class SUBAnTest {
 
         val instruction = SUBAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xD6.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xD6.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -119,8 +116,8 @@ class SUBAnTest {
 
         val instruction = SUBAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xD6.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xD6.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -135,8 +132,8 @@ class SUBAnTest {
 
         val instruction = SUBAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xD6.toByte(), 0x20.toByte()),
-            sourceByte = 0x20.toByte()
+            bytes = DataByteArray(byteArrayOf(0xD6.toByte(), 0x20.toByte())),
+            sourceUByte = 0x20.toUByte()
         )
 
         instruction.execute()
@@ -151,8 +148,8 @@ class SUBAnTest {
 
         val instruction = SUBAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xD6.toByte(), 0x10.toByte()),
-            sourceByte = 0x10.toByte()
+            bytes = DataByteArray(byteArrayOf(0xD6.toByte(), 0x10.toByte())),
+            sourceUByte = 0x10.toUByte()
         )
 
         instruction.execute()
@@ -164,10 +161,10 @@ class SUBAnTest {
     fun toStringFormat() {
         val instruction = SUBAn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xD6.toByte(), 0xAB.toByte()),
-            sourceByte = 0xAB.toByte()
+            bytes = DataByteArray(byteArrayOf(0xD6.toByte(), 0xAB.toByte())),
+            sourceUByte = 0xAB.toUByte()
         )
 
-        assertEquals("SUB A, -85", instruction.toString())
+        assertEquals("SUB A, ABh", instruction.toString())
     }
 }

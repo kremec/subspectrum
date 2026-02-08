@@ -1,8 +1,9 @@
 package com.subbyte.subspectrum.proc.instructions.load16
 
 import com.subbyte.subspectrum.base.Memory
-import com.subbyte.subspectrum.base.RegisterPairStackCode
+import com.subbyte.subspectrum.base.RegisterPairQQCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,7 +25,7 @@ class POPqqTest {
         assertEquals(0xC1.toByte(), instruction.bytes[0])
 
         val instructionTyped = instruction as POPqq
-        assertEquals(RegisterPairStackCode.BC, instructionTyped.destinationRegisterPairCode)
+        assertEquals(RegisterPairQQCode.BC, instructionTyped.destinationRegisterPairCode)
     }
 
     @Test
@@ -35,8 +36,8 @@ class POPqqTest {
 
         val instruction = POPqq(
             address = 0x1000u,
-            bytes = byteArrayOf(0xC1.toByte()),
-            destinationRegisterPairCode = RegisterPairStackCode.BC
+            bytes = DataByteArray(byteArrayOf(0xC1.toByte())),
+            destinationRegisterPairCode = RegisterPairQQCode.BC
         )
 
         instruction.execute()
@@ -54,8 +55,8 @@ class POPqqTest {
 
         val instruction = POPqq(
             address = 0x1000u,
-            bytes = byteArrayOf(0xD1.toByte()),
-            destinationRegisterPairCode = RegisterPairStackCode.DE
+            bytes = DataByteArray(byteArrayOf(0xD1.toByte())),
+            destinationRegisterPairCode = RegisterPairQQCode.DE
         )
 
         instruction.execute()
@@ -73,8 +74,8 @@ class POPqqTest {
 
         val instruction = POPqq(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE1.toByte()),
-            destinationRegisterPairCode = RegisterPairStackCode.HL
+            bytes = DataByteArray(byteArrayOf(0xE1.toByte())),
+            destinationRegisterPairCode = RegisterPairQQCode.HL
         )
 
         instruction.execute()
@@ -92,8 +93,8 @@ class POPqqTest {
 
         val instruction = POPqq(
             address = 0x1000u,
-            bytes = byteArrayOf(0xF1.toByte()),
-            destinationRegisterPairCode = RegisterPairStackCode.AF
+            bytes = DataByteArray(byteArrayOf(0xF1.toByte())),
+            destinationRegisterPairCode = RegisterPairQQCode.AF
         )
 
         instruction.execute()
@@ -107,8 +108,8 @@ class POPqqTest {
     fun toStringFormat() {
         val instruction = POPqq(
             address = 0x0000u,
-            bytes = byteArrayOf(0xC1.toByte()),
-            destinationRegisterPairCode = RegisterPairStackCode.BC
+            bytes = DataByteArray(byteArrayOf(0xC1.toByte())),
+            destinationRegisterPairCode = RegisterPairQQCode.BC
         )
 
         assertEquals("PUSH BC", instruction.toString())

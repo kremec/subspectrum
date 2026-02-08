@@ -7,10 +7,14 @@ import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
+import com.subbyte.subspectrum.units.DataByteArray
+
 data class CPD(
     override val address: Address,
-    override val bytes: ByteArray
+    override val bytes: DataByteArray
 ) : Instruction {
+    override fun getTStates(): Int = 16
+
     override fun execute() {
         val aRegisterValue = Registers.registerSet.getA()
         val hlRegisterPairValue = Registers.registerSet.getHL()
@@ -24,24 +28,20 @@ data class CPD(
 
         Registers.registerSet.setSFlag(comparison < 0.toByte())
         Registers.registerSet.setZFlag(comparison == 0.toByte())
-        Registers.registerSet.setHFlag(((aRegisterValue.toUByte().toInt() and 0x0F) - (sourceMemoryValue.toUByte().toInt() and 0x0F)) < 0)
+        Registers.registerSet.setHFlag(
+            ((aRegisterValue.toUByte().toInt() and 0x0F) - (sourceMemoryValue.toUByte().toInt() and 0x0F)) < 0
+        )
         Registers.registerSet.setPVFlag(bcRegisterPairValue.dec() != 0.toShort())
         Registers.registerSet.setNFlag(true)
     }
 
     override fun toString(): String = "CPD"
 
-    companion object : InstructionDefinition {
-        override val mCycles: Int = 4
-        override val tStates: Int = 16
 
+    companion object : InstructionDefinition {
         override val bitPattern = BitPattern.of("11101101 10101001")
         override fun decode(word: Long, address: Address): Instruction {
-
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
+            val bytes = bitPattern.toInstructionByteArray(word)
 
             return CPD(address, bytes)
         }

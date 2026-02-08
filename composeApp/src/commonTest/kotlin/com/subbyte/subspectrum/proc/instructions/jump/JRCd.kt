@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.jump
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -45,7 +46,7 @@ class JRCdTest {
 
         val instruction = JRCd(
             address = 0x1000u,
-            bytes = byteArrayOf(0x38.toByte(), 0x10.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x38.toByte(), 0x10.toByte())),
             displacement = 0x10
         )
 
@@ -61,7 +62,7 @@ class JRCdTest {
 
         val instruction = JRCd(
             address = 0x1000u,
-            bytes = byteArrayOf(0x38.toByte(), 0x10.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x38.toByte(), 0x10.toByte())),
             displacement = 0x10
         )
 
@@ -77,7 +78,7 @@ class JRCdTest {
 
         val instruction = JRCd(
             address = 0x1000u,
-            bytes = byteArrayOf(0x38.toByte(), 0xF0.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x38.toByte(), 0xF0.toByte())),
             displacement = 0xF0.toByte() // -16
         )
 
@@ -93,7 +94,7 @@ class JRCdTest {
 
         val instruction = JRCd(
             address = 0x1000u,
-            bytes = byteArrayOf(0x38.toByte(), 0xF0.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x38.toByte(), 0xF0.toByte())),
             displacement = 0xF0.toByte() // -16
         )
 
@@ -113,7 +114,7 @@ class JRCdTest {
 
         val instruction = JRCd(
             address = 0x1000u,
-            bytes = byteArrayOf(0x38.toByte(), 0x10.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x38.toByte(), 0x10.toByte())),
             displacement = 0x10
         )
 
@@ -137,7 +138,7 @@ class JRCdTest {
 
         val instruction = JRCd(
             address = 0x1000u,
-            bytes = byteArrayOf(0x38.toByte(), 0x10.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x38.toByte(), 0x10.toByte())),
             displacement = 0x10
         )
 
@@ -154,21 +155,21 @@ class JRCdTest {
     fun toStringFormat() {
         val instruction = JRCd(
             address = 0x0000u,
-            bytes = byteArrayOf(0x38.toByte(), 0x10.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x38.toByte(), 0x10.toByte())),
             displacement = 0x10
         )
 
-        assertEquals("JR C, +16", instruction.toString())
+        assertEquals("JR C, +10h", instruction.toString())
     }
 
     @Test
     fun toStringFormatNegative() {
         val instruction = JRCd(
             address = 0x0000u,
-            bytes = byteArrayOf(0x38.toByte(), 0xF0.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x38.toByte(), 0xF0.toByte())),
             displacement = 0xF0.toByte() // -16
         )
 
-        assertEquals("JR C, -16", instruction.toString())
+        assertEquals("JR C, -10h", instruction.toString())
     }
 }

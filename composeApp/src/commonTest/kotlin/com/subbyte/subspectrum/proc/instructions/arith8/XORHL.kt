@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class XORHLTest {
     @BeforeTest
@@ -33,7 +30,7 @@ class XORHLTest {
 
         val instruction = XORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xAE.toByte())
+            bytes = DataByteArray(byteArrayOf(0xAE.toByte()))
         )
 
         instruction.execute()
@@ -53,7 +50,7 @@ class XORHLTest {
 
         val instruction = XORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xAE.toByte())
+            bytes = DataByteArray(byteArrayOf(0xAE.toByte()))
         )
 
         instruction.execute()
@@ -70,7 +67,7 @@ class XORHLTest {
 
         val instruction = XORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xAE.toByte())
+            bytes = DataByteArray(byteArrayOf(0xAE.toByte()))
         )
 
         instruction.execute()
@@ -87,7 +84,7 @@ class XORHLTest {
 
         val instruction = XORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xAE.toByte())
+            bytes = DataByteArray(byteArrayOf(0xAE.toByte()))
         )
 
         instruction.execute()
@@ -104,7 +101,7 @@ class XORHLTest {
 
         val instruction = XORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xAE.toByte())
+            bytes = DataByteArray(byteArrayOf(0xAE.toByte()))
         )
 
         instruction.execute()
@@ -122,7 +119,7 @@ class XORHLTest {
 
         val instruction = XORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xAE.toByte())
+            bytes = DataByteArray(byteArrayOf(0xAE.toByte()))
         )
 
         instruction.execute()
@@ -140,7 +137,7 @@ class XORHLTest {
 
         val instruction = XORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xAE.toByte())
+            bytes = DataByteArray(byteArrayOf(0xAE.toByte()))
         )
 
         instruction.execute()
@@ -153,7 +150,7 @@ class XORHLTest {
     fun toStringFormat() {
         val instruction = XORHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0xAE.toByte())
+            bytes = DataByteArray(byteArrayOf(0xAE.toByte()))
         )
 
         assertEquals("XOR (HL)", instruction.toString())

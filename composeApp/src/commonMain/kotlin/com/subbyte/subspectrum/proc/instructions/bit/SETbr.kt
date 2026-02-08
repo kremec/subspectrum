@@ -1,44 +1,39 @@
 package com.subbyte.subspectrum.proc.instructions.bit
 
+import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
+import com.subbyte.subspectrum.units.DataByteArray
 import com.subbyte.subspectrum.units.setBit
 
 data class SETbr(
     override val address: Address,
-    override val bytes: ByteArray,
-    val bit: Int,
+    override val bytes: DataByteArray,
+    val bitPosition: Int,
     val sourceRegister: RegisterCode
 ) : Instruction {
+    override fun getTStates(): Int = 8
+
     override fun execute() {
         val currentValue = Registers.registerSet.getRegister(sourceRegister)
-        val newValue = currentValue.setBit(bit, true)
+        val newValue = currentValue.setBit(bitPosition, true)
         Registers.registerSet.setRegister(sourceRegister, newValue)
     }
 
-    override fun toString(): String = "SET $bit, $sourceRegister"
+    override fun toString(): String = "SET $bitPosition, $sourceRegister"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 2
-        override val tStates: Int = 8
-
         override val bitPattern = BitPattern.of("11001011 11bbbrrr")
         override fun decode(word: Long, address: Address): Instruction {
-            val b = bitPattern.get(word, 'b')
-            val r = bitPattern.get(word, 'r')
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val bit = b
-            val sourceRegister = RegisterCode.entries.first { it.code == r }
+            val bitPosition = bitPattern.getBitPosition(word, 'b')
+            val sourceRegister = bitPattern.getRegisterCode(word, 'r')
 
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
-
-            return SETbr(address, bytes, bit, sourceRegister)
+            return SETbr(address, bytes, bitPosition, sourceRegister)
         }
     }
 }

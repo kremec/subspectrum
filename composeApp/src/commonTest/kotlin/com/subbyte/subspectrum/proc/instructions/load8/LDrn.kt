@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.load8
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,7 +27,7 @@ class LDrnTest {
 
         val ldrn = instruction as LDrn
         assertEquals(RegisterCode.B, ldrn.destinationRegister)
-        assertEquals(0xAB.toByte(), ldrn.sourceByte)
+        assertEquals(0xAB.toUByte(), ldrn.sourceUByte)
     }
 
     @Test
@@ -35,9 +36,9 @@ class LDrnTest {
 
         val instruction = LDrn(
             address = 0x1000u,
-            bytes = byteArrayOf(0x06.toByte(), 0xFF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x06.toByte(), 0xFF.toByte())),
             destinationRegister = RegisterCode.B,
-            sourceByte = 0xFF.toByte()
+            sourceUByte = 0xFF.toUByte()
         )
 
         instruction.execute()
@@ -49,9 +50,9 @@ class LDrnTest {
     fun toStringFormat() {
         val instruction = LDrn(
             address = 0x0000u,
-            bytes = byteArrayOf(0x06.toByte(), 0xFF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x06.toByte(), 0xFF.toByte())),
             destinationRegister = RegisterCode.B,
-            sourceByte = 0xFF.toByte()
+            sourceUByte = 0xFF.toUByte()
         )
 
         assertEquals("LD B, FFh", instruction.toString())

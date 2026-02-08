@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.shift
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class SLAIYdTest {
     @BeforeTest
@@ -38,7 +35,7 @@ class SLAIYdTest {
 
         val instruction = SLAIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -60,7 +57,7 @@ class SLAIYdTest {
 
         val instruction = SLAIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -82,7 +79,7 @@ class SLAIYdTest {
 
         val instruction = SLAIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -104,7 +101,7 @@ class SLAIYdTest {
 
         val instruction = SLAIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -121,7 +118,7 @@ class SLAIYdTest {
 
         val instruction = SLAIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -135,10 +132,10 @@ class SLAIYdTest {
     fun toStringFormat() {
         val instruction = SLAIYd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x26.toByte())),
             displacement = 0x00.toByte()
         )
 
-        assertEquals("SLA (IY + 0)", instruction.toString())
+        assertEquals("SLA (IY+00h)", instruction.toString())
     }
 }

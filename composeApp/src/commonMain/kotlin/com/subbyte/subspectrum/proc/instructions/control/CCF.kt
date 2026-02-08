@@ -6,10 +6,14 @@ import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
+import com.subbyte.subspectrum.units.DataByteArray
+
 data class CCF(
     override val address: Address,
-    override val bytes: ByteArray
+    override val bytes: DataByteArray
 ) : Instruction {
+    override fun getTStates(): Int = 4
+
     override fun execute() {
         val cFlagValue = Registers.registerSet.getCFlag()
 
@@ -21,15 +25,9 @@ data class CCF(
     override fun toString(): String = "CCF"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 1
-        override val tStates: Int = 4
-
         override val bitPattern = BitPattern.of("00111111")
         override fun decode(word: Long, address: Address): Instruction {
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
+            val bytes = bitPattern.toInstructionByteArray(word)
 
             return CCF(address, bytes)
         }

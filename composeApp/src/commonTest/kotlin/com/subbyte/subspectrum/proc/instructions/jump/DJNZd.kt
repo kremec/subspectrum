@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.jump
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -45,7 +46,7 @@ class DJNZdTest {
 
         val instruction = DJNZd(
             address = 0x1000u,
-            bytes = byteArrayOf(0x10.toByte(), 0x10.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x10.toByte(), 0x10.toByte())),
             displacement = 0x10
         )
 
@@ -62,7 +63,7 @@ class DJNZdTest {
 
         val instruction = DJNZd(
             address = 0x1000u,
-            bytes = byteArrayOf(0x10.toByte(), 0x10.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x10.toByte(), 0x10.toByte())),
             displacement = 0x10
         )
 
@@ -78,7 +79,7 @@ class DJNZdTest {
 
         val instruction = DJNZd(
             address = 0x1000u,
-            bytes = byteArrayOf(0x10.toByte(), 0xF0.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x10.toByte(), 0xF0.toByte())),
             displacement = 0xF0.toByte() // -16
         )
 
@@ -95,7 +96,7 @@ class DJNZdTest {
 
         val instruction = DJNZd(
             address = 0x1000u,
-            bytes = byteArrayOf(0x10.toByte(), 0x10.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x10.toByte(), 0x10.toByte())),
             displacement = 0x10
         )
 
@@ -112,7 +113,7 @@ class DJNZdTest {
 
         val instruction = DJNZd(
             address = 0x1000u,
-            bytes = byteArrayOf(0x10.toByte(), 0x10.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x10.toByte(), 0x10.toByte())),
             displacement = 0x10
         )
 
@@ -133,7 +134,7 @@ class DJNZdTest {
 
         val instruction = DJNZd(
             address = 0x1000u,
-            bytes = byteArrayOf(0x10.toByte(), 0x10.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x10.toByte(), 0x10.toByte())),
             displacement = 0x10
         )
 
@@ -155,7 +156,7 @@ class DJNZdTest {
 
         val instruction = DJNZd(
             address = 0x1000u,
-            bytes = byteArrayOf(0x10.toByte(), 0x10.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x10.toByte(), 0x10.toByte())),
             displacement = 0x10
         )
 
@@ -172,21 +173,21 @@ class DJNZdTest {
     fun toStringFormat() {
         val instruction = DJNZd(
             address = 0x0000u,
-            bytes = byteArrayOf(0x10.toByte(), 0x05.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x10.toByte(), 0x05.toByte())),
             displacement = 0x05
         )
 
-        assertEquals("DJNZ +5", instruction.toString())
+        assertEquals("DJNZ +05h", instruction.toString())
     }
 
     @Test
     fun toStringFormatNegative() {
         val instruction = DJNZd(
             address = 0x0000u,
-            bytes = byteArrayOf(0x10.toByte(), 0xFB.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x10.toByte(), 0xFB.toByte())),
             displacement = 0xFB.toByte() // -5
         )
 
-        assertEquals("DJNZ -5", instruction.toString())
+        assertEquals("DJNZ -05h", instruction.toString())
     }
 }

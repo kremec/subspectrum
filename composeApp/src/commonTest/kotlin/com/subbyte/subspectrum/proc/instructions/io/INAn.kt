@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.io
 import com.subbyte.subspectrum.base.IO
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,7 +27,7 @@ class INAnTest {
         assertEquals(0xA5.toByte(), instruction.bytes[1])
 
         val inan = instruction as INAn
-        assertEquals(0xA5.toByte(), inan.sourceByte)
+        assertEquals(0xA5.toUByte(), inan.sourceUByte)
     }
 
     @Test
@@ -36,8 +37,8 @@ class INAnTest {
 
         val instruction = INAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDB.toByte(), 0xA5.toByte()),
-            sourceByte = 0xA5.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDB.toByte(), 0xA5.toByte())),
+            sourceUByte = 0xA5.toUByte()
         )
 
         instruction.execute()
@@ -52,8 +53,8 @@ class INAnTest {
 
         val instruction = INAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDB.toByte(), 0x00.toByte()),
-            sourceByte = 0x00.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDB.toByte(), 0x00.toByte())),
+            sourceUByte = 0x00.toUByte()
         )
 
         instruction.execute()
@@ -65,8 +66,8 @@ class INAnTest {
     fun toStringFormat() {
         val instruction = INAn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDB.toByte(), 0xA5.toByte()),
-            sourceByte = 0xA5.toByte()
+            bytes = DataByteArray(byteArrayOf(0xDB.toByte(), 0xA5.toByte())),
+            sourceUByte = 0xA5.toUByte()
         )
 
         assertEquals("IN A, (A5h)", instruction.toString())

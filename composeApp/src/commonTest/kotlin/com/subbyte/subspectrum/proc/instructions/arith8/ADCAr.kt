@@ -3,11 +3,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class ADCArTest {
     @BeforeTest
@@ -37,7 +34,7 @@ class ADCArTest {
 
         val instruction = ADCAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x89.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x89.toByte())),
             sourceRegister = RegisterCode.C
         )
 
@@ -55,7 +52,7 @@ class ADCArTest {
 
         val instruction = ADCAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x89.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x89.toByte())),
             sourceRegister = RegisterCode.C
         )
 
@@ -73,7 +70,7 @@ class ADCArTest {
 
         val instruction = ADCAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -92,7 +89,7 @@ class ADCArTest {
 
         val instruction = ADCAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -111,7 +108,7 @@ class ADCArTest {
 
         val instruction = ADCAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -130,7 +127,7 @@ class ADCArTest {
 
         val instruction = ADCAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -148,7 +145,7 @@ class ADCArTest {
 
         val instruction = ADCAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -167,7 +164,7 @@ class ADCArTest {
 
         val instruction = ADCAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -185,7 +182,7 @@ class ADCArTest {
 
         val instruction = ADCAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -203,7 +200,7 @@ class ADCArTest {
 
         val instruction = ADCAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -222,7 +219,7 @@ class ADCArTest {
 
         val instruction = ADCAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -241,7 +238,7 @@ class ADCArTest {
 
         val instruction = ADCAr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x80.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x80.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -254,7 +251,7 @@ class ADCArTest {
     fun toStringFormat() {
         val instruction = ADCAr(
             address = 0x0000u,
-            bytes = byteArrayOf(0x89.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x89.toByte())),
             sourceRegister = RegisterCode.C
         )
 

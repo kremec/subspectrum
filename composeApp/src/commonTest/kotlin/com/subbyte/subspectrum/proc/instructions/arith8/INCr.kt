@@ -3,11 +3,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class INCrTest {
     @BeforeTest
@@ -35,7 +32,7 @@ class INCrTest {
 
         val instruction = INCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x04.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x04.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -52,7 +49,7 @@ class INCrTest {
 
         val instruction = INCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x04.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x04.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -69,7 +66,7 @@ class INCrTest {
 
         val instruction = INCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x0C.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x0C.toByte())),
             sourceRegister = RegisterCode.C
         )
 
@@ -85,7 +82,7 @@ class INCrTest {
 
         val instruction = INCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x14.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x14.toByte())),
             sourceRegister = RegisterCode.D
         )
 
@@ -101,7 +98,7 @@ class INCrTest {
 
         val instruction = INCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x1C.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x1C.toByte())),
             sourceRegister = RegisterCode.E
         )
 
@@ -117,7 +114,7 @@ class INCrTest {
 
         val instruction = INCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x24.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x24.toByte())),
             sourceRegister = RegisterCode.H
         )
 
@@ -134,7 +131,7 @@ class INCrTest {
 
         val instruction = INCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x2C.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x2C.toByte())),
             sourceRegister = RegisterCode.L
         )
 
@@ -151,7 +148,7 @@ class INCrTest {
 
         val instruction = INCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x3C.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x3C.toByte())),
             sourceRegister = RegisterCode.A
         )
 
@@ -165,7 +162,7 @@ class INCrTest {
     fun toStringFormat() {
         val instruction = INCr(
             address = 0x0000u,
-            bytes = byteArrayOf(0x04.toByte()),
+            bytes = DataByteArray(byteArrayOf(0x04.toByte())),
             sourceRegister = RegisterCode.B
         )
 

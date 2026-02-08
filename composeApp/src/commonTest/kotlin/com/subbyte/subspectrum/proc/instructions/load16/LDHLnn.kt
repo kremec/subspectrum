@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.load16
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,7 +26,7 @@ class LDHLnnTest {
         assertEquals(0x12.toByte(), instruction.bytes[2])
 
         val ldnn = instruction as LDHLnn
-        assertEquals(0x12CD.toShort(), ldnn.sourceWord)
+        assertEquals(0x12CD.toUShort(), ldnn.sourceUWord)
     }
 
     @Test
@@ -35,8 +36,8 @@ class LDHLnnTest {
 
         val instruction = LDHLnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0x2A, 0x34.toByte(), 0x12.toByte()),
-            sourceWord = 0x1234.toShort()
+            bytes = DataByteArray(byteArrayOf(0x2A, 0x34.toByte(), 0x12.toByte())),
+            sourceUWord = 0x1234.toUShort()
         )
 
         instruction.execute()
@@ -49,8 +50,8 @@ class LDHLnnTest {
     fun toStringFormat() {
         val instruction = LDHLnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0x2A, 0x34.toByte(), 0x12.toByte()),
-            sourceWord = 0x1234.toShort()
+            bytes = DataByteArray(byteArrayOf(0x2A, 0x34.toByte(), 0x12.toByte())),
+            sourceUWord = 0x1234.toUShort()
         )
 
         assertEquals("LD HL, (1234h)", instruction.toString())

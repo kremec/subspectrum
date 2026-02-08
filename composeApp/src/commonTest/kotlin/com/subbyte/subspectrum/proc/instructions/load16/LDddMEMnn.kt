@@ -1,8 +1,9 @@
 package com.subbyte.subspectrum.proc.instructions.load16
 
 import com.subbyte.subspectrum.base.Memory
-import com.subbyte.subspectrum.base.RegisterPairCode
+import com.subbyte.subspectrum.base.RegisterPairSSCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,8 +28,8 @@ class LDddMEMnnTest {
         assertEquals(0x34.toByte(), instruction.bytes[3])
 
         val ldnn = instruction as LDddMEMnn
-        assertEquals(RegisterPairCode.BC, ldnn.destinationRegisterPair)
-        assertEquals(0x3412.toShort(), ldnn.sourceWord)
+        assertEquals(RegisterPairSSCode.BC, ldnn.destinationRegisterPair)
+        assertEquals(0x3412.toUShort(), ldnn.sourceUWord)
     }
 
     @Test
@@ -38,9 +39,9 @@ class LDddMEMnnTest {
 
         val instruction = LDddMEMnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4B.toByte(), 0x34.toByte(), 0x12.toByte()),
-            destinationRegisterPair = RegisterPairCode.BC,
-            sourceWord = 0x1234.toShort()
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4B.toByte(), 0x34.toByte(), 0x12.toByte())),
+            destinationRegisterPair = RegisterPairSSCode.BC,
+            sourceUWord = 0x1234.toUShort()
         )
 
         instruction.execute()
@@ -56,9 +57,9 @@ class LDddMEMnnTest {
 
         val instruction = LDddMEMnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x5B.toByte(), 0x00.toByte(), 0x20.toByte()),
-            destinationRegisterPair = RegisterPairCode.DE,
-            sourceWord = 0x2000.toShort()
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x5B.toByte(), 0x00.toByte(), 0x20.toByte())),
+            destinationRegisterPair = RegisterPairSSCode.DE,
+            sourceUWord = 0x2000.toUShort()
         )
 
         instruction.execute()
@@ -74,9 +75,9 @@ class LDddMEMnnTest {
 
         val instruction = LDddMEMnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x6B.toByte(), 0x00.toByte(), 0x30.toByte()),
-            destinationRegisterPair = RegisterPairCode.HL,
-            sourceWord = 0x3000.toShort()
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x6B.toByte(), 0x00.toByte(), 0x30.toByte())),
+            destinationRegisterPair = RegisterPairSSCode.HL,
+            sourceUWord = 0x3000.toUShort()
         )
 
         instruction.execute()
@@ -92,9 +93,9 @@ class LDddMEMnnTest {
 
         val instruction = LDddMEMnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x7B.toByte(), 0x00.toByte(), 0x40.toByte()),
-            destinationRegisterPair = RegisterPairCode.SP,
-            sourceWord = 0x4000.toShort()
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x7B.toByte(), 0x00.toByte(), 0x40.toByte())),
+            destinationRegisterPair = RegisterPairSSCode.SP,
+            sourceUWord = 0x4000.toUShort()
         )
 
         instruction.execute()
@@ -106,9 +107,9 @@ class LDddMEMnnTest {
     fun toStringFormat() {
         val instruction = LDddMEMnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x4B.toByte(), 0x34.toByte(), 0x12.toByte()),
-            destinationRegisterPair = RegisterPairCode.BC,
-            sourceWord = 0x1234.toShort()
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4B.toByte(), 0x34.toByte(), 0x12.toByte())),
+            destinationRegisterPair = RegisterPairSSCode.BC,
+            sourceUWord = 0x1234.toUShort()
         )
 
         assertEquals("LD BC, (1234h)", instruction.toString())

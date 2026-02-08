@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.call
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,7 +34,7 @@ class RETTest {
 
         val instruction = RET(
             address = 0x5000u,
-            bytes = byteArrayOf(0xC9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xC9.toByte()))
         )
 
         instruction.execute()
@@ -53,7 +54,7 @@ class RETTest {
 
         val instruction = RET(
             address = 0x2000u,
-            bytes = byteArrayOf(0xC9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xC9.toByte()))
         )
 
         instruction.execute()
@@ -70,7 +71,7 @@ class RETTest {
 
         val instruction = RET(
             address = 0x3000u,
-            bytes = byteArrayOf(0xC9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xC9.toByte()))
         )
 
         instruction.execute()
@@ -90,7 +91,7 @@ class RETTest {
         // CALL pushes return address onto stack
         val callInstruction = CALLnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x20.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x20.toByte())),
             targetAddress = 0x2000u
         )
         callInstruction.execute()
@@ -102,7 +103,7 @@ class RETTest {
         // RET pops return address from stack
         val retInstruction = RET(
             address = 0x2000u,
-            bytes = byteArrayOf(0xC9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xC9.toByte()))
         )
         retInstruction.execute()
 
@@ -121,7 +122,7 @@ class RETTest {
         
         val call1 = CALLnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x20.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x20.toByte())),
             targetAddress = 0x2000u
         )
         call1.execute()
@@ -133,7 +134,7 @@ class RETTest {
         Registers.specialPurposeRegisters.setPC(0x2003.toShort())
         val call2 = CALLnn(
             address = 0x2000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x30.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x30.toByte())),
             targetAddress = 0x3000u
         )
         call2.execute()
@@ -144,7 +145,7 @@ class RETTest {
         // First RET from 0x3000 back to 0x2003
         val ret1 = RET(
             address = 0x3000u,
-            bytes = byteArrayOf(0xC9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xC9.toByte()))
         )
         ret1.execute()
         
@@ -154,7 +155,7 @@ class RETTest {
         // Second RET from 0x2003 back to 0x1003
         val ret2 = RET(
             address = 0x2003u,
-            bytes = byteArrayOf(0xC9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xC9.toByte()))
         )
         ret2.execute()
         
@@ -186,7 +187,7 @@ class RETTest {
 
             val instruction = RET(
                 address = 0x4000u,
-                bytes = byteArrayOf(0xC9.toByte())
+                bytes = DataByteArray(byteArrayOf(0xC9.toByte()))
             )
             
             instruction.execute()
@@ -200,7 +201,7 @@ class RETTest {
     fun toStringFormat() {
         val instruction = RET(
             address = 0x0000u,
-            bytes = byteArrayOf(0xC9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xC9.toByte()))
         )
 
         assertEquals("RET", instruction.toString())

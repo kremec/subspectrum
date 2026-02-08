@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.ex
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,7 +33,7 @@ class EXSPHLTest {
 
         val instruction = EXSPHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE3.toByte())
+            bytes = DataByteArray(byteArrayOf(0xE3.toByte()))
         )
 
         instruction.execute()
@@ -46,7 +47,7 @@ class EXSPHLTest {
     fun toStringFormat() {
         val instruction = EXSPHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0xE3.toByte())
+            bytes = DataByteArray(byteArrayOf(0xE3.toByte()))
         )
 
         assertEquals("EX (SP), HL", instruction.toString())

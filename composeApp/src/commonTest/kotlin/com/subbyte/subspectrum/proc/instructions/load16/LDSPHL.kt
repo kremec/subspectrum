@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.load16
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,8 +22,6 @@ class LDSPHLTest {
         assertEquals(0x1000u, instruction.address)
         assertEquals(1, instruction.bytes.size)
         assertEquals(0xF9.toByte(), instruction.bytes[0])
-
-        val instructionTyped = instruction as LDSPHL
     }
 
     @Test
@@ -31,7 +30,7 @@ class LDSPHLTest {
 
         val instruction = LDSPHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xF9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xF9.toByte()))
         )
 
         instruction.execute()
@@ -43,7 +42,7 @@ class LDSPHLTest {
     fun toStringFormat() {
         val instruction = LDSPHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0xF9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xF9.toByte()))
         )
 
         assertEquals("LD SP, HL", instruction.toString())

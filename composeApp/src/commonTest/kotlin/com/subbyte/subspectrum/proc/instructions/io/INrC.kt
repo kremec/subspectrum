@@ -4,11 +4,8 @@ import com.subbyte.subspectrum.base.IO
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class INrCTest {
     @BeforeTest
@@ -58,7 +55,7 @@ class INrCTest {
 
         val instruction = INrC(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x78.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x78.toByte())),
             destinationRegister = RegisterCode.A
         )
 
@@ -83,7 +80,7 @@ class INrCTest {
 
         val instruction = INrC(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x40.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x40.toByte())),
             destinationRegister = RegisterCode.B
         )
 
@@ -108,7 +105,7 @@ class INrCTest {
 
         val instruction = INrC(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x50.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x50.toByte())),
             destinationRegister = RegisterCode.D
         )
 
@@ -127,7 +124,7 @@ class INrCTest {
     fun toStringFormat() {
         val instruction = INrC(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x78.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x78.toByte())),
             destinationRegister = RegisterCode.A
         )
 

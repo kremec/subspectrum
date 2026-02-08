@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.shift
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class SRLHLTest {
     @BeforeTest
@@ -33,7 +30,7 @@ class SRLHLTest {
 
         val instruction = SRLHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x3E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x3E.toByte()))
         )
 
         instruction.execute()
@@ -54,7 +51,7 @@ class SRLHLTest {
 
         val instruction = SRLHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x3E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x3E.toByte()))
         )
 
         instruction.execute()
@@ -75,12 +72,15 @@ class SRLHLTest {
 
         val instruction = SRLHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x3E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x3E.toByte()))
         )
 
         instruction.execute()
 
-        assertEquals(0x42.toByte(), Memory.memorySet.getMemoryCell(0x2000u)) // 01000010 (shifted right, MSB set to 0, becomes positive)
+        assertEquals(
+            0x42.toByte(),
+            Memory.memorySet.getMemoryCell(0x2000u)
+        ) // 01000010 (shifted right, MSB set to 0, becomes positive)
         assertFalse(Registers.registerSet.getSFlag()) // S flag reset
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
@@ -96,7 +96,7 @@ class SRLHLTest {
 
         val instruction = SRLHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x3E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x3E.toByte()))
         )
 
         instruction.execute()
@@ -117,7 +117,7 @@ class SRLHLTest {
 
         val instruction = SRLHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x3E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x3E.toByte()))
         )
 
         instruction.execute()
@@ -133,7 +133,7 @@ class SRLHLTest {
 
         val instruction = SRLHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x3E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x3E.toByte()))
         )
 
         instruction.execute()
@@ -146,7 +146,7 @@ class SRLHLTest {
     fun toStringFormat() {
         val instruction = SRLHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x3E.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x3E.toByte()))
         )
 
         assertEquals("SRL (HL)", instruction.toString())

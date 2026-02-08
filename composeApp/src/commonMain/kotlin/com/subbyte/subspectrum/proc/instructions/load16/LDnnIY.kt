@@ -6,40 +6,34 @@ import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
-import com.subbyte.subspectrum.units.Word
-import com.subbyte.subspectrum.units.fromBytes
+import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.UWord
+import com.subbyte.subspectrum.units.displayString
 import com.subbyte.subspectrum.units.toBytes
 
 data class LDnnIY(
     override val address: Address,
-    override val bytes: ByteArray,
-    val destinationWord: Word
+    override val bytes: DataByteArray,
+    val destinationUWord: UWord
 ) : Instruction {
+    override fun getTStates(): Int = 16
+
     override fun execute() {
         val sourceValue = Registers.specialPurposeRegisters.getIY()
         val (sourceLowValue, sourceHighValue) = sourceValue.toBytes()
-        Memory.memorySet.setMemoryCells(destinationWord.toUShort(), byteArrayOf(sourceLowValue, sourceHighValue))
+        Memory.memorySet.setMemoryCells(destinationUWord, byteArrayOf(sourceLowValue, sourceHighValue))
     }
 
-    override fun toString(): String = "LD (${destinationWord.toHexString(HexFormat.UpperCase)}h), IY"
+    override fun toString(): String = "LD (${destinationUWord.displayString()}), IY"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 5
-        override val tStates: Int = 16
-
         override val bitPattern = BitPattern.of("11011101 00100010 llllllll hhhhhhhh")
         override fun decode(word: Long, address: Address): Instruction {
-            val l = bitPattern.get(word, 'l').toByte()
-            val h = bitPattern.get(word, 'h').toByte()
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val destinationWord = Pair(h, l).fromBytes()
+            val destinationUWord = bitPattern.getUWord(word, 'l', 'h')
 
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
-
-            return LDnnIY(address, bytes, destinationWord)
+            return LDnnIY(address, bytes, destinationUWord)
         }
     }
 }

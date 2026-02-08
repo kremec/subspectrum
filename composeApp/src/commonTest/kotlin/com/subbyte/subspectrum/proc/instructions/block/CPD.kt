@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.block
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class CPDTest {
     @BeforeTest
@@ -35,7 +32,7 @@ class CPDTest {
 
         val instruction = CPD(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xA9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xA9.toByte()))
         )
 
         instruction.execute()
@@ -58,7 +55,7 @@ class CPDTest {
 
         val instruction = CPD(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xA9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xA9.toByte()))
         )
 
         instruction.execute()
@@ -78,7 +75,7 @@ class CPDTest {
 
         val instruction = CPD(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xA9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xA9.toByte()))
         )
 
         instruction.execute()
@@ -97,7 +94,7 @@ class CPDTest {
 
         val instruction = CPD(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xA9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xA9.toByte()))
         )
 
         instruction.execute()
@@ -115,7 +112,7 @@ class CPDTest {
 
         val instruction = CPD(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xA9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xA9.toByte()))
         )
 
         instruction.execute()
@@ -127,7 +124,7 @@ class CPDTest {
     fun toStringFormat() {
         val instruction = CPD(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xA9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xA9.toByte()))
         )
 
         assertEquals("CPD", instruction.toString())

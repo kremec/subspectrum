@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.shift
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class RLDTest {
     @BeforeTest
@@ -34,7 +31,7 @@ class RLDTest {
 
         val instruction = RLD(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x6F.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x6F.toByte()))
         )
 
         instruction.execute()
@@ -60,7 +57,7 @@ class RLDTest {
 
         val instruction = RLD(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x6F.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x6F.toByte()))
         )
 
         instruction.execute()
@@ -81,7 +78,7 @@ class RLDTest {
 
         val instruction = RLD(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x6F.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x6F.toByte()))
         )
 
         instruction.execute()
@@ -103,7 +100,7 @@ class RLDTest {
 
         val instruction = RLD(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x6F.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x6F.toByte()))
         )
 
         instruction.execute()
@@ -120,7 +117,7 @@ class RLDTest {
 
         val instruction = RLD(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x6F.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x6F.toByte()))
         )
 
         instruction.execute()
@@ -133,7 +130,7 @@ class RLDTest {
     fun toStringFormat() {
         val instruction = RLD(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x6F.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x6F.toByte()))
         )
 
         assertEquals("RLD", instruction.toString())

@@ -1,8 +1,9 @@
 package com.subbyte.subspectrum.proc.instructions.arith16
 
 import com.subbyte.subspectrum.base.Memory
-import com.subbyte.subspectrum.base.RegisterPairCode
+import com.subbyte.subspectrum.base.RegisterPairSSCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,7 +25,7 @@ class DECssTest {
         assertEquals(0x0B.toByte(), instruction.bytes[0])
 
         val decSs = instruction as DECss
-        assertEquals(RegisterPairCode.BC, decSs.sourceRegisterPairCode)
+        assertEquals(RegisterPairSSCode.BC, decSs.sourceRegisterPairCode)
     }
 
     @Test
@@ -33,8 +34,8 @@ class DECssTest {
 
         val instruction = DECss(
             address = 0x1000u,
-            bytes = byteArrayOf(0x0B.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0x0B.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         instruction.execute()
@@ -48,8 +49,8 @@ class DECssTest {
 
         val instruction = DECss(
             address = 0x1000u,
-            bytes = byteArrayOf(0x1B.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.DE
+            bytes = DataByteArray(byteArrayOf(0x1B.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.DE
         )
 
         instruction.execute()
@@ -63,8 +64,8 @@ class DECssTest {
 
         val instruction = DECss(
             address = 0x1000u,
-            bytes = byteArrayOf(0x2B.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.HL
+            bytes = DataByteArray(byteArrayOf(0x2B.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.HL
         )
 
         instruction.execute()
@@ -78,8 +79,8 @@ class DECssTest {
 
         val instruction = DECss(
             address = 0x1000u,
-            bytes = byteArrayOf(0x3B.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.SP
+            bytes = DataByteArray(byteArrayOf(0x3B.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.SP
         )
 
         instruction.execute()
@@ -91,8 +92,8 @@ class DECssTest {
     fun toStringFormat() {
         val instruction = DECss(
             address = 0x0000u,
-            bytes = byteArrayOf(0x0B.toByte()),
-            sourceRegisterPairCode = RegisterPairCode.BC
+            bytes = DataByteArray(byteArrayOf(0x0B.toByte())),
+            sourceRegisterPairCode = RegisterPairSSCode.BC
         )
 
         assertEquals("DEC BC", instruction.toString())

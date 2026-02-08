@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class ORHLTest {
     @BeforeTest
@@ -33,7 +30,7 @@ class ORHLTest {
 
         val instruction = ORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xB6.toByte())
+            bytes = DataByteArray(byteArrayOf(0xB6.toByte()))
         )
 
         instruction.execute()
@@ -52,7 +49,7 @@ class ORHLTest {
 
         val instruction = ORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xB6.toByte())
+            bytes = DataByteArray(byteArrayOf(0xB6.toByte()))
         )
 
         instruction.execute()
@@ -72,7 +69,7 @@ class ORHLTest {
 
         val instruction = ORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xB6.toByte())
+            bytes = DataByteArray(byteArrayOf(0xB6.toByte()))
         )
 
         instruction.execute()
@@ -89,7 +86,7 @@ class ORHLTest {
 
         val instruction = ORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xB6.toByte())
+            bytes = DataByteArray(byteArrayOf(0xB6.toByte()))
         )
 
         instruction.execute()
@@ -106,7 +103,7 @@ class ORHLTest {
 
         val instruction = ORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xB6.toByte())
+            bytes = DataByteArray(byteArrayOf(0xB6.toByte()))
         )
 
         instruction.execute()
@@ -123,7 +120,7 @@ class ORHLTest {
 
         val instruction = ORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xB6.toByte())
+            bytes = DataByteArray(byteArrayOf(0xB6.toByte()))
         )
 
         instruction.execute()
@@ -141,7 +138,7 @@ class ORHLTest {
 
         val instruction = ORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xB6.toByte())
+            bytes = DataByteArray(byteArrayOf(0xB6.toByte()))
         )
 
         instruction.execute()
@@ -159,7 +156,7 @@ class ORHLTest {
 
         val instruction = ORHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xB6.toByte())
+            bytes = DataByteArray(byteArrayOf(0xB6.toByte()))
         )
 
         instruction.execute()
@@ -172,7 +169,7 @@ class ORHLTest {
     fun toStringFormat() {
         val instruction = ORHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0xB6.toByte())
+            bytes = DataByteArray(byteArrayOf(0xB6.toByte()))
         )
 
         assertEquals("OR (HL)", instruction.toString())

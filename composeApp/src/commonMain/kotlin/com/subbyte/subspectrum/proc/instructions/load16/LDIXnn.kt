@@ -5,37 +5,31 @@ import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
-import com.subbyte.subspectrum.units.Word
-import com.subbyte.subspectrum.units.fromBytes
+import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.UWord
+import com.subbyte.subspectrum.units.displayString
 
 data class LDIXnn(
     override val address: Address,
-    override val bytes: ByteArray,
-    val sourceWord: Word
+    override val bytes: DataByteArray,
+    val sourceUWord: UWord
 ) : Instruction {
+    override fun getTStates(): Int = 14
+
     override fun execute() {
-        Registers.specialPurposeRegisters.setIX(sourceWord)
+        Registers.specialPurposeRegisters.setIX(sourceUWord)
     }
 
-    override fun toString(): String = "LD IX, ${sourceWord.toHexString(HexFormat.UpperCase)}h"
+    override fun toString(): String = "LD IX, ${sourceUWord.displayString()}"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 4
-        override val tStates: Int = 14
-
         override val bitPattern = BitPattern.of("11011101 00100001 llllllll hhhhhhhh")
         override fun decode(word: Long, address: Address): Instruction {
-            val l = bitPattern.get(word, 'l').toByte()
-            val h = bitPattern.get(word, 'h').toByte()
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val sourceWord = Pair(h, l).fromBytes()
+            val sourceUWord = bitPattern.getUWord(word, 'l', 'h')
 
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
-
-            return LDIXnn(address, bytes, sourceWord)
+            return LDIXnn(address, bytes, sourceUWord)
         }
     }
 }

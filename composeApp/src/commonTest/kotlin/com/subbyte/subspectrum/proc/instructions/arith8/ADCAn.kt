@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class ADCAnTest {
     @BeforeTest
@@ -26,7 +23,7 @@ class ADCAnTest {
         assertEquals(0xAB.toByte(), instruction.bytes[1])
 
         val adcAn = instruction as ADCAn
-        assertEquals(0xAB.toByte(), adcAn.sourceByte)
+        assertEquals(0xAB.toUByte(), adcAn.sourceUByte)
     }
 
     @Test
@@ -36,8 +33,8 @@ class ADCAnTest {
 
         val instruction = ADCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCE.toByte(), 0x20.toByte()),
-            sourceByte = 0x20.toByte()
+            bytes = DataByteArray(byteArrayOf(0xCE.toByte(), 0x20.toByte())),
+            sourceUByte = 0x20.toUByte()
         )
 
         instruction.execute()
@@ -53,8 +50,8 @@ class ADCAnTest {
 
         val instruction = ADCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCE.toByte(), 0x20.toByte()),
-            sourceByte = 0x20.toByte()
+            bytes = DataByteArray(byteArrayOf(0xCE.toByte(), 0x20.toByte())),
+            sourceUByte = 0x20.toUByte()
         )
 
         instruction.execute()
@@ -69,8 +66,8 @@ class ADCAnTest {
 
         val instruction = ADCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCE.toByte(), 0x00.toByte()),
-            sourceByte = 0x00.toByte()
+            bytes = DataByteArray(byteArrayOf(0xCE.toByte(), 0x00.toByte())),
+            sourceUByte = 0x00.toUByte()
         )
 
         instruction.execute()
@@ -87,8 +84,8 @@ class ADCAnTest {
 
         val instruction = ADCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCE.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xCE.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -105,8 +102,8 @@ class ADCAnTest {
 
         val instruction = ADCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCE.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xCE.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -123,8 +120,8 @@ class ADCAnTest {
 
         val instruction = ADCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCE.toByte(), 0xFF.toByte()),
-            sourceByte = 0xFF.toByte()
+            bytes = DataByteArray(byteArrayOf(0xCE.toByte(), 0xFF.toByte())),
+            sourceUByte = 0xFF.toUByte()
         )
 
         instruction.execute()
@@ -140,8 +137,8 @@ class ADCAnTest {
 
         val instruction = ADCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCE.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xCE.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -158,8 +155,8 @@ class ADCAnTest {
 
         val instruction = ADCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCE.toByte(), 0x00.toByte()),
-            sourceByte = 0x00.toByte()
+            bytes = DataByteArray(byteArrayOf(0xCE.toByte(), 0x00.toByte())),
+            sourceUByte = 0x00.toUByte()
         )
 
         instruction.execute()
@@ -175,8 +172,8 @@ class ADCAnTest {
 
         val instruction = ADCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCE.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xCE.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -192,8 +189,8 @@ class ADCAnTest {
 
         val instruction = ADCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCE.toByte(), 0xFF.toByte()),
-            sourceByte = 0xFF.toByte()
+            bytes = DataByteArray(byteArrayOf(0xCE.toByte(), 0xFF.toByte())),
+            sourceUByte = 0xFF.toUByte()
         )
 
         instruction.execute()
@@ -210,8 +207,8 @@ class ADCAnTest {
 
         val instruction = ADCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCE.toByte(), 0x20.toByte()),
-            sourceByte = 0x20.toByte()
+            bytes = DataByteArray(byteArrayOf(0xCE.toByte(), 0x20.toByte())),
+            sourceUByte = 0x20.toUByte()
         )
 
         instruction.execute()
@@ -228,8 +225,8 @@ class ADCAnTest {
 
         val instruction = ADCAn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCE.toByte(), 0x20.toByte()),
-            sourceByte = 0x20.toByte()
+            bytes = DataByteArray(byteArrayOf(0xCE.toByte(), 0x20.toByte())),
+            sourceUByte = 0x20.toUByte()
         )
 
         instruction.execute()
@@ -241,10 +238,10 @@ class ADCAnTest {
     fun toStringFormat() {
         val instruction = ADCAn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCE.toByte(), 0xAB.toByte()),
-            sourceByte = 0xAB.toByte()
+            bytes = DataByteArray(byteArrayOf(0xCE.toByte(), 0xAB.toByte())),
+            sourceUByte = 0xAB.toUByte()
         )
 
-        assertEquals("ADC A, -85", instruction.toString())
+        assertEquals("ADC A, ABh", instruction.toString())
     }
 }

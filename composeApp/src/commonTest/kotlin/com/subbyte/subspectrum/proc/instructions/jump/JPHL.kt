@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.jump
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,7 +34,7 @@ class JPHLTest {
 
         val instruction = JPHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xE9.toByte()))
         )
 
         instruction.execute()
@@ -47,7 +48,7 @@ class JPHLTest {
 
         val instruction = JPHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xE9.toByte()))
         )
 
         instruction.execute()
@@ -61,7 +62,7 @@ class JPHLTest {
 
         val instruction = JPHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xE9.toByte()))
         )
 
         instruction.execute()
@@ -80,7 +81,7 @@ class JPHLTest {
 
         val instruction = JPHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xE9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xE9.toByte()))
         )
 
         instruction.execute()
@@ -96,7 +97,7 @@ class JPHLTest {
     fun toStringFormat() {
         val instruction = JPHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0xE9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xE9.toByte()))
         )
 
         assertEquals("JP (HL)", instruction.toString())

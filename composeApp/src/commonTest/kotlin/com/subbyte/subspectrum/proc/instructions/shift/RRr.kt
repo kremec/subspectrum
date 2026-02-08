@@ -3,11 +3,8 @@ package com.subbyte.subspectrum.proc.instructions.shift
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class RRrTest {
     @BeforeTest
@@ -37,13 +34,16 @@ class RRrTest {
 
         val instruction = RRr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x18.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x18.toByte())),
             sourceRegister = RegisterCode.B
         )
 
         instruction.execute()
 
-        assertEquals(0x80.toByte(), Registers.registerSet.getRegister(RegisterCode.B)) // 10000000 (old carry=1 becomes bit 7)
+        assertEquals(
+            0x80.toByte(),
+            Registers.registerSet.getRegister(RegisterCode.B)
+        ) // 10000000 (old carry=1 becomes bit 7)
         assertTrue(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
@@ -59,13 +59,16 @@ class RRrTest {
 
         val instruction = RRr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x18.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x18.toByte())),
             sourceRegister = RegisterCode.B
         )
 
         instruction.execute()
 
-        assertEquals(0x00.toByte(), Registers.registerSet.getRegister(RegisterCode.B)) // 00000000 (old carry=0 becomes bit 7)
+        assertEquals(
+            0x00.toByte(),
+            Registers.registerSet.getRegister(RegisterCode.B)
+        ) // 00000000 (old carry=0 becomes bit 7)
         assertFalse(Registers.registerSet.getSFlag())
         assertTrue(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
@@ -81,13 +84,16 @@ class RRrTest {
 
         val instruction = RRr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x18.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x18.toByte())),
             sourceRegister = RegisterCode.B
         )
 
         instruction.execute()
 
-        assertEquals(0x81.toByte(), Registers.registerSet.getRegister(RegisterCode.B)) // 10000001 (old carry=1 becomes bit 7)
+        assertEquals(
+            0x81.toByte(),
+            Registers.registerSet.getRegister(RegisterCode.B)
+        ) // 10000001 (old carry=1 becomes bit 7)
         assertTrue(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
@@ -103,7 +109,7 @@ class RRrTest {
 
         val instruction = RRr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x18.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x18.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -125,7 +131,7 @@ class RRrTest {
 
         val instruction = RRr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x18.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x18.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -142,7 +148,7 @@ class RRrTest {
 
         val instruction = RRr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x18.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x18.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -156,7 +162,7 @@ class RRrTest {
     fun toStringFormat() {
         val instruction = RRr(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x18.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x18.toByte())),
             sourceRegister = RegisterCode.B
         )
 

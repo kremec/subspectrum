@@ -1,17 +1,22 @@
 package com.subbyte.subspectrum.proc.instructions.load8
 
+import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
+import com.subbyte.subspectrum.units.DataByteArray
+
 data class LDrr(
     override val address: Address,
-    override val bytes: ByteArray,
+    override val bytes: DataByteArray,
     val destinationRegister: RegisterCode,
     val sourceRegister: RegisterCode
 ) : Instruction {
+    override fun getTStates(): Int = 4
+
     override fun execute() {
         val sourceValue = Registers.registerSet.getRegister(sourceRegister)
         Registers.registerSet.setRegister(destinationRegister, sourceValue)
@@ -20,21 +25,12 @@ data class LDrr(
     override fun toString(): String = "LD $destinationRegister, $sourceRegister"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 1
-        override val tStates: Int = 4
-
         override val bitPattern = BitPattern.of("01xxxyyy")
         override fun decode(word: Long, address: Address): Instruction {
-            val x = bitPattern.get(word, 'x')
-            val y = bitPattern.get(word, 'y')
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val destinationRegister = RegisterCode.entries.first { it.code == x }
-            val sourceRegister = RegisterCode.entries.first { it.code == y }
-
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
+            val destinationRegister = bitPattern.getRegisterCode(word, 'x')
+            val sourceRegister = bitPattern.getRegisterCode(word, 'y')
 
             return LDrr(address, bytes, destinationRegister, sourceRegister)
         }

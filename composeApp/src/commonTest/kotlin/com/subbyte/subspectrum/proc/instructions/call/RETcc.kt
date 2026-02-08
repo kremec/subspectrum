@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.call
 import com.subbyte.subspectrum.base.ConditionCode
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,7 +26,7 @@ class RETccTest {
         assertEquals(0xC0.toByte(), instruction.bytes[0])
 
         val retcc = instruction as RETcc
-        assertEquals(ConditionCode.NZ, retcc.condition)
+        assertEquals(ConditionCode.NZ, retcc.conditionCode)
     }
 
     @Test
@@ -34,7 +35,7 @@ class RETccTest {
         val instruction = RETcc.decode(word, 0x1000u)
 
         val retcc = instruction as RETcc
-        assertEquals(ConditionCode.Z, retcc.condition)
+        assertEquals(ConditionCode.Z, retcc.conditionCode)
     }
 
     @Test
@@ -43,7 +44,7 @@ class RETccTest {
         val instruction = RETcc.decode(word, 0x1000u)
 
         val retcc = instruction as RETcc
-        assertEquals(ConditionCode.C, retcc.condition)
+        assertEquals(ConditionCode.C, retcc.conditionCode)
     }
 
     @Test
@@ -52,7 +53,7 @@ class RETccTest {
         val instruction = RETcc.decode(word, 0x1000u)
 
         val retcc = instruction as RETcc
-        assertEquals(ConditionCode.NC, retcc.condition)
+        assertEquals(ConditionCode.NC, retcc.conditionCode)
     }
 
     @Test
@@ -64,8 +65,8 @@ class RETccTest {
 
         val instruction = RETcc(
             address = 0x5000u,
-            bytes = byteArrayOf(0xC0.toByte()),
-            condition = ConditionCode.NZ
+            bytes = DataByteArray(byteArrayOf(0xC0.toByte())),
+            conditionCode = ConditionCode.NZ
         )
 
         instruction.execute()
@@ -84,8 +85,8 @@ class RETccTest {
 
         val instruction = RETcc(
             address = 0x5000u,
-            bytes = byteArrayOf(0xC0.toByte()),
-            condition = ConditionCode.NZ
+            bytes = DataByteArray(byteArrayOf(0xC0.toByte())),
+            conditionCode = ConditionCode.NZ
         )
 
         instruction.execute()
@@ -103,8 +104,8 @@ class RETccTest {
 
         val instruction = RETcc(
             address = 0x3000u,
-            bytes = byteArrayOf(0xC8.toByte()),
-            condition = ConditionCode.Z
+            bytes = DataByteArray(byteArrayOf(0xC8.toByte())),
+            conditionCode = ConditionCode.Z
         )
 
         instruction.execute()
@@ -123,8 +124,8 @@ class RETccTest {
 
         val instruction = RETcc(
             address = 0x3000u,
-            bytes = byteArrayOf(0xC8.toByte()),
-            condition = ConditionCode.Z
+            bytes = DataByteArray(byteArrayOf(0xC8.toByte())),
+            conditionCode = ConditionCode.Z
         )
 
         instruction.execute()
@@ -142,8 +143,8 @@ class RETccTest {
 
         val instruction = RETcc(
             address = 0x4000u,
-            bytes = byteArrayOf(0xD8.toByte()),
-            condition = ConditionCode.C
+            bytes = DataByteArray(byteArrayOf(0xD8.toByte())),
+            conditionCode = ConditionCode.C
         )
 
         instruction.execute()
@@ -161,8 +162,8 @@ class RETccTest {
 
         val instruction = RETcc(
             address = 0x5000u,
-            bytes = byteArrayOf(0xD0.toByte()),
-            condition = ConditionCode.NC
+            bytes = DataByteArray(byteArrayOf(0xD0.toByte())),
+            conditionCode = ConditionCode.NC
         )
 
         instruction.execute()
@@ -180,8 +181,8 @@ class RETccTest {
 
         val instruction = RETcc(
             address = 0x6000u,
-            bytes = byteArrayOf(0xF0.toByte()),
-            condition = ConditionCode.P
+            bytes = DataByteArray(byteArrayOf(0xF0.toByte())),
+            conditionCode = ConditionCode.P
         )
 
         instruction.execute()
@@ -199,8 +200,8 @@ class RETccTest {
 
         val instruction = RETcc(
             address = 0x7000u,
-            bytes = byteArrayOf(0xF8.toByte()),
-            condition = ConditionCode.M
+            bytes = DataByteArray(byteArrayOf(0xF8.toByte())),
+            conditionCode = ConditionCode.M
         )
 
         instruction.execute()
@@ -218,8 +219,8 @@ class RETccTest {
 
         val instruction = RETcc(
             address = 0x8000u,
-            bytes = byteArrayOf(0xE8.toByte()),
-            condition = ConditionCode.PE
+            bytes = DataByteArray(byteArrayOf(0xE8.toByte())),
+            conditionCode = ConditionCode.PE
         )
 
         instruction.execute()
@@ -237,8 +238,8 @@ class RETccTest {
 
         val instruction = RETcc(
             address = 0x9000u,
-            bytes = byteArrayOf(0xE0.toByte()),
-            condition = ConditionCode.PO
+            bytes = DataByteArray(byteArrayOf(0xE0.toByte())),
+            conditionCode = ConditionCode.PO
         )
 
         instruction.execute()
@@ -255,7 +256,7 @@ class RETccTest {
 
         val callInstruction = CALLnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x20.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x20.toByte())),
             targetAddress = 0x2000u
         )
         callInstruction.execute()
@@ -265,8 +266,8 @@ class RETccTest {
 
         val retInstruction = RETcc(
             address = 0x2000u,
-            bytes = byteArrayOf(0xC0.toByte()),
-            condition = ConditionCode.NZ
+            bytes = DataByteArray(byteArrayOf(0xC0.toByte())),
+            conditionCode = ConditionCode.NZ
         )
         retInstruction.execute()
 
@@ -282,7 +283,7 @@ class RETccTest {
 
         val callInstruction = CALLnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x20.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x00.toByte(), 0x20.toByte())),
             targetAddress = 0x2000u
         )
         callInstruction.execute()
@@ -292,8 +293,8 @@ class RETccTest {
 
         val retInstruction = RETcc(
             address = 0x2000u,
-            bytes = byteArrayOf(0xC0.toByte()),
-            condition = ConditionCode.NZ
+            bytes = DataByteArray(byteArrayOf(0xC0.toByte())),
+            conditionCode = ConditionCode.NZ
         )
         retInstruction.execute()
 
@@ -305,8 +306,8 @@ class RETccTest {
     fun toStringFormat() {
         val instruction = RETcc(
             address = 0x0000u,
-            bytes = byteArrayOf(0xC0.toByte()),
-            condition = ConditionCode.NZ
+            bytes = DataByteArray(byteArrayOf(0xC0.toByte())),
+            conditionCode = ConditionCode.NZ
         )
 
         assertEquals("RET NZ", instruction.toString())
@@ -316,8 +317,8 @@ class RETccTest {
     fun toStringFormatZCondition() {
         val instruction = RETcc(
             address = 0x0000u,
-            bytes = byteArrayOf(0xC8.toByte()),
-            condition = ConditionCode.Z
+            bytes = DataByteArray(byteArrayOf(0xC8.toByte())),
+            conditionCode = ConditionCode.Z
         )
 
         assertEquals("RET Z", instruction.toString())

@@ -1,44 +1,38 @@
 package com.subbyte.subspectrum.proc.instructions.load16
 
+import BitPattern
 import com.subbyte.subspectrum.base.Address
-import com.subbyte.subspectrum.base.RegisterPairCode
+import com.subbyte.subspectrum.base.RegisterPairSSCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
-import com.subbyte.subspectrum.units.Word
-import com.subbyte.subspectrum.units.fromBytes
+import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.UWord
+import com.subbyte.subspectrum.units.displayString
 
 data class LDddnn(
     override val address: Address,
-    override val bytes: ByteArray,
-    val destinationRegisterPair: RegisterPairCode,
-    val sourceWord: Word
+    override val bytes: DataByteArray,
+    val destinationRegisterPair: RegisterPairSSCode,
+    val sourceUWord: UWord
 ) : Instruction {
+    override fun getTStates(): Int = 10
+
     override fun execute() {
-        Registers.setRegisterPair(destinationRegisterPair, sourceWord)
+        Registers.setRegisterPair(destinationRegisterPair, sourceUWord)
     }
 
-    override fun toString(): String = "LD $destinationRegisterPair, ${sourceWord.toHexString(HexFormat.UpperCase)}h"
+    override fun toString(): String = "LD $destinationRegisterPair, ${sourceUWord.displayString()}"
 
-    companion object : InstructionDefinition {
-        override val mCycles: Int = 2
-        override val tStates: Int = 10
-
+    companion object Companion : InstructionDefinition {
         override val bitPattern = BitPattern.of("00dd0001 llllllll hhhhhhhh")
         override fun decode(word: Long, address: Address): Instruction {
-            val d = bitPattern.get(word, 'd')
-            val l = bitPattern.get(word, 'l').toByte()
-            val h = bitPattern.get(word, 'h').toByte()
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val destinationRegisterPair = RegisterPairCode.entries.first { it.code == d }
-            val sourceWord = Pair(h, l).fromBytes()
+            val destinationRegisterPair = bitPattern.getRegisterPairSSCode(word, 'd')
+            val sourceUWord = bitPattern.getUWord(word, 'l', 'h')
 
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
-
-            return LDddnn(address, bytes, destinationRegisterPair, sourceWord)
+            return LDddnn(address, bytes, destinationRegisterPair, sourceUWord)
         }
     }
 }

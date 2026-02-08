@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.bit
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class BITbIXdTest {
     @BeforeTest
@@ -31,7 +28,7 @@ class BITbIXdTest {
         assertEquals(0x46.toByte(), instruction.bytes[3])
 
         val bitbIXd = instruction as BITbIXd
-        assertEquals(0, bitbIXd.bit)
+        assertEquals(0, bitbIXd.bitPosition)
         assertEquals(5.toByte(), bitbIXd.displacement)
     }
 
@@ -42,7 +39,7 @@ class BITbIXdTest {
         val instruction = BITbIXd.decode(word, 0x1000u)
 
         val bitbIXd = instruction as BITbIXd
-        assertEquals(7, bitbIXd.bit)
+        assertEquals(7, bitbIXd.bitPosition)
         assertEquals(10.toByte(), bitbIXd.displacement)
     }
 
@@ -53,9 +50,9 @@ class BITbIXdTest {
 
         val instruction = BITbIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x46.toByte()),
-            bit = 0,
-            displacement = 5
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x46.toByte())),
+            bitPosition = 0,
+            displacement = 5.toByte()
         )
 
         instruction.execute()
@@ -72,9 +69,9 @@ class BITbIXdTest {
 
         val instruction = BITbIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x46.toByte()),
-            bit = 0,
-            displacement = 5
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x46.toByte())),
+            bitPosition = 0,
+            displacement = 5.toByte()
         )
 
         instruction.execute()
@@ -91,9 +88,9 @@ class BITbIXdTest {
 
         val instruction = BITbIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x0A.toByte(), 0x7E.toByte()),
-            bit = 7,
-            displacement = 10
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x0A.toByte(), 0x7E.toByte())),
+            bitPosition = 7,
+            displacement = 10.toByte()
         )
 
         instruction.execute()
@@ -110,9 +107,9 @@ class BITbIXdTest {
 
         val instruction = BITbIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x0A.toByte(), 0x7E.toByte()),
-            bit = 7,
-            displacement = 10
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x0A.toByte(), 0x7E.toByte())),
+            bitPosition = 7,
+            displacement = 10.toByte()
         )
 
         instruction.execute()
@@ -131,9 +128,16 @@ class BITbIXdTest {
 
             val instruction = BITbIXd(
                 address = 0x1000u,
-                bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x02.toByte(), (0x40 or (bit shl 3)).toByte()),
-                bit = bit,
-                displacement = 2
+                bytes = DataByteArray(
+                    byteArrayOf(
+                        0xDD.toByte(),
+                        0xCB.toByte(),
+                        0x02.toByte(),
+                        (0x40 or (bit shl 3)).toByte()
+                    )
+                ),
+                bitPosition = bit,
+                displacement = 2.toByte()
             )
 
             instruction.execute()
@@ -151,9 +155,9 @@ class BITbIXdTest {
 
         val instruction = BITbIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0xFB.toByte(), 0x46.toByte()),
-            bit = 0,
-            displacement = -5
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0xFB.toByte(), 0x46.toByte())),
+            bitPosition = 0,
+            displacement = (-5).toByte()
         )
 
         instruction.execute()
@@ -164,28 +168,27 @@ class BITbIXdTest {
     }
 
 
-
     @Test
     fun toStringFormat() {
         val instruction = BITbIXd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x46.toByte()),
-            bit = 0,
-            displacement = 5
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0x46.toByte())),
+            bitPosition = 0,
+            displacement = 5.toByte()
         )
 
-        assertEquals("BIT 0, (IX + 5)", instruction.toString())
+        assertEquals("BIT 0, (IX+05h)", instruction.toString())
     }
 
     @Test
     fun toStringFormatNegativeDisplacement() {
         val instruction = BITbIXd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0xFB.toByte(), 0x46.toByte()),
-            bit = 3,
-            displacement = -5
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0xFB.toByte(), 0x46.toByte())),
+            bitPosition = 3,
+            displacement = (-5).toByte()
         )
 
-        assertEquals("BIT 3, (IX + -5)", instruction.toString())
+        assertEquals("BIT 3, (IX-05h)", instruction.toString())
     }
 }

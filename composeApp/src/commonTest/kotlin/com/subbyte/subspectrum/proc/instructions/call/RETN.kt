@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.call
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,7 +34,7 @@ class RETNTest {
 
         val instruction = RETN(
             address = 0x0066u,
-            bytes = byteArrayOf(0xED.toByte(), 0x45.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x45.toByte()))
         )
 
         instruction.execute()
@@ -50,7 +51,7 @@ class RETNTest {
 
         val instruction = RETN(
             address = 0x0066u,
-            bytes = byteArrayOf(0xED.toByte(), 0x45.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x45.toByte()))
         )
 
         instruction.execute()
@@ -67,7 +68,7 @@ class RETNTest {
 
         val instruction = RETN(
             address = 0x0066u,
-            bytes = byteArrayOf(0xED.toByte(), 0x45.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x45.toByte()))
         )
 
         instruction.execute()
@@ -85,7 +86,7 @@ class RETNTest {
 
         val retn = RETN(
             address = 0x0066u,
-            bytes = byteArrayOf(0xED.toByte(), 0x45.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x45.toByte()))
         )
         retn.execute()
 
@@ -100,7 +101,7 @@ class RETNTest {
 
         val call1 = CALLnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x66.toByte(), 0x00.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x66.toByte(), 0x00.toByte())),
             targetAddress = 0x0066u
         )
         call1.execute()
@@ -111,7 +112,7 @@ class RETNTest {
         Registers.specialPurposeRegisters.setPC(0x0069.toShort())
         val call2 = CALLnn(
             address = 0x0066u,
-            bytes = byteArrayOf(0xCD.toByte(), 0x66.toByte(), 0x00.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCD.toByte(), 0x66.toByte(), 0x00.toByte())),
             targetAddress = 0x0066u
         )
         call2.execute()
@@ -121,7 +122,7 @@ class RETNTest {
 
         val retn1 = RETN(
             address = 0x0066u,
-            bytes = byteArrayOf(0xED.toByte(), 0x45.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x45.toByte()))
         )
         retn1.execute()
 
@@ -130,7 +131,7 @@ class RETNTest {
 
         val retn2 = RETN(
             address = 0x0069u,
-            bytes = byteArrayOf(0xED.toByte(), 0x45.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x45.toByte()))
         )
         retn2.execute()
 
@@ -149,23 +150,23 @@ class RETNTest {
 
         for ((address, expected) in testCases) {
             setup()
-            
+
             val sp = 0xE000.toShort()
             Registers.specialPurposeRegisters.setSP(sp)
-            
+
             val lowByte = (address.toInt() and 0xFF).toByte()
             val highByte = ((address.toInt() shr 8) and 0xFF).toByte()
-            
+
             Memory.memorySet.setMemoryCell(sp.toUShort(), lowByte)
             Memory.memorySet.setMemoryCell((sp + 1).toUShort(), highByte)
 
             val instruction = RETN(
                 address = 0x0066u,
-                bytes = byteArrayOf(0xED.toByte(), 0x45.toByte())
+                bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x45.toByte()))
             )
-            
+
             instruction.execute()
-            
+
             assertEquals(expected, Registers.specialPurposeRegisters.getPC())
             assertEquals((sp + 2).toShort(), Registers.specialPurposeRegisters.getSP())
         }
@@ -175,7 +176,7 @@ class RETNTest {
     fun toStringFormat() {
         val instruction = RETN(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0x45.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x45.toByte()))
         )
 
         assertEquals("RETN", instruction.toString())

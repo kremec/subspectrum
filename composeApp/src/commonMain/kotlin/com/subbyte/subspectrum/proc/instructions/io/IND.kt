@@ -8,10 +8,14 @@ import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
+import com.subbyte.subspectrum.units.DataByteArray
+
 data class IND(
     override val address: Address,
-    override val bytes: ByteArray
+    override val bytes: DataByteArray
 ) : Instruction {
+    override fun getTStates(): Int = 16
+
     override fun execute() {
         val bRegisterValue = Registers.registerSet.getB()
         val cRegisterValue = Registers.registerSet.getC()
@@ -30,16 +34,11 @@ data class IND(
 
     override fun toString(): String = "IND"
 
-    companion object : InstructionDefinition {
-        override val mCycles: Int = 4
-        override val tStates: Int = 16
 
+    companion object : InstructionDefinition {
         override val bitPattern = BitPattern.of("11101101 10101010")
         override fun decode(word: Long, address: Address): Instruction {
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
+            val bytes = bitPattern.toInstructionByteArray(word)
 
             return IND(address, bytes)
         }

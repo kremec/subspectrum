@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class ADDAHLTest {
     @BeforeTest
@@ -33,7 +30,7 @@ class ADDAHLTest {
 
         val instruction = ADDAHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x86.toByte())
+            bytes = DataByteArray(byteArrayOf(0x86.toByte()))
         )
 
         instruction.execute()
@@ -50,7 +47,7 @@ class ADDAHLTest {
 
         val instruction = ADDAHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x86.toByte())
+            bytes = DataByteArray(byteArrayOf(0x86.toByte()))
         )
 
         instruction.execute()
@@ -68,7 +65,7 @@ class ADDAHLTest {
 
         val instruction = ADDAHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x86.toByte())
+            bytes = DataByteArray(byteArrayOf(0x86.toByte()))
         )
 
         instruction.execute()
@@ -85,7 +82,7 @@ class ADDAHLTest {
 
         val instruction = ADDAHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x86.toByte())
+            bytes = DataByteArray(byteArrayOf(0x86.toByte()))
         )
 
         instruction.execute()
@@ -103,7 +100,7 @@ class ADDAHLTest {
 
         val instruction = ADDAHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x86.toByte())
+            bytes = DataByteArray(byteArrayOf(0x86.toByte()))
         )
 
         instruction.execute()
@@ -121,7 +118,7 @@ class ADDAHLTest {
 
         val instruction = ADDAHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x86.toByte())
+            bytes = DataByteArray(byteArrayOf(0x86.toByte()))
         )
 
         instruction.execute()
@@ -138,7 +135,7 @@ class ADDAHLTest {
 
         val instruction = ADDAHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x86.toByte())
+            bytes = DataByteArray(byteArrayOf(0x86.toByte()))
         )
 
         instruction.execute()
@@ -156,7 +153,7 @@ class ADDAHLTest {
 
         val instruction = ADDAHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0x86.toByte())
+            bytes = DataByteArray(byteArrayOf(0x86.toByte()))
         )
 
         instruction.execute()
@@ -168,7 +165,7 @@ class ADDAHLTest {
     fun toStringFormat() {
         val instruction = ADDAHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0x86.toByte())
+            bytes = DataByteArray(byteArrayOf(0x86.toByte()))
         )
 
         assertEquals("ADD A, (HL)", instruction.toString())

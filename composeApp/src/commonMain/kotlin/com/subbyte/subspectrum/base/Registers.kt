@@ -1,7 +1,8 @@
 package com.subbyte.subspectrum.base
 
+import com.subbyte.subspectrum.units.UWord
 import com.subbyte.subspectrum.units.Word
-import com.subbyte.subspectrum.units.fromBytes
+import com.subbyte.subspectrum.units.wordFromBytes
 import com.subbyte.subspectrum.units.getBit
 import com.subbyte.subspectrum.units.setBit
 import com.subbyte.subspectrum.units.toBytes
@@ -40,18 +41,29 @@ enum class ConditionCode(val code: Int) {
     M(0b111)
 }
 
-enum class RegisterPairCode(val code: Int) {
+enum class RegisterPairSSCode(val code: Int) {
     BC(0b00),
     DE(0b01),
     HL(0b10),
     SP(0b11)
 }
-
-enum class RegisterPairStackCode(val code: Int) {
+enum class RegisterPairQQCode(val code: Int) {
     BC(0b00),
     DE(0b01),
     HL(0b10),
     AF(0b11)
+}
+enum class RegisterPairPPCode(val code: Int) {
+    BC(0b00),
+    DE(0b01),
+    IX(0b10),
+    SP(0b11)
+}
+enum class RegisterPairRRCode(val code: Int) {
+    BC(0b00),
+    DE(0b01),
+    IY(0b10),
+    SP(0b11)
 }
 
 data class RegisterSet(
@@ -112,7 +124,7 @@ data class RegisterSet(
         invalidate()
     }
 
-    fun getAF(): Word = Pair(A, F).fromBytes()
+    fun getAF(): Word = Pair(A, F).wordFromBytes()
     fun setAF(value: Word) {
         val bytes = value.toBytes()
         setA(bytes.first)
@@ -120,7 +132,7 @@ data class RegisterSet(
         invalidate()
     }
 
-    fun getBC(): Word = Pair(B, C).fromBytes()
+    fun getBC(): Word = Pair(B, C).wordFromBytes()
     fun setBC(value: Word) {
         val bytes = value.toBytes()
         setB(bytes.first)
@@ -128,7 +140,7 @@ data class RegisterSet(
         invalidate()
     }
 
-    fun getDE(): Word = Pair(D, E).fromBytes()
+    fun getDE(): Word = Pair(D, E).wordFromBytes()
     fun setDE(value: Word) {
         val bytes = value.toBytes()
         setD(bytes.first)
@@ -136,7 +148,7 @@ data class RegisterSet(
         invalidate()
     }
 
-    fun getHL(): Word = Pair(H, L).fromBytes()
+    fun getHL(): Word = Pair(H, L).wordFromBytes()
     fun setHL(value: Word) {
         val bytes = value.toBytes()
         setH(bytes.first)
@@ -153,6 +165,7 @@ data class RegisterSet(
         RegisterCode.H -> H
         RegisterCode.L -> L
     }
+
     fun setRegister(code: RegisterCode, value: Byte) {
         when (code) {
             RegisterCode.A -> A = value
@@ -162,6 +175,19 @@ data class RegisterSet(
             RegisterCode.E -> E = value
             RegisterCode.H -> H = value
             RegisterCode.L -> L = value
+        }
+        invalidate()
+    }
+    fun setRegister(code: RegisterCode, value: UByte) {
+        val registerValue = value.toByte()
+        when (code) {
+            RegisterCode.A -> A = registerValue
+            RegisterCode.B -> B = registerValue
+            RegisterCode.C -> C = registerValue
+            RegisterCode.D -> D = registerValue
+            RegisterCode.E -> E = registerValue
+            RegisterCode.H -> H = registerValue
+            RegisterCode.L -> L = registerValue
         }
         invalidate()
     }
@@ -258,15 +284,33 @@ data class SpecialPurposeRegisters(
         invalidate()
     }
 
+    fun incrementR(count: Int) {
+        if (count <= 0) return
+        val rValue = R.toInt() and 0xFF
+        val newValue = (rValue and 0x80) or ((rValue + count) and 0x7F)
+        R = newValue.toByte()
+        invalidate()
+    }
+
     fun getIX(): Word = IX
     fun setIX(value: Word) {
         IX = value
         invalidate()
     }
 
+    fun setIX(value: UWord) {
+        IX = value.toShort()
+        invalidate()
+    }
+
     fun getIY(): Word = IY
     fun setIY(value: Word) {
         IY = value
+        invalidate()
+    }
+
+    fun setIY(value: UWord) {
+        IY = value.toShort()
         invalidate()
     }
 
@@ -318,64 +362,92 @@ data class SpecialPurposeRegisters(
 object Registers {
     val normalRegisterSet = RegisterSet()
     val shadowRegisterSet = RegisterSet()
-    var registerSet: RegisterSet = normalRegisterSet
+    val registerSet: RegisterSet = normalRegisterSet
     val specialPurposeRegisters: SpecialPurposeRegisters = SpecialPurposeRegisters()
 
-    fun getRegisterPair(code: RegisterPairCode): Word = when (code) {
-        RegisterPairCode.BC -> registerSet.getBC()
-        RegisterPairCode.DE -> registerSet.getDE()
-        RegisterPairCode.HL -> registerSet.getHL()
-        RegisterPairCode.SP -> specialPurposeRegisters.getSP()
+    fun getRegisterPair(code: RegisterPairSSCode): Word = when (code) {
+        RegisterPairSSCode.BC -> registerSet.getBC()
+        RegisterPairSSCode.DE -> registerSet.getDE()
+        RegisterPairSSCode.HL -> registerSet.getHL()
+        RegisterPairSSCode.SP -> specialPurposeRegisters.getSP()
     }
-    fun setRegisterPair(code: RegisterPairCode, value: Word) {
+    fun getRegisterPair(code: RegisterPairQQCode): Word = when (code) {
+        RegisterPairQQCode.BC -> registerSet.getBC()
+        RegisterPairQQCode.DE -> registerSet.getDE()
+        RegisterPairQQCode.HL -> registerSet.getHL()
+        RegisterPairQQCode.AF -> registerSet.getAF()
+    }
+    fun getRegisterPair(code: RegisterPairPPCode): Word = when (code) {
+        RegisterPairPPCode.BC -> registerSet.getBC()
+        RegisterPairPPCode.DE -> registerSet.getDE()
+        RegisterPairPPCode.IX -> specialPurposeRegisters.getIX()
+        RegisterPairPPCode.SP -> specialPurposeRegisters.getSP()
+    }
+    fun getRegisterPair(code: RegisterPairRRCode): Word = when (code) {
+        RegisterPairRRCode.BC -> registerSet.getBC()
+        RegisterPairRRCode.DE -> registerSet.getDE()
+        RegisterPairRRCode.IY -> specialPurposeRegisters.getIY()
+        RegisterPairRRCode.SP -> specialPurposeRegisters.getSP()
+    }
+
+    fun setRegisterPair(code: RegisterPairSSCode, value: Word) {
         when (code) {
-            RegisterPairCode.BC -> {
+            RegisterPairSSCode.BC -> {
                 registerSet.setBC(value)
                 registerSet.invalidate()
             }
-            RegisterPairCode.DE -> {
+            RegisterPairSSCode.DE -> {
                 registerSet.setDE(value)
                 registerSet.invalidate()
             }
-            RegisterPairCode.HL -> {
+            RegisterPairSSCode.HL -> {
                 registerSet.setHL(value)
                 registerSet.invalidate()
             }
-            RegisterPairCode.SP -> {
+            RegisterPairSSCode.SP -> {
                 specialPurposeRegisters.setSP(value)
                 specialPurposeRegisters.invalidate()
             }
         }
     }
-
-    fun getRegisterPair(code: RegisterPairStackCode): Word = when (code) {
-        RegisterPairStackCode.BC -> registerSet.getBC()
-        RegisterPairStackCode.DE -> registerSet.getDE()
-        RegisterPairStackCode.HL -> registerSet.getHL()
-        RegisterPairStackCode.AF -> registerSet.getAF()
-    }
-    fun setRegisterPair(code: RegisterPairStackCode, value: Word) {
+    fun setRegisterPair(code: RegisterPairSSCode, value: UWord) {
         when (code) {
-            RegisterPairStackCode.BC -> {
+            RegisterPairSSCode.BC -> {
+                registerSet.setBC(value.toShort())
+                registerSet.invalidate()
+            }
+            RegisterPairSSCode.DE -> {
+                registerSet.setDE(value.toShort())
+                registerSet.invalidate()
+            }
+            RegisterPairSSCode.HL -> {
+                registerSet.setHL(value.toShort())
+                registerSet.invalidate()
+            }
+            RegisterPairSSCode.SP -> {
+                specialPurposeRegisters.setSP(value.toShort())
+                specialPurposeRegisters.invalidate()
+            }
+        }
+    }
+    fun setRegisterPair(code: RegisterPairQQCode, value: Word) {
+        when (code) {
+            RegisterPairQQCode.BC -> {
                 registerSet.setBC(value)
                 registerSet.invalidate()
             }
-            RegisterPairStackCode.DE -> {
+            RegisterPairQQCode.DE -> {
                 registerSet.setDE(value)
                 registerSet.invalidate()
             }
-            RegisterPairStackCode.HL -> {
+            RegisterPairQQCode.HL -> {
                 registerSet.setHL(value)
                 registerSet.invalidate()
             }
-            RegisterPairStackCode.AF -> {
+            RegisterPairQQCode.AF -> {
                 registerSet.setAF(value)
                 registerSet.invalidate()
             }
         }
-    }
-
-    fun switchRegisterSets() {
-        registerSet = if (registerSet == normalRegisterSet) shadowRegisterSet else normalRegisterSet
     }
 }

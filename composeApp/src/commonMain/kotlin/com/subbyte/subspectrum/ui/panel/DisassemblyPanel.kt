@@ -89,7 +89,11 @@ fun DisassemblyPanel() {
             if (pcRowIndex == -1) return@LaunchedEffect
 
             val visible = lazyListState.layoutInfo.visibleItemsInfo
-            val isPcRowVisible = visible.any { it.index == pcRowIndex } && visible.indexOfFirst { it.index == pcRowIndex } !in listOf(0, visible.size)
+            val isPcRowVisible =
+                visible.any { it.index == pcRowIndex } && visible.indexOfFirst { it.index == pcRowIndex } !in listOf(
+                    0,
+                    visible.size
+                )
             if (isPcRowVisible) return@LaunchedEffect
 
             lazyListState.scrollToItem(pcRowIndex)
@@ -148,7 +152,8 @@ private fun buildDisassemblyRows(): List<DisassemblyRow> {
 
     while (address < 0x10000) {
         try {
-            val instruction = Instructions.decode(address.toUShort())
+            val decodedInstruction = Instructions.decode(address.toUShort())
+            val instruction = decodedInstruction.instruction
             val addressStr =
                 address.toString(16).padStart(4, '0').uppercase()
             val bytesStr = instruction.bytes.joinToString(" ") { byte ->

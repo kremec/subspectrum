@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.load16
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,7 +27,7 @@ class LDIXMEMnnTest {
         assertEquals(0xAB.toByte(), instruction.bytes[3])
 
         val ldnn = instruction as LDIXMEMnn
-        assertEquals(0xABCD.toShort(), ldnn.sourceWord)
+        assertEquals(0xABCD.toUShort(), ldnn.sourceUWord)
     }
 
     @Test
@@ -36,8 +37,8 @@ class LDIXMEMnnTest {
 
         val instruction = LDIXMEMnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x2A.toByte(), 0x34.toByte(), 0x12.toByte()),
-            sourceWord = 0x1234.toShort()
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x2A.toByte(), 0x34.toByte(), 0x12.toByte())),
+            sourceUWord = 0x1234.toUShort()
         )
 
         instruction.execute()
@@ -49,8 +50,8 @@ class LDIXMEMnnTest {
     fun toStringFormat() {
         val instruction = LDIXMEMnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x2A.toByte(), 0x34.toByte(), 0x12.toByte()),
-            sourceWord = 0x1234.toShort()
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x2A.toByte(), 0x34.toByte(), 0x12.toByte())),
+            sourceUWord = 0x1234.toUShort()
         )
 
         assertEquals("LD IX, (1234h)", instruction.toString())

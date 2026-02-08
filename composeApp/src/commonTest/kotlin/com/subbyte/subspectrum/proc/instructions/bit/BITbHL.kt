@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.bit
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class BITbHLTest {
     @BeforeTest
@@ -26,7 +23,7 @@ class BITbHLTest {
         assertEquals(0x46.toByte(), instruction.bytes[1])
 
         val bitbHL = instruction as BITbHL
-        assertEquals(0, bitbHL.bit)
+        assertEquals(0, bitbHL.bitPosition)
     }
 
     @Test
@@ -36,8 +33,8 @@ class BITbHLTest {
 
         val instruction = BITbHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x46.toByte()),
-            bit = 0
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x46.toByte())),
+            bitPosition = 0
         )
 
         instruction.execute()
@@ -54,8 +51,8 @@ class BITbHLTest {
 
         val instruction = BITbHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x46.toByte()),
-            bit = 0
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x46.toByte())),
+            bitPosition = 0
         )
 
         instruction.execute()
@@ -72,8 +69,8 @@ class BITbHLTest {
 
         val instruction = BITbHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x7E.toByte()),
-            bit = 7
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x7E.toByte())),
+            bitPosition = 7
         )
 
         instruction.execute()
@@ -87,8 +84,8 @@ class BITbHLTest {
     fun toStringFormat() {
         val instruction = BITbHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x46.toByte()),
-            bit = 0
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x46.toByte())),
+            bitPosition = 0
         )
 
         assertEquals("BIT 0, (HL)", instruction.toString())

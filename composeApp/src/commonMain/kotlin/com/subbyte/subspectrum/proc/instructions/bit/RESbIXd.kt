@@ -1,46 +1,42 @@
 package com.subbyte.subspectrum.proc.instructions.bit
 
+import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
+import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.displayStringDisplacement
 import com.subbyte.subspectrum.units.setBit
 
 data class RESbIXd(
     override val address: Address,
-    override val bytes: ByteArray,
-    val bit: Int,
+    override val bytes: DataByteArray,
+    val bitPosition: Int,
     val displacement: Byte
 ) : Instruction {
+    override fun getTStates(): Int = 20
+
     override fun execute() {
         val ixValue = Registers.specialPurposeRegisters.getIX()
         val targetAddress = ixValue.plus(displacement).toUShort()
         val memoryValue = Memory.memorySet.getMemoryCell(targetAddress)
-        val newValue = memoryValue.setBit(bit, false)
+        val newValue = memoryValue.setBit(bitPosition, false)
         Memory.memorySet.setMemoryCell(targetAddress, newValue)
     }
 
-    override fun toString(): String = "RES $bit, (IX + $displacement)"
+    override fun toString(): String = "RES $bitPosition, (IX${displacement.displayStringDisplacement()})"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 4
-        override val tStates: Int = 20
-
         override val bitPattern = BitPattern.of("11011101 11001011 dddddddd 10bbb110")
         override fun decode(word: Long, address: Address): Instruction {
-            val b = bitPattern.get(word, 'b')
-            val d = bitPattern.get(word, 'd')
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val bit = b
-            val displacement = d.toByte()
+            val bitPosition = bitPattern.getBitPosition(word, 'b')
+            val displacement = bitPattern.getByte(word, 'd')
 
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
-
-            return RESbIXd(address, bytes, bit, displacement)
+            return RESbIXd(address, bytes, bitPosition, displacement)
         }
     }
 }

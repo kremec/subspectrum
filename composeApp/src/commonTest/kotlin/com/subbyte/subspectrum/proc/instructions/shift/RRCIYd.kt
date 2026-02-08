@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.shift
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class RRCIYdTest {
     @BeforeTest
@@ -38,7 +35,7 @@ class RRCIYdTest {
 
         val instruction = RRCIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x0E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x0E.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -60,13 +57,16 @@ class RRCIYdTest {
 
         val instruction = RRCIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x0E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x0E.toByte())),
             displacement = 0x00.toByte()
         )
 
         instruction.execute()
 
-        assertEquals(0x01.toByte(), Memory.memorySet.getMemoryCell(0x2000u)) // 00000001 (shifted right, bit 0 becomes bit 7)
+        assertEquals(
+            0x01.toByte(),
+            Memory.memorySet.getMemoryCell(0x2000u)
+        ) // 00000001 (shifted right, bit 0 becomes bit 7)
         assertFalse(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
@@ -82,7 +82,7 @@ class RRCIYdTest {
 
         val instruction = RRCIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x0E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x0E.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -104,7 +104,7 @@ class RRCIYdTest {
 
         val instruction = RRCIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x0E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x0E.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -121,7 +121,7 @@ class RRCIYdTest {
 
         val instruction = RRCIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x0E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x0E.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -135,10 +135,10 @@ class RRCIYdTest {
     fun toStringFormat() {
         val instruction = RRCIYd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x0E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x0E.toByte())),
             displacement = 0x00.toByte()
         )
 
-        assertEquals("RRC (IY + 0)", instruction.toString())
+        assertEquals("RRC (IY+00h)", instruction.toString())
     }
 }

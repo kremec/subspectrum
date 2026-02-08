@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.shift
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class RLCHLTest {
     @BeforeTest
@@ -33,7 +30,7 @@ class RLCHLTest {
 
         val instruction = RLCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x06.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x06.toByte()))
         )
 
         instruction.execute()
@@ -54,7 +51,7 @@ class RLCHLTest {
 
         val instruction = RLCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x06.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x06.toByte()))
         )
 
         instruction.execute()
@@ -75,7 +72,7 @@ class RLCHLTest {
 
         val instruction = RLCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x06.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x06.toByte()))
         )
 
         instruction.execute()
@@ -91,7 +88,7 @@ class RLCHLTest {
 
         val instruction = RLCHL(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x06.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x06.toByte()))
         )
 
         instruction.execute()
@@ -104,7 +101,7 @@ class RLCHLTest {
     fun toStringFormat() {
         val instruction = RLCHL(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x06.toByte())
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x06.toByte()))
         )
 
         assertEquals("RLC (HL)", instruction.toString())

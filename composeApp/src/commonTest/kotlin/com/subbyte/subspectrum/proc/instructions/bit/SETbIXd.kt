@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.bit
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -28,7 +29,7 @@ class SETbIXdTest {
         assertEquals(0xC6.toByte(), instruction.bytes[3])
 
         val setbIXd = instruction as SETbIXd
-        assertEquals(0, setbIXd.bit)
+        assertEquals(0, setbIXd.bitPosition)
         assertEquals(5.toByte(), setbIXd.displacement)
     }
 
@@ -38,7 +39,7 @@ class SETbIXdTest {
         val instruction = SETbIXd.decode(word, 0x1000u)
 
         val setbIXd = instruction as SETbIXd
-        assertEquals(7, setbIXd.bit)
+        assertEquals(7, setbIXd.bitPosition)
         assertEquals(10.toByte(), setbIXd.displacement)
     }
 
@@ -50,8 +51,8 @@ class SETbIXdTest {
 
         val instruction = SETbIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0xC6.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0xC6.toByte())),
+            bitPosition = 0,
             displacement = 5
         )
 
@@ -68,8 +69,8 @@ class SETbIXdTest {
 
         val instruction = SETbIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0xC6.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0xC6.toByte())),
+            bitPosition = 0,
             displacement = 5
         )
 
@@ -86,8 +87,8 @@ class SETbIXdTest {
 
         val instruction = SETbIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x0A.toByte(), 0xFE.toByte()),
-            bit = 7,
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x0A.toByte(), 0xFE.toByte())),
+            bitPosition = 7,
             displacement = 10
         )
 
@@ -108,8 +109,8 @@ class SETbIXdTest {
 
         val instruction = SETbIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0xC6.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0xC6.toByte())),
+            bitPosition = 0,
             displacement = 5
         )
 
@@ -131,8 +132,8 @@ class SETbIXdTest {
 
             val instruction = SETbIXd(
                 address = 0x1000u,
-                bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x02.toByte(), (0xC6 or (bit shl 3)).toByte()),
-                bit = bit,
+                bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x02.toByte(), (0xC6 or (bit shl 3)).toByte())),
+                bitPosition = bit,
                 displacement = 2
             )
 
@@ -151,8 +152,8 @@ class SETbIXdTest {
 
         val instruction = SETbIXd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0xFB.toByte(), 0xC6.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0xFB.toByte(), 0xC6.toByte())),
+            bitPosition = 0,
             displacement = -5
         )
 
@@ -165,23 +166,23 @@ class SETbIXdTest {
     fun toStringFormat() {
         val instruction = SETbIXd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0xC6.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x05.toByte(), 0xC6.toByte())),
+            bitPosition = 0,
             displacement = 5
         )
 
-        assertEquals("SET 0, (IX + 5)", instruction.toString())
+        assertEquals("SET 0, (IX+05h)", instruction.toString())
     }
 
     @Test
     fun toStringFormatNegativeDisplacement() {
         val instruction = SETbIXd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0xFB.toByte(), 0xC6.toByte()),
-            bit = 3,
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0xFB.toByte(), 0xC6.toByte())),
+            bitPosition = 3,
             displacement = -5
         )
 
-        assertEquals("SET 3, (IX + -5)", instruction.toString())
+        assertEquals("SET 3, (IX-05h)", instruction.toString())
     }
 }

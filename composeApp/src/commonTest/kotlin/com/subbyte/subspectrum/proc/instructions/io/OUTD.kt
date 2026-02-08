@@ -3,11 +3,8 @@ package com.subbyte.subspectrum.proc.instructions.io
 import com.subbyte.subspectrum.base.IO
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class OUTDTest {
     @BeforeTest
@@ -40,7 +37,7 @@ class OUTDTest {
 
         val instruction = OUTD(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xAB.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xAB.toByte()))
         )
 
         instruction.execute()
@@ -69,7 +66,7 @@ class OUTDTest {
 
         val instruction = OUTD(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xAB.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xAB.toByte()))
         )
 
         instruction.execute()
@@ -90,7 +87,7 @@ class OUTDTest {
     fun toStringFormat() {
         val instruction = OUTD(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xAB.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xAB.toByte()))
         )
 
         assertEquals("OUTD", instruction.toString())

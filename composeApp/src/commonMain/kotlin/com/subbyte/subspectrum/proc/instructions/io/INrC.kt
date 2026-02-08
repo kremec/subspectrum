@@ -8,11 +8,15 @@ import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
+import com.subbyte.subspectrum.units.DataByteArray
+
 data class INrC(
     override val address: Address,
-    override val bytes: ByteArray,
+    override val bytes: DataByteArray,
     val destinationRegister: RegisterCode
 ) : Instruction {
+    override fun getTStates(): Int = 12
+
     override fun execute() {
         val cRegisterValue = Registers.registerSet.getC()
         val sourceIOPortValue = IO.ioPortSet.getIOPort(cRegisterValue.toUByte())
@@ -28,19 +32,11 @@ data class INrC(
     override fun toString(): String = "IN $destinationRegister, (C)"
 
     companion object : InstructionDefinition {
-        override val mCycles: Int = 3
-        override val tStates: Int = 12
-
         override val bitPattern = BitPattern.of("11101101 01rrr000")
         override fun decode(word: Long, address: Address): Instruction {
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
+            val bytes = bitPattern.toInstructionByteArray(word)
 
-            val r = bitPattern.get(word, 'r')
-
-            val destinationRegister = RegisterCode.entries.first { it.code == r }
+            val destinationRegister = bitPattern.getRegisterCode(word, 'r')
 
             return INrC(address, bytes, destinationRegister)
         }

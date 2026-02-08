@@ -2,6 +2,7 @@ package com.subbyte.subspectrum.proc.instructions.load8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,7 +28,7 @@ class LDIXdnTest {
 
         val ldIXdn = instruction as LDIXdn
         assertEquals(0x12.toByte(), ldIXdn.displacement)
-        assertEquals(0xAB.toByte(), ldIXdn.sourceByte)
+        assertEquals(0xAB.toUByte(), ldIXdn.sourceUByte)
     }
 
     @Test
@@ -36,9 +37,9 @@ class LDIXdnTest {
 
         val instruction = LDIXdn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x36.toByte(), 0x05.toByte(), 0xFF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x36.toByte(), 0x05.toByte(), 0xFF.toByte())),
             displacement = 0x05.toByte(),
-            sourceByte = 0xFF.toByte()
+            sourceUByte = 0xFF.toUByte()
         )
 
         instruction.execute()
@@ -50,9 +51,9 @@ class LDIXdnTest {
     fun toStringFormat() {
         val instruction = LDIXdn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xDD.toByte(), 0x36.toByte(), 0x05.toByte(), 0xFF.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x36.toByte(), 0x05.toByte(), 0xFF.toByte())),
             displacement = 0x05.toByte(),
-            sourceByte = 0xFF.toByte()
+            sourceUByte = 0xFF.toUByte()
         )
 
         assertEquals("LD (IX+05h), FFh", instruction.toString())

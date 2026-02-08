@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.call
 import com.subbyte.subspectrum.base.ConditionCode
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,7 +28,7 @@ class CALLccnnTest {
         assertEquals(0x12.toByte(), instruction.bytes[2])
 
         val callccnn = instruction as CALLccnn
-        assertEquals(ConditionCode.NZ, callccnn.condition)
+        assertEquals(ConditionCode.NZ, callccnn.conditionCode)
         assertEquals(0x1234u, callccnn.targetAddress)
     }
 
@@ -37,7 +38,7 @@ class CALLccnnTest {
         val instruction = CALLccnn.decode(word, 0x1000u)
 
         val callccnn = instruction as CALLccnn
-        assertEquals(ConditionCode.Z, callccnn.condition)
+        assertEquals(ConditionCode.Z, callccnn.conditionCode)
         assertEquals(0x5678u, callccnn.targetAddress)
     }
 
@@ -47,7 +48,7 @@ class CALLccnnTest {
         val instruction = CALLccnn.decode(word, 0x1000u)
 
         val callccnn = instruction as CALLccnn
-        assertEquals(ConditionCode.NC, callccnn.condition)
+        assertEquals(ConditionCode.NC, callccnn.conditionCode)
         assertEquals(0x9ABCu, callccnn.targetAddress)
     }
 
@@ -57,7 +58,7 @@ class CALLccnnTest {
         val instruction = CALLccnn.decode(word, 0x1000u)
 
         val callccnn = instruction as CALLccnn
-        assertEquals(ConditionCode.C, callccnn.condition)
+        assertEquals(ConditionCode.C, callccnn.conditionCode)
         assertEquals(0xDEF0u, callccnn.targetAddress)
     }
 
@@ -69,8 +70,8 @@ class CALLccnnTest {
 
         val instruction = CALLccnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xC4.toByte(), 0x56.toByte(), 0x78.toByte()),
-            condition = ConditionCode.NZ,
+            bytes = DataByteArray(byteArrayOf(0xC4.toByte(), 0x56.toByte(), 0x78.toByte())),
+            conditionCode = ConditionCode.NZ,
             targetAddress = 0x5678u
         )
 
@@ -78,10 +79,10 @@ class CALLccnnTest {
 
         // PC should jump to target address
         assertEquals(0x5678, Registers.specialPurposeRegisters.getPC())
-        
+
         // SP should be decremented by 2
         assertEquals(0xFFFC.toShort(), Registers.specialPurposeRegisters.getSP())
-        
+
         // Return address (0x1003) should be pushed onto stack
         assertEquals<Byte>(0x03.toByte(), Memory.memorySet.getMemoryCell(0xFFFCu))
         assertEquals<Byte>(0x10.toByte(), Memory.memorySet.getMemoryCell(0xFFFDu))
@@ -95,8 +96,8 @@ class CALLccnnTest {
 
         val instruction = CALLccnn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xC4.toByte(), 0x56.toByte(), 0x78.toByte()),
-            condition = ConditionCode.NZ,
+            bytes = DataByteArray(byteArrayOf(0xC4.toByte(), 0x56.toByte(), 0x78.toByte())),
+            conditionCode = ConditionCode.NZ,
             targetAddress = 0x5678u
         )
 
@@ -104,7 +105,7 @@ class CALLccnnTest {
 
         // PC should NOT change
         assertEquals<Short>(0x1003, Registers.specialPurposeRegisters.getPC())
-        
+
         // SP should NOT change
         assertEquals(0xFFFE.toShort(), Registers.specialPurposeRegisters.getSP())
     }
@@ -117,8 +118,8 @@ class CALLccnnTest {
 
         val instruction = CALLccnn(
             address = 0x2000u,
-            bytes = byteArrayOf(0xCC.toByte(), 0x34.toByte(), 0x12.toByte()),
-            condition = ConditionCode.Z,
+            bytes = DataByteArray(byteArrayOf(0xCC.toByte(), 0x34.toByte(), 0x12.toByte())),
+            conditionCode = ConditionCode.Z,
             targetAddress = 0x1234u
         )
 
@@ -138,8 +139,8 @@ class CALLccnnTest {
 
         val instruction = CALLccnn(
             address = 0x2000u,
-            bytes = byteArrayOf(0xCC.toByte(), 0x34.toByte(), 0x12.toByte()),
-            condition = ConditionCode.Z,
+            bytes = DataByteArray(byteArrayOf(0xCC.toByte(), 0x34.toByte(), 0x12.toByte())),
+            conditionCode = ConditionCode.Z,
             targetAddress = 0x1234u
         )
 
@@ -157,8 +158,8 @@ class CALLccnnTest {
 
         val instruction = CALLccnn(
             address = 0x3000u,
-            bytes = byteArrayOf(0xDC.toByte(), 0xCD.toByte(), 0xAB.toByte()),
-            condition = ConditionCode.C,
+            bytes = DataByteArray(byteArrayOf(0xDC.toByte(), 0xCD.toByte(), 0xAB.toByte())),
+            conditionCode = ConditionCode.C,
             targetAddress = 0xABCDu
         )
 
@@ -178,8 +179,8 @@ class CALLccnnTest {
 
         val instruction = CALLccnn(
             address = 0x4000u,
-            bytes = byteArrayOf(0xD4.toByte(), 0x01.toByte(), 0xEF.toByte()),
-            condition = ConditionCode.NC,
+            bytes = DataByteArray(byteArrayOf(0xD4.toByte(), 0x01.toByte(), 0xEF.toByte())),
+            conditionCode = ConditionCode.NC,
             targetAddress = 0xEF01u
         )
 
@@ -199,8 +200,8 @@ class CALLccnnTest {
 
         val instruction = CALLccnn(
             address = 0x5000u,
-            bytes = byteArrayOf(0xF4.toByte(), 0x45.toByte(), 0x23.toByte()),
-            condition = ConditionCode.P,
+            bytes = DataByteArray(byteArrayOf(0xF4.toByte(), 0x45.toByte(), 0x23.toByte())),
+            conditionCode = ConditionCode.P,
             targetAddress = 0x2345u
         )
 
@@ -220,8 +221,8 @@ class CALLccnnTest {
 
         val instruction = CALLccnn(
             address = 0x6000u,
-            bytes = byteArrayOf(0xFC.toByte(), 0x89.toByte(), 0x67.toByte()),
-            condition = ConditionCode.M,
+            bytes = DataByteArray(byteArrayOf(0xFC.toByte(), 0x89.toByte(), 0x67.toByte())),
+            conditionCode = ConditionCode.M,
             targetAddress = 0x6789u
         )
 
@@ -241,8 +242,8 @@ class CALLccnnTest {
 
         val instruction = CALLccnn(
             address = 0x7000u,
-            bytes = byteArrayOf(0xEC.toByte(), 0xDE.toByte(), 0xBC.toByte()),
-            condition = ConditionCode.PE,
+            bytes = DataByteArray(byteArrayOf(0xEC.toByte(), 0xDE.toByte(), 0xBC.toByte())),
+            conditionCode = ConditionCode.PE,
             targetAddress = 0xBCDEu
         )
 
@@ -262,8 +263,8 @@ class CALLccnnTest {
 
         val instruction = CALLccnn(
             address = 0x8000u,
-            bytes = byteArrayOf(0xE4.toByte(), 0x12.toByte(), 0xF0.toByte()),
-            condition = ConditionCode.PO,
+            bytes = DataByteArray(byteArrayOf(0xE4.toByte(), 0x12.toByte(), 0xF0.toByte())),
+            conditionCode = ConditionCode.PO,
             targetAddress = 0xF012u
         )
 
@@ -279,8 +280,8 @@ class CALLccnnTest {
     fun toStringFormat() {
         val instruction = CALLccnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xC4.toByte(), 0x34.toByte(), 0x12.toByte()),
-            condition = ConditionCode.NZ,
+            bytes = DataByteArray(byteArrayOf(0xC4.toByte(), 0x34.toByte(), 0x12.toByte())),
+            conditionCode = ConditionCode.NZ,
             targetAddress = 0x1234u
         )
 
@@ -291,8 +292,8 @@ class CALLccnnTest {
     fun toStringFormatZCondition() {
         val instruction = CALLccnn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCC.toByte(), 0x78.toByte(), 0x56.toByte()),
-            condition = ConditionCode.Z,
+            bytes = DataByteArray(byteArrayOf(0xCC.toByte(), 0x78.toByte(), 0x56.toByte())),
+            conditionCode = ConditionCode.Z,
             targetAddress = 0x5678u
         )
 

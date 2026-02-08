@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.bit
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,7 +27,7 @@ class RESbrTest {
         assertEquals(0x80.toByte(), instruction.bytes[1])
 
         val resbr = instruction as RESbr
-        assertEquals(0, resbr.bit)
+        assertEquals(0, resbr.bitPosition)
         assertEquals(RegisterCode.B, resbr.sourceRegister)
     }
 
@@ -35,7 +36,7 @@ class RESbrTest {
         val instruction = RESbr.decode(0xCBBFL, 0x1000u)
 
         val resbr = instruction as RESbr
-        assertEquals(7, resbr.bit)
+        assertEquals(7, resbr.bitPosition)
         assertEquals(RegisterCode.A, resbr.sourceRegister)
     }
 
@@ -45,8 +46,8 @@ class RESbrTest {
 
         val instruction = RESbr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x80.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x80.toByte())),
+            bitPosition = 0,
             sourceRegister = RegisterCode.B
         )
 
@@ -61,8 +62,8 @@ class RESbrTest {
 
         val instruction = RESbr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x80.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x80.toByte())),
+            bitPosition = 0,
             sourceRegister = RegisterCode.B
         )
 
@@ -77,8 +78,8 @@ class RESbrTest {
 
         val instruction = RESbr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0xBF.toByte()),
-            bit = 7,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0xBF.toByte())),
+            bitPosition = 7,
             sourceRegister = RegisterCode.A
         )
 
@@ -97,8 +98,8 @@ class RESbrTest {
 
         val instruction = RESbr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x80.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x80.toByte())),
+            bitPosition = 0,
             sourceRegister = RegisterCode.B
         )
 
@@ -117,8 +118,8 @@ class RESbrTest {
 
             val instruction = RESbr(
                 address = 0x1000u,
-                bytes = byteArrayOf(0xCB.toByte(), (0x80 or (bit shl 3)).toByte()),
-                bit = bit,
+                bytes = DataByteArray(byteArrayOf(0xCB.toByte(), (0x80 or (bit shl 3)).toByte())),
+                bitPosition = bit,
                 sourceRegister = RegisterCode.C
             )
 
@@ -133,8 +134,8 @@ class RESbrTest {
     fun toStringFormat() {
         val instruction = RESbr(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x80.toByte()),
-            bit = 0,
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x80.toByte())),
+            bitPosition = 0,
             sourceRegister = RegisterCode.B
         )
 

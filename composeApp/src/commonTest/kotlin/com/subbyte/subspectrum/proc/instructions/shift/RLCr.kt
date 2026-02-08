@@ -3,11 +3,8 @@ package com.subbyte.subspectrum.proc.instructions.shift
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class RLCrTest {
     @BeforeTest
@@ -36,7 +33,7 @@ class RLCrTest {
 
         val instruction = RLCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x00.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x00.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -57,7 +54,7 @@ class RLCrTest {
 
         val instruction = RLCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x00.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x00.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -78,7 +75,7 @@ class RLCrTest {
 
         val instruction = RLCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x00.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x00.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -94,7 +91,7 @@ class RLCrTest {
 
         val instruction = RLCr(
             address = 0x1000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x00.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x00.toByte())),
             sourceRegister = RegisterCode.B
         )
 
@@ -108,7 +105,7 @@ class RLCrTest {
     fun toStringFormat() {
         val instruction = RLCr(
             address = 0x0000u,
-            bytes = byteArrayOf(0xCB.toByte(), 0x00.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xCB.toByte(), 0x00.toByte())),
             sourceRegister = RegisterCode.B
         )
 

@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.base
 
+import com.subbyte.subspectrum.units.DataByteArray
 import com.subbyte.subspectrum.units.getBit
 import com.subbyte.subspectrum.units.setBit
 import kotlinx.coroutines.channels.BufferOverflow
@@ -8,10 +9,11 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 typealias Address = UShort
+
 val MEMORY_SIZE = Address.MAX_VALUE.toInt() + 1
 
-data class MemorySet (
-    private val memoryCells: ByteArray = ByteArray(MEMORY_SIZE)
+data class MemorySet(
+    private val memoryCells: DataByteArray = DataByteArray(ByteArray(MEMORY_SIZE))
 ) {
     private val _invalidations = MutableSharedFlow<Unit>(
         replay = 0,
@@ -29,6 +31,11 @@ data class MemorySet (
 
     fun setMemoryCell(address: Address, value: Byte) {
         memoryCells[address.toInt()] = value
+        invalidate()
+    }
+
+    fun setMemoryCell(address: Address, value: UByte) {
+        memoryCells[address.toInt()] = value.toByte()
         invalidate()
     }
 
@@ -51,7 +58,7 @@ data class MemorySet (
             )
         }
 
-        data.copyInto(memoryCells, startAddress.toInt())
+        DataByteArray(data).copyInto(memoryCells, startAddress.toInt())
         invalidate()
     }
 

@@ -1,14 +1,19 @@
 package com.subbyte.subspectrum.proc.instructions.ex
 
+import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
+import com.subbyte.subspectrum.units.DataByteArray
+
 data class EXAFAF(
     override val address: Address,
-    override val bytes: ByteArray
+    override val bytes: DataByteArray
 ) : Instruction {
+    override fun getTStates(): Int = 4
+
     override fun execute() {
         val afRegisterPairValue = Registers.normalRegisterSet.getAF()
         val afShadowRegisterPairValue = Registers.shadowRegisterSet.getAF()
@@ -19,17 +24,11 @@ data class EXAFAF(
 
     override fun toString(): String = "EX AF, AF'"
 
-    companion object : InstructionDefinition {
-        override val mCycles: Int = 1
-        override val tStates: Int = 4
 
+    companion object : InstructionDefinition {
         override val bitPattern = BitPattern.of("00001000")
         override fun decode(word: Long, address: Address): Instruction {
-
-            val bytes = ByteArray(bitPattern.byteCount) { i ->
-                val shift = 8 * (bitPattern.byteCount - 1 - i)
-                ((word shr shift) and 0xFF).toByte()
-            }
+            val bytes = bitPattern.toInstructionByteArray(word)
 
             return EXAFAF(address, bytes)
         }

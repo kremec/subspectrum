@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.shift
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class SRAIYdTest {
     @BeforeTest
@@ -38,13 +35,16 @@ class SRAIYdTest {
 
         val instruction = SRAIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte())),
             displacement = 0x00.toByte()
         )
 
         instruction.execute()
 
-        assertEquals(0x01.toByte(), Memory.memorySet.getMemoryCell(0x2000u)) // 00000001 (shifted right, sign bit preserved as 0)
+        assertEquals(
+            0x01.toByte(),
+            Memory.memorySet.getMemoryCell(0x2000u)
+        ) // 00000001 (shifted right, sign bit preserved as 0)
         assertFalse(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
@@ -60,13 +60,16 @@ class SRAIYdTest {
 
         val instruction = SRAIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte())),
             displacement = 0x00.toByte()
         )
 
         instruction.execute()
 
-        assertEquals(0xC2.toByte(), Memory.memorySet.getMemoryCell(0x2000u)) // 11000010 (shifted right, sign bit preserved as 1)
+        assertEquals(
+            0xC2.toByte(),
+            Memory.memorySet.getMemoryCell(0x2000u)
+        ) // 11000010 (shifted right, sign bit preserved as 1)
         assertTrue(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
@@ -82,13 +85,16 @@ class SRAIYdTest {
 
         val instruction = SRAIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte())),
             displacement = 0x00.toByte()
         )
 
         instruction.execute()
 
-        assertEquals(0xC2.toByte(), Memory.memorySet.getMemoryCell(0x2000u)) // 11000010 (shifted right, sign bit preserved as 1)
+        assertEquals(
+            0xC2.toByte(),
+            Memory.memorySet.getMemoryCell(0x2000u)
+        ) // 11000010 (shifted right, sign bit preserved as 1)
         assertTrue(Registers.registerSet.getSFlag())
         assertFalse(Registers.registerSet.getZFlag())
         assertFalse(Registers.registerSet.getHFlag())
@@ -104,7 +110,7 @@ class SRAIYdTest {
 
         val instruction = SRAIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -126,7 +132,7 @@ class SRAIYdTest {
 
         val instruction = SRAIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -143,7 +149,7 @@ class SRAIYdTest {
 
         val instruction = SRAIYd(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte())),
             displacement = 0x00.toByte()
         )
 
@@ -157,10 +163,10 @@ class SRAIYdTest {
     fun toStringFormat() {
         val instruction = SRAIYd(
             address = 0x0000u,
-            bytes = byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte()),
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x2E.toByte())),
             displacement = 0x00.toByte()
         )
 
-        assertEquals("SRA (IY + 0)", instruction.toString())
+        assertEquals("SRA (IY+00h)", instruction.toString())
     }
 }

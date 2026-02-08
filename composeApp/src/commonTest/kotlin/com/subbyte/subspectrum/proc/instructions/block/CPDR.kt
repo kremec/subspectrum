@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.block
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class CPDRTest {
     @BeforeTest
@@ -36,7 +33,7 @@ class CPDRTest {
 
         val instruction = CPDR(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xB9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xB9.toByte()))
         )
 
         instruction.execute()
@@ -61,12 +58,12 @@ class CPDRTest {
 
         val instruction = CPDR(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xB9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xB9.toByte()))
         )
 
         instruction.execute()
 
-        assertEquals(0x0FFE, Registers.specialPurposeRegisters.getPC())
+        assertEquals(0x1000, Registers.specialPurposeRegisters.getPC())
         assertEquals(0x1FFF, Registers.registerSet.getHL())
         assertEquals(0x0002, Registers.registerSet.getBC())
         assertFalse(Registers.registerSet.getSFlag())
@@ -85,12 +82,12 @@ class CPDRTest {
 
         val instruction = CPDR(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xB9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xB9.toByte()))
         )
 
         instruction.execute()
 
-        assertEquals(0x0FFE, Registers.specialPurposeRegisters.getPC())
+        assertEquals(0x1000, Registers.specialPurposeRegisters.getPC())
         assertEquals(0x1FFF, Registers.registerSet.getHL())
         assertEquals(0x0000, Registers.registerSet.getBC())
         assertTrue(Registers.registerSet.getHFlag())
@@ -107,12 +104,12 @@ class CPDRTest {
 
         val instruction = CPDR(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xB9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xB9.toByte()))
         )
 
         instruction.execute()
 
-        assertEquals(0x0FFE, Registers.specialPurposeRegisters.getPC())
+        assertEquals(0x1000, Registers.specialPurposeRegisters.getPC())
         assertFalse(Registers.registerSet.getHFlag())
     }
 
@@ -125,7 +122,7 @@ class CPDRTest {
 
         val instruction = CPDR(
             address = 0x1000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xB9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xB9.toByte()))
         )
 
         instruction.execute()
@@ -137,7 +134,7 @@ class CPDRTest {
     fun toStringFormat() {
         val instruction = CPDR(
             address = 0x0000u,
-            bytes = byteArrayOf(0xED.toByte(), 0xB9.toByte())
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xB9.toByte()))
         )
 
         assertEquals("CPDR", instruction.toString())

@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.load8
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -35,7 +36,7 @@ class LDrrTest {
 
         val instruction = LDrr(
             address = 0x1000u,
-            bytes = byteArrayOf(0x41),
+            bytes = DataByteArray(byteArrayOf(0x41)),
             destinationRegister = RegisterCode.B,
             sourceRegister = RegisterCode.C
         )
@@ -53,7 +54,7 @@ class LDrrTest {
 
         val instruction = LDrr(
             address = 0x2000u,
-            bytes = byteArrayOf(0x57),
+            bytes = DataByteArray(byteArrayOf(0x57)),
             destinationRegister = RegisterCode.D,
             sourceRegister = RegisterCode.A
         )
@@ -68,7 +69,7 @@ class LDrrTest {
     fun toStringFormat() {
         val instruction = LDrr(
             address = 0x0000u,
-            bytes = byteArrayOf(0x41),
+            bytes = DataByteArray(byteArrayOf(0x41)),
             destinationRegister = RegisterCode.B,
             sourceRegister = RegisterCode.C
         )

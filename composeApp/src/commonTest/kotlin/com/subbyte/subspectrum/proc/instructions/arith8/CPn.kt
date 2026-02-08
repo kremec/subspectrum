@@ -2,11 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.arith8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.assertFalse
+import com.subbyte.subspectrum.units.DataByteArray
+import kotlin.test.*
 
 class CPnTest {
     @BeforeTest
@@ -26,7 +23,7 @@ class CPnTest {
         assertEquals(0xAB.toByte(), instruction.bytes[1])
 
         val cpn = instruction as CPn
-        assertEquals(0xAB.toByte(), cpn.sourceByte)
+        assertEquals(0xAB.toUByte(), cpn.sourceUByte)
     }
 
     @Test
@@ -35,8 +32,8 @@ class CPnTest {
 
         val instruction = CPn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFE.toByte(), 0x10.toByte()),
-            sourceByte = 0x10.toByte()
+            bytes = DataByteArray(byteArrayOf(0xFE.toByte(), 0x10.toByte())),
+            sourceUByte = 0x10.toUByte()
         )
 
         instruction.execute()
@@ -52,8 +49,8 @@ class CPnTest {
 
         val instruction = CPn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFE.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xFE.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -69,8 +66,8 @@ class CPnTest {
 
         val instruction = CPn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFE.toByte(), 0x20.toByte()),
-            sourceByte = 0x20.toByte()
+            bytes = DataByteArray(byteArrayOf(0xFE.toByte(), 0x20.toByte())),
+            sourceUByte = 0x20.toUByte()
         )
 
         instruction.execute()
@@ -85,8 +82,8 @@ class CPnTest {
 
         val instruction = CPn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFE.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xFE.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -102,8 +99,8 @@ class CPnTest {
 
         val instruction = CPn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFE.toByte(), 0x01.toByte()),
-            sourceByte = 0x01.toByte()
+            bytes = DataByteArray(byteArrayOf(0xFE.toByte(), 0x01.toByte())),
+            sourceUByte = 0x01.toUByte()
         )
 
         instruction.execute()
@@ -118,8 +115,8 @@ class CPnTest {
 
         val instruction = CPn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFE.toByte(), 0x20.toByte()),
-            sourceByte = 0x20.toByte()
+            bytes = DataByteArray(byteArrayOf(0xFE.toByte(), 0x20.toByte())),
+            sourceUByte = 0x20.toUByte()
         )
 
         instruction.execute()
@@ -134,8 +131,8 @@ class CPnTest {
 
         val instruction = CPn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFE.toByte(), 0x10.toByte()),
-            sourceByte = 0x10.toByte()
+            bytes = DataByteArray(byteArrayOf(0xFE.toByte(), 0x10.toByte())),
+            sourceUByte = 0x10.toUByte()
         )
 
         instruction.execute()
@@ -151,8 +148,8 @@ class CPnTest {
 
         val instruction = CPn(
             address = 0x1000u,
-            bytes = byteArrayOf(0xFE.toByte(), 0x10.toByte()),
-            sourceByte = 0x10.toByte()
+            bytes = DataByteArray(byteArrayOf(0xFE.toByte(), 0x10.toByte())),
+            sourceUByte = 0x10.toUByte()
         )
 
         instruction.execute()
@@ -164,10 +161,10 @@ class CPnTest {
     fun toStringFormat() {
         val instruction = CPn(
             address = 0x0000u,
-            bytes = byteArrayOf(0xFE.toByte(), 0xAB.toByte()),
-            sourceByte = 0xAB.toByte()
+            bytes = DataByteArray(byteArrayOf(0xFE.toByte(), 0xAB.toByte())),
+            sourceUByte = 0xAB.toUByte()
         )
 
-        assertEquals("CP -85", instruction.toString())
+        assertEquals("CP ABh", instruction.toString())
     }
 }

@@ -16,8 +16,8 @@ data class JRd(
     override fun getTStates(): Int = 12
 
     override fun execute() {
-        val baseAddress = address.toShort()
-        val newPC = baseAddress.plus(displacement).toShort()
+        val pcRegisterValue = Registers.specialPurposeRegisters.getPC()
+        val newPC = pcRegisterValue.plus(displacement).toShort()
         Registers.specialPurposeRegisters.setPC(newPC)
     }
 

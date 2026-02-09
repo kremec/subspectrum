@@ -20,9 +20,9 @@ data class JRNCd(
     override fun execute() {
         conditionMet = !Registers.registerSet.getCFlag()
         if (conditionMet) {
-            val baseAddress = address.toShort()
-            val newPC = baseAddress + displacement
-            Registers.specialPurposeRegisters.setPC(newPC.toShort())
+            val pcRegisterValue = Registers.specialPurposeRegisters.getPC()
+            val newPC = pcRegisterValue.plus(displacement).toShort()
+            Registers.specialPurposeRegisters.setPC(newPC)
         }
     }
 

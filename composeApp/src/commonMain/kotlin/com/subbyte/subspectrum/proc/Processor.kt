@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.proc
 
+import androidx.compose.runtime.mutableStateOf
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.base.ULA
@@ -15,7 +16,7 @@ object Processor {
 
     var inHalt: Boolean = false
 
-    var running = false
+    var running = mutableStateOf(false)
 
     fun step() {
         if (NMI_FF && !afterEIDI) {
@@ -142,22 +143,24 @@ object Processor {
     */
 
     fun run(steps: Int) {
-        running = true
+        running.value = true
 
         repeat(steps) {
-            if (!running) return@repeat
+            if (!running.value) return@repeat
             step()
         }
 
-        running = false
+        running.value = false
     }
     fun run() {
-        while(running) {
+        running.value = true
+
+        while(running.value) {
             step()
         }
     }
 
     fun stop() {
-        running = false
+        running.value = false
     }
 }

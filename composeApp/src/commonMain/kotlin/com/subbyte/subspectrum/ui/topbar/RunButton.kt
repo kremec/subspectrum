@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.ui.topbar.components.TopBarButton
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -15,9 +16,11 @@ fun RunButton() {
     val scope = rememberCoroutineScope()
 
     TopBarButton(
-        tooltip = if (Processor.running) "Stop" else "Run",
-        onClick = { scope.launch { if (Processor.running) Processor.stop() else Processor.run() } }
+        tooltip = if (Processor.running.value) "Stop" else "Run",
+        onClick = { scope.launch(Dispatchers.Default) {
+            if (Processor.running.value) Processor.stop() else Processor.run()
+        } }
     ) {
-        Icon(imageVector = if (Processor.running) Icons.Outlined.Stop else Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = if (Processor.running) "Stop" else "Run")
+        Icon(imageVector = if (Processor.running.value) Icons.Outlined.Stop else Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = if (Processor.running.value) "Stop" else "Run")
     }
 }

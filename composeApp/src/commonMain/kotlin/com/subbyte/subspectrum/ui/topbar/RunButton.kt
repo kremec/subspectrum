@@ -21,6 +21,9 @@ fun RunButton() {
             if (Processor.running.value) Processor.stop() else Processor.run()
         } }
     ) {
-        Icon(imageVector = if (Processor.running.value) Icons.Outlined.Stop else Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = if (Processor.running.value) "Stop" else "Run")
+        Icon(
+            imageVector = if (Processor.running.value) Icons.Outlined.Stop else Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+            contentDescription = if (Processor.running.value) "Stop" else "Run"
+        )
     }
 }

@@ -24,7 +24,7 @@ data class LDAR(
         Registers.registerSet.setZFlag(rRegisterValue == 0.toByte())
         Registers.registerSet.setHFlag(false)
         val willTriggerInterrupt = Processor.IFF1 &&
-                ((ULA.currentTState + getTStates()) % ULA.T_STATES_PER_FRAME == 0)
+                ((ULA.currentTStatesInFrame + getTStates()) % ULA.T_STATES_PER_FRAME == 0)
         Registers.registerSet.setPVFlag(if (willTriggerInterrupt) false else Processor.IFF2)
         Registers.registerSet.setNFlag(false)
     }

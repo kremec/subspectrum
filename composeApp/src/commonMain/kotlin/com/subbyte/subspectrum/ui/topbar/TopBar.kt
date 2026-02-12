@@ -11,24 +11,23 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun TopBar() {
-
-
-
     MaterialTheme {
         Column(modifier = Modifier.background(Color.White)) {
-            Spacer(modifier = Modifier.height(25.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = 8.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 LoadRomMenu()
                 LoadProgramButton()
+                Spacer(Modifier.width(20.dp))
                 ResetButton()
                 StepButton()
                 RunButton()
+                Spacer(Modifier.width(20.dp))
+                ScreenButton()
             }
         }
     }

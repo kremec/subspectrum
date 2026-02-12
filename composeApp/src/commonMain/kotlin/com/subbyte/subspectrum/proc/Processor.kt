@@ -6,6 +6,8 @@ import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.base.ULA
 import com.subbyte.subspectrum.proc.instructions.Instructions
 import com.subbyte.subspectrum.units.toBytes
+import kotlinx.coroutines.delay
+import kotlin.time.TimeSource
 
 object Processor {
     var NMI_FF: Boolean = false
@@ -142,21 +144,30 @@ object Processor {
     }
     */
 
-    fun run(steps: Int) {
+    suspend fun run() {
         running.value = true
+        val startTime = TimeSource.Monotonic.markNow()
+        val startTStates = ULA.totalTStates
+        
+        try {
+            while (running.value) {
+                step()
+                
+                if (ULA.isInstructionExecutionRealtime) {
+                    continue
+                }
+                
+                val stepElapsedTStates = ULA.totalTStates - startTStates
+                val expectedNanos = (stepElapsedTStates * 1_000_000_000L) / ULA.CPU_CLOCK_HZ
+                val actualNanos = startTime.elapsedNow().inWholeNanoseconds
 
-        repeat(steps) {
-            if (!running.value) return@repeat
-            step()
-        }
-
-        running.value = false
-    }
-    fun run() {
-        running.value = true
-
-        while(running.value) {
-            step()
+                val behind = expectedNanos - actualNanos
+                if (behind > 0) {
+                    delay((behind + 999_999L) / 1_000_000L)
+                }
+            }
+        } finally {
+            running.value = false
         }
     }
 

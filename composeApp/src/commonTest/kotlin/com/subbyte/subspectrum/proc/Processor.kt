@@ -42,26 +42,6 @@ class ProcessorTest {
     }
 
     @Test
-    fun runMultipleInstructions() {
-        // Program:
-        // 0x0000: LD B, A (0x47) - copy A to B
-        // 0x0001: LD C, B (0x48) - copy B to C
-        // 0x0002: LD D, C (0x51) - copy C to D
-        Memory.memorySet.setMemoryCells(0x0000u, byteArrayOf(0x47, 0x48, 0x51))
-        Registers.specialPurposeRegisters.setPC(0x0000)
-        Registers.registerSet.setA(0x42)
-
-        Processor.run(3)
-
-        // All registers should now be 0x42
-        assertEquals(0x42, Registers.registerSet.getB())
-        assertEquals(0x42, Registers.registerSet.getC())
-        assertEquals(0x42, Registers.registerSet.getD())
-        // PC should be at 0x0003
-        assertEquals(0x0003, Registers.specialPurposeRegisters.getPC())
-    }
-
-    @Test
     fun executesInstructionSequence() {
         // Setup a sequence: LD E, A; LD H, E
         // LD E, A: 01 011 111 = 0x5F

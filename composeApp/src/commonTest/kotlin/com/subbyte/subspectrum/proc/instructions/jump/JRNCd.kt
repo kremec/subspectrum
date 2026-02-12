@@ -41,6 +41,7 @@ class JRNCdTest {
 
     @Test
     fun executeJumpWhenCarryClear() {
+        Registers.specialPurposeRegisters.setPC(0x1000)
         Registers.registerSet.setCFlag(false) // Carry flag clear
 
         val instruction = JRNCd(
@@ -72,6 +73,7 @@ class JRNCdTest {
 
     @Test
     fun executeJumpBackwardWhenCarryClear() {
+        Registers.specialPurposeRegisters.setPC(0x1000)
         Registers.registerSet.setCFlag(false)
 
         val instruction = JRNCd(
@@ -103,6 +105,7 @@ class JRNCdTest {
 
     @Test
     fun executeNoFlagsAffectedWhenJumping() {
+        Registers.specialPurposeRegisters.setPC(0x1000)
         Registers.registerSet.setCFlag(false)
         // Set other flags
         Registers.registerSet.setZFlag(true)

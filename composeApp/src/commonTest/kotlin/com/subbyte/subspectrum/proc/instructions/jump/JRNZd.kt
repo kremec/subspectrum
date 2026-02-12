@@ -41,6 +41,7 @@ class JRNZdTest {
 
     @Test
     fun executeJumpWhenZeroClear() {
+        Registers.specialPurposeRegisters.setPC(0x1000)
         Registers.registerSet.setZFlag(false) // Zero flag clear
 
         val instruction = JRNZd(
@@ -72,6 +73,7 @@ class JRNZdTest {
 
     @Test
     fun executeJumpBackwardWhenZeroClear() {
+        Registers.specialPurposeRegisters.setPC(0x1000)
         Registers.registerSet.setZFlag(false)
 
         val instruction = JRNZd(
@@ -103,6 +105,7 @@ class JRNZdTest {
 
     @Test
     fun executeNoFlagsAffectedWhenJumping() {
+        Registers.specialPurposeRegisters.setPC(0x1000)
         Registers.registerSet.setZFlag(false)
         // Set other flags
         Registers.registerSet.setCFlag(true)

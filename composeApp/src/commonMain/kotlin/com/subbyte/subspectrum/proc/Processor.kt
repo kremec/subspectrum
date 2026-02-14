@@ -20,14 +20,28 @@ object Processor {
 
     var running = mutableStateOf(false)
 
+    var breakpoints = mutableStateOf(setOf<Int>())
+    var currentBreakpoint: Int? = null
+
     fun step() {
+        val pc = Registers.specialPurposeRegisters.getPC()
+        if (breakpoints.value.contains(pc.toInt())) {
+            if (currentBreakpoint != pc.toInt()) {
+                if (running.value) {
+                    running.value = false
+                    currentBreakpoint = pc.toInt()
+                    return
+                }
+            } else {
+                currentBreakpoint = null
+            }
+        }
+
         if (NMI_FF && !afterEIDI) {
             handleNMI()
         }
         inHalt = false
         afterEIDI = false
-
-        val pc = Registers.specialPurposeRegisters.getPC()
 
         val decodedInstruction = Instructions.decode(pc.toUShort())
         Registers.specialPurposeRegisters.incrementR(decodedInstruction.opcodeFetchCount)

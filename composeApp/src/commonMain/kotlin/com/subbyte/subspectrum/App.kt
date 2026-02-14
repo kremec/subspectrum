@@ -22,7 +22,7 @@ fun App() {
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White),
-            initialSplit = 0.4f,
+            initialSplit = 0.5f,
             left = {
                 VerticalSplitPane(
                     modifier = Modifier.fillMaxSize(),

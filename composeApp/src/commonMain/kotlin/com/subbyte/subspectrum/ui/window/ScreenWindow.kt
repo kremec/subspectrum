@@ -23,7 +23,6 @@ import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.ULA
 import com.subbyte.subspectrum.units.getBit
 import kotlinx.coroutines.flow.conflate
-import kotlin.experimental.and
 
 object ScreenWindowState {
     private val _isOpen: MutableState<Boolean> = mutableStateOf(false)
@@ -42,38 +41,6 @@ object ScreenWindowState {
 
 @Composable
 fun ScreenWindowContent() {
-    val ROWS = 24
-    val ROWS_PER_SECTION = 8
-    val COLS = 32
-    val PIXELS_PER_LOCATION = 8
-
-    val COLOR_BLACK = Color(0xFF000000)
-    val COLOR_BLACK_BRIGHT = Color(0xFF000000)
-    val COLOR_BLUE = Color(0xFF0100CE)
-    val COLOR_BLUE_BRIGHT = Color(0xFF0200FD)
-    val COLOR_RED = Color(0xFFCF0100)
-    val COLOR_RED_BRIGHT = Color(0xFFFF0201)
-    val COLOR_MAGENTA = Color(0xFFCF01CE)
-    val COLOR_MAGENTA_BRIGHT = Color(0xFFFF02FD)
-    val COLOR_GREEN = Color(0xFF00CF15)
-    val COLOR_GREEN_BRIGHT = Color(0xFF00FF1C)
-    val COLOR_CYAN = Color(0xFF01CFCF)
-    val COLOR_CYAN_BRIGHT = Color(0xFF02FFFF)
-    val COLOR_YELLOW = Color(0xFFCFCF15)
-    val COLOR_YELLOW_BRIGHT = Color(0xFFFFFF1D)
-    val COLOR_WHITE = Color(0xFFCFCFCF)
-    val COLOR_WHITE_BRIGHT = Color(0xFFFFFFFF)
-    val COLORS = arrayOf(
-        Pair(COLOR_BLACK, COLOR_BLACK_BRIGHT),
-        Pair(COLOR_BLUE, COLOR_BLUE_BRIGHT),
-        Pair(COLOR_RED, COLOR_RED_BRIGHT),
-        Pair(COLOR_MAGENTA, COLOR_MAGENTA_BRIGHT),
-        Pair(COLOR_GREEN, COLOR_GREEN_BRIGHT),
-        Pair(COLOR_CYAN, COLOR_CYAN_BRIGHT),
-        Pair(COLOR_YELLOW, COLOR_YELLOW_BRIGHT),
-        Pair(COLOR_WHITE, COLOR_WHITE_BRIGHT)
-    )
-
     var frameVersion by remember { mutableIntStateOf(0) }
     LaunchedEffect(Unit) {
         ULA.frameInvalidations
@@ -82,19 +49,26 @@ fun ScreenWindowContent() {
     }
 
     val displayFile = remember(frameVersion) {
-        Memory.memorySet.getMemoryCells(0x4000.toUShort(), 0x57FF.toUShort())
+        Memory.memorySet.getMemoryCells(
+            ULA.DISPLAY_FILE_START.toUShort(),
+            ULA.DISPLAY_FILE_END.toUShort(),
+        )
     }
     val attributes = remember(frameVersion) {
-        Memory.memorySet.getMemoryCells(0x5800.toUShort(), 0x5AFF.toUShort())
+        Memory.memorySet.getMemoryCells(
+            ULA.ATTRIBUTE_FILE_START.toUShort(),
+            ULA.ATTRIBUTE_FILE_END.toUShort(),
+        )
     }
     val flashPhaseOn = ULA.isScreenFlashAttributeInverted()
+    val borderColor = ULA.getCurrentBorderColor()
 
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize().background(Color.Black),
         contentAlignment = Alignment.Center
     ) {
-        val totalPixelWidth = COLS * PIXELS_PER_LOCATION
-        val totalPixelHeight = ROWS * PIXELS_PER_LOCATION
+        val totalPixelWidth = ULA.FULL_SCREEN_PIXEL_WIDTH
+        val totalPixelHeight = ULA.FULL_SCREEN_PIXEL_HEIGHT
 
         // Calculate integer pixel size (no fractions = no gaps)
         val pixelSize = minOf(
@@ -111,38 +85,31 @@ fun ScreenWindowContent() {
                 with(LocalDensity.current) { gridHeight.toDp() }
             )
         ) {
-            // Draw each individual pixel
-            for (row in 0 until ROWS) {
-                for (col in 0 until COLS) {
+            drawRect(
+                color = borderColor,
+                topLeft = Offset.Zero,
+                size = size,
+            )
 
-                    val attributeByteIndex = row * COLS + col
+            // Draw each individual pixel
+            for (row in 0 until ULA.FRAME_ATTRIBUTE_ROWS) {
+                for (col in 0 until ULA.FRAME_ATTRIBUTE_COLS) {
+
+                    val attributeByteIndex = row * ULA.FRAME_ATTRIBUTE_COLS + col
                     val attributeByteValue = attributes[attributeByteIndex]
 
-                    val flash = attributeByteValue.getBit(7)
+                    val pixelColors = ULA.resolvePixelColors(attributeByteValue, flashPhaseOn)
 
-                    val bright = attributeByteValue.getBit(6)
+                    for (py in 0 until ULA.PIXELS_PER_ATTRIBUTE) {
+                        for (px in 0 until ULA.PIXELS_PER_ATTRIBUTE) {
+                            val absX = col * ULA.PIXELS_PER_ATTRIBUTE + px
+                            val absY = row * ULA.PIXELS_PER_ATTRIBUTE + py
 
-                    val paperCode = attributeByteValue.and(0b00111000).toInt() shr 3
-                    val paperColor = if (bright) COLORS[paperCode].second else COLORS[paperCode].first
-
-                    val inkCode = attributeByteValue.and(0b00000111).toInt()
-                    val inkColor = if (bright) COLORS[inkCode].second else COLORS[inkCode].first
-                    val effectiveInkColor = if (flash && flashPhaseOn) paperColor else inkColor
-                    val effectivePaperColor = if (flash && flashPhaseOn) inkColor else paperColor
-
-                    for (py in 0 until PIXELS_PER_LOCATION) {
-                        for (px in 0 until PIXELS_PER_LOCATION) {
-                            val absX = col * PIXELS_PER_LOCATION + px
-                            val absY = row * PIXELS_PER_LOCATION + py
-
-                            val section = row / ROWS_PER_SECTION // 0 = top, 1 = middle, 2 = bottom
-                            val rowInSection = row % ROWS_PER_SECTION
-                            val scanline = py
-
-                            val bytesPerSection = PIXELS_PER_LOCATION * ROWS_PER_SECTION * COLS
-                            val scanlineBands = COLS * ROWS_PER_SECTION
-                            val byteIndex =
-                                (section * bytesPerSection) + (scanline * scanlineBands) + (rowInSection * COLS) + col
+                            val byteIndex = ULA.getDisplayFileByteIndex(
+                                attributeRow = row,
+                                attributeCol = col,
+                                pixelRowInAttribute = py,
+                            )
 
                             val byteValue = displayFile[byteIndex]
                             val bitIndex = 7 - px // Bit 7 = leftmost pixel, Bit 0 = rightmost
@@ -150,10 +117,10 @@ fun ScreenWindowContent() {
                             val isInk = byteValue.getBit(bitIndex)
 
                             drawRect(
-                                color = if (isInk) effectiveInkColor else effectivePaperColor,
+                                color = if (isInk) pixelColors.ink else pixelColors.paper,
                                 topLeft = Offset(
-                                    absX * pixelSize.toFloat(),
-                                    absY * pixelSize.toFloat()
+                                    (ULA.BORDER_PIXEL_WIDTH + absX) * pixelSize.toFloat(),
+                                    (ULA.BORDER_PIXEL_HEIGHT + absY) * pixelSize.toFloat(),
                                 ),
                                 size = Size(pixelSize.toFloat(), pixelSize.toFloat())
                             )

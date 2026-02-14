@@ -2,12 +2,17 @@ package com.subbyte.subspectrum.ui.panel
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.proc.instructions.Instructions
 import kotlinx.coroutines.flow.conflate
 
@@ -57,6 +63,7 @@ fun DisassemblyPanel() {
 
         // Header
         Row(modifier = Modifier.padding(4.dp)) {
+            Spacer(Modifier.width(20.dp))
             Text(
                 "ADDRESS",
                 fontFamily = FontFamily.Monospace,
@@ -108,11 +115,35 @@ fun DisassemblyPanel() {
                     val textColor =
                         if (row.startAddress == pc.toInt()) Color.Red else Color.Black
 
+                    val breakpoints by Processor.breakpoints
+                    val breakpointSet = breakpoints.contains(row.startAddress)
+
                     Row(
                         modifier = Modifier
                             .padding(4.dp)
                             .fillMaxWidth()
                     ) {
+                        Box(
+                            modifier = Modifier
+                                .width(20.dp)
+                                .align(Alignment.CenterVertically)
+                                .clickable(
+                                    indication = null,
+                                    interactionSource = null
+                                ) {
+                                    Processor.breakpoints.value = if (breakpointSet)
+                                        breakpoints - row.startAddress
+                                    else
+                                        breakpoints + row.startAddress
+                                }
+                        ) {
+                            Icon(
+                                imageVector = if (breakpointSet) Icons.Filled.Circle else Icons.Outlined.Circle,
+                                contentDescription = if (breakpointSet) "Remove breakpoint" else "Add breakpoint",
+                                modifier = Modifier.size(15.dp)
+                            )
+                        }
+
                         Text(
                             row.address,
                             fontFamily = FontFamily.Monospace,

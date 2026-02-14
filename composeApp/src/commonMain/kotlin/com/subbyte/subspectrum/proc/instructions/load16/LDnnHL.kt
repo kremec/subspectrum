@@ -20,7 +20,7 @@ data class LDnnHL(
 
     override fun execute() {
         val sourceValue = Registers.registerSet.getHL()
-        val (sourceLowValue, sourceHighValue) = sourceValue.toBytes()
+        val (sourceHighValue, sourceLowValue) = sourceValue.toBytes()
         Memory.memorySet.setMemoryCells(destinationUWord, byteArrayOf(sourceLowValue, sourceHighValue))
     }
 

@@ -8,6 +8,7 @@ import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
 import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.wordFromBytes
 
 data class POPIY(
     override val address: Address,
@@ -21,11 +22,11 @@ data class POPIY(
         val sourceHighValue = Memory.memorySet.getMemoryCell(Registers.specialPurposeRegisters.getSP().toUShort())
         Registers.specialPurposeRegisters.setSP(Registers.specialPurposeRegisters.getSP().inc())
 
-        val sourceValue = ((sourceHighValue.toInt() shl 8) or (sourceLowValue.toInt() and 0xFF)).toShort()
+        val sourceValue = Pair(sourceHighValue, sourceLowValue).wordFromBytes()
         Registers.specialPurposeRegisters.setIY(sourceValue)
     }
 
-    override fun toString(): String = "PUSH IY"
+    override fun toString(): String = "POP IY"
 
     companion object : InstructionDefinition {
         override val bitPattern = BitPattern.of("11111101 11100001")

@@ -49,6 +49,6 @@ class POPIYTest {
             bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0xE1.toByte()))
         )
 
-        assertEquals("PUSH IY", instruction.toString())
+        assertEquals("POP IY", instruction.toString())
     }
 }

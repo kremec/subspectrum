@@ -41,8 +41,8 @@ class LDnnHLTest {
 
         instruction.execute()
 
-        assertEquals(0xAB.toByte(), Memory.memorySet.getMemoryCell(0x3412u))
-        assertEquals(0xCD.toByte(), Memory.memorySet.getMemoryCell(0x3413u))
+        assertEquals(0xCD.toByte(), Memory.memorySet.getMemoryCell(0x3412u))
+        assertEquals(0xAB.toByte(), Memory.memorySet.getMemoryCell(0x3413u))
     }
 
     @Test

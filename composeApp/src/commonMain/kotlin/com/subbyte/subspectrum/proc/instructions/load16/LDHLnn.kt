@@ -9,6 +9,7 @@ import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 import com.subbyte.subspectrum.units.DataByteArray
 import com.subbyte.subspectrum.units.UWord
 import com.subbyte.subspectrum.units.displayString
+import com.subbyte.subspectrum.units.wordFromBytes
 
 data class LDHLnn(
     override val address: Address,
@@ -20,7 +21,7 @@ data class LDHLnn(
     override fun execute() {
         val sourceLowValue = Memory.memorySet.getMemoryCell(sourceUWord)
         val sourceHighValue = Memory.memorySet.getMemoryCell(sourceUWord.inc())
-        val sourceValue = ((sourceHighValue.toInt() shl 8) or (sourceLowValue.toInt() and 0xFF)).toShort()
+        val sourceValue = Pair(sourceHighValue, sourceLowValue).wordFromBytes()
         Registers.registerSet.setHL(sourceValue)
     }
 

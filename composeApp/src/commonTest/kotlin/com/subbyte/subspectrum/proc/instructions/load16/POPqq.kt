@@ -112,6 +112,6 @@ class POPqqTest {
             destinationRegisterPairCode = RegisterPairQQCode.BC
         )
 
-        assertEquals("PUSH BC", instruction.toString())
+        assertEquals("POP BC", instruction.toString())
     }
 }

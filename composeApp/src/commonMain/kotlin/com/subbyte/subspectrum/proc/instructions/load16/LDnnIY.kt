@@ -16,18 +16,18 @@ data class LDnnIY(
     override val bytes: DataByteArray,
     val destinationUWord: UWord
 ) : Instruction {
-    override fun getTStates(): Int = 16
+    override fun getTStates(): Int = 20
 
     override fun execute() {
         val sourceValue = Registers.specialPurposeRegisters.getIY()
-        val (sourceLowValue, sourceHighValue) = sourceValue.toBytes()
+        val (sourceHighValue, sourceLowValue) = sourceValue.toBytes()
         Memory.memorySet.setMemoryCells(destinationUWord, byteArrayOf(sourceLowValue, sourceHighValue))
     }
 
     override fun toString(): String = "LD (${destinationUWord.displayString()}), IY"
 
     companion object : InstructionDefinition {
-        override val bitPattern = BitPattern.of("11011101 00100010 llllllll hhhhhhhh")
+        override val bitPattern = BitPattern.of("11111101 00100010 llllllll hhhhhhhh")
         override fun decode(word: Long, address: Address): Instruction {
             val bytes = bitPattern.toInstructionByteArray(word)
 

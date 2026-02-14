@@ -46,8 +46,8 @@ class LDnnddTest {
 
         instruction.execute()
 
-        assertEquals(0xAB.toByte(), Memory.memorySet.getMemoryCell(0x3412u))
-        assertEquals(0xCD.toByte(), Memory.memorySet.getMemoryCell(0x3413u))
+        assertEquals(0xCD.toByte(), Memory.memorySet.getMemoryCell(0x3412u))
+        assertEquals(0xAB.toByte(), Memory.memorySet.getMemoryCell(0x3413u))
     }
 
     @Test
@@ -64,8 +64,8 @@ class LDnnddTest {
 
         instruction.execute()
 
-        assertEquals(0x12.toByte(), Memory.memorySet.getMemoryCell(0x2000u))
-        assertEquals(0x34.toByte(), Memory.memorySet.getMemoryCell(0x2001u))
+        assertEquals(0x34.toByte(), Memory.memorySet.getMemoryCell(0x2000u))
+        assertEquals(0x12.toByte(), Memory.memorySet.getMemoryCell(0x2001u))
     }
 
     @Test
@@ -82,8 +82,8 @@ class LDnnddTest {
 
         instruction.execute()
 
-        assertEquals(0xFE.toByte(), Memory.memorySet.getMemoryCell(0x3000u))
-        assertEquals(0xDC.toByte(), Memory.memorySet.getMemoryCell(0x3001u))
+        assertEquals(0xDC.toByte(), Memory.memorySet.getMemoryCell(0x3000u))
+        assertEquals(0xFE.toByte(), Memory.memorySet.getMemoryCell(0x3001u))
     }
 
     @Test

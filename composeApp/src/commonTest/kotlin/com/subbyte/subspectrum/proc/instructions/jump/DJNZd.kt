@@ -76,6 +76,7 @@ class DJNZdTest {
     @Test
     fun executeDecrementAndJumpBackward() {
         Registers.registerSet.setB(0x03) // B = 3
+        Registers.specialPurposeRegisters.setPC(0x1000)
 
         val instruction = DJNZd(
             address = 0x1000u,

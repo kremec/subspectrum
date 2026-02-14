@@ -49,6 +49,6 @@ class POPIXTest {
             bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0xE1.toByte()))
         )
 
-        assertEquals("PUSH IX", instruction.toString())
+        assertEquals("POP IX", instruction.toString())
     }
 }

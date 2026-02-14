@@ -24,9 +24,9 @@ data class DJNZd(
 
         jumpOccurred = result != 0.toByte()
         if (jumpOccurred) {
-            val baseAddress = address.toShort()
-            val newPC = baseAddress + displacement
-            Registers.specialPurposeRegisters.setPC(newPC.toShort())
+            val pcRegisterValue = Registers.specialPurposeRegisters.getPC()
+            val newPC = pcRegisterValue.plus(displacement).toShort()
+            Registers.specialPurposeRegisters.setPC(newPC)
         }
     }
 

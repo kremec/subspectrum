@@ -16,11 +16,11 @@ data class LDnnIX(
     override val bytes: DataByteArray,
     val destinationUWord: UWord
 ) : Instruction {
-    override fun getTStates(): Int = 16
+    override fun getTStates(): Int = 20
 
     override fun execute() {
         val sourceValue = Registers.specialPurposeRegisters.getIX()
-        val (sourceLowValue, sourceHighValue) = sourceValue.toBytes()
+        val (sourceHighValue, sourceLowValue) = sourceValue.toBytes()
         Memory.memorySet.setMemoryCells(destinationUWord, byteArrayOf(sourceLowValue, sourceHighValue))
     }
 

@@ -22,7 +22,7 @@ data class LDnndd(
 
     override fun execute() {
         val sourceValue = Registers.getRegisterPair(sourceRegisterPairCode)
-        val (sourceLowValue, sourceHighValue) = sourceValue.toBytes()
+        val (sourceHighValue, sourceLowValue) = sourceValue.toBytes()
         Memory.memorySet.setMemoryCells(destinationUWord, byteArrayOf(sourceLowValue, sourceHighValue))
     }
 

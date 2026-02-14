@@ -9,6 +9,7 @@ import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 import com.subbyte.subspectrum.units.DataByteArray
 import com.subbyte.subspectrum.units.UWord
 import com.subbyte.subspectrum.units.displayString
+import com.subbyte.subspectrum.units.wordFromBytes
 
 data class LDIYMEMnn(
     override val address: Address,
@@ -20,14 +21,14 @@ data class LDIYMEMnn(
     override fun execute() {
         val sourceLowValue = Memory.memorySet.getMemoryCell(sourceUWord)
         val sourceHighValue = Memory.memorySet.getMemoryCell(sourceUWord.inc())
-        val sourceValue = ((sourceHighValue.toInt() shl 8) or (sourceLowValue.toInt() and 0xFF)).toShort()
+        val sourceValue = Pair(sourceHighValue, sourceLowValue).wordFromBytes()
         Registers.specialPurposeRegisters.setIY(sourceValue)
     }
 
     override fun toString(): String = "LD IY, (${sourceUWord.displayString()})"
 
     companion object : InstructionDefinition {
-        override val bitPattern = BitPattern.of("11011101 00101010 llllllll hhhhhhhh")
+        override val bitPattern = BitPattern.of("11111101 00101010 llllllll hhhhhhhh")
         override fun decode(word: Long, address: Address): Instruction {
             val bytes = bitPattern.toInstructionByteArray(word)
 

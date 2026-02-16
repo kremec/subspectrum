@@ -22,17 +22,18 @@ data class LDIR(
         val sourceMemoryValue = Memory.memorySet.getMemoryCell(hlRegisterPairValue.toUShort())
         val deRegisterPairValue = Registers.registerSet.getDE()
         val bcRegisterPairValue = Registers.registerSet.getBC()
+        val newBC = bcRegisterPairValue.dec()
 
         Memory.memorySet.setMemoryCell(deRegisterPairValue.toUShort(), sourceMemoryValue)
         Registers.registerSet.setDE(deRegisterPairValue.inc())
         Registers.registerSet.setHL(hlRegisterPairValue.inc())
-        Registers.registerSet.setBC(bcRegisterPairValue.dec())
+        Registers.registerSet.setBC(newBC)
 
         Registers.registerSet.setHFlag(false)
-        Registers.registerSet.setPVFlag(bcRegisterPairValue.dec() != 0.toShort())
+        Registers.registerSet.setPVFlag(newBC != 0.toShort())
         Registers.registerSet.setNFlag(false)
 
-        conditionBCIs0 = bcRegisterPairValue == 0.toShort()
+        conditionBCIs0 = newBC == 0.toShort()
         if (!conditionBCIs0) {
             Registers.specialPurposeRegisters.setPC(Registers.specialPurposeRegisters.getPC().minus(2).toShort())
             Registers.specialPurposeRegisters.incrementR(2)

@@ -33,7 +33,7 @@ class RLCATest {
 
         instruction.execute()
 
-        assertEquals(0x00.toByte(), Registers.registerSet.getA()) // 00000000
+        assertEquals(0x01.toByte(), Registers.registerSet.getA()) // 00000001
         assertFalse(Registers.registerSet.getHFlag())
         assertFalse(Registers.registerSet.getNFlag())
         assertTrue(Registers.registerSet.getCFlag()) // Carry set to bit 7

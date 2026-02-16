@@ -17,7 +17,8 @@ data class RLCA(
     override fun execute() {
         val aRegisterValue = Registers.registerSet.getA()
         val carryValue = aRegisterValue.getBit(7)
-        val result = (aRegisterValue.toInt() shl 1).toByte()
+        val shifted = aRegisterValue.toInt() and 0xFF
+        val result = ((shifted shl 1) or (if (carryValue) 0x01 else 0x00)).toByte()
         Registers.registerSet.setA(result)
 
         Registers.registerSet.setHFlag(false)

@@ -53,7 +53,7 @@ class LDDRTest {
     }
 
     @Test
-    fun executeLoadDecrementRepeatBCZero() {
+    fun executeLoadDecrementRepeatBCBecomesZero() {
         Registers.specialPurposeRegisters.setPC(0x1000.toShort())
         Registers.registerSet.setHL(0x2000.toShort())
         Memory.memorySet.setMemoryCell(0x2000u, 0xAB.toByte())
@@ -67,12 +67,13 @@ class LDDRTest {
 
         instruction.execute()
 
-        assertEquals(0x0FFE.toShort(), Registers.specialPurposeRegisters.getPC())
+        assertEquals(0x1000.toShort(), Registers.specialPurposeRegisters.getPC())
         assertEquals(0x0000.toShort(), Registers.registerSet.getBC())
+        assertFalse(Registers.registerSet.getPVFlag())
     }
 
     @Test
-    fun executeLoadDecrementRepeatBCZeroNoRepeat() {
+    fun executeLoadDecrementRepeatBCStartsAtZero() {
         Registers.specialPurposeRegisters.setPC(0x1000.toShort())
         Registers.registerSet.setHL(0x2000.toShort())
         Memory.memorySet.setMemoryCell(0x2000u, 0xAB.toByte())
@@ -86,7 +87,8 @@ class LDDRTest {
 
         instruction.execute()
 
-        assertEquals(0x1000.toShort(), Registers.specialPurposeRegisters.getPC())
+        assertEquals(0x0FFE.toShort(), Registers.specialPurposeRegisters.getPC())
+        assertEquals(0xFFFF.toShort(), Registers.registerSet.getBC())
     }
 
     @Test
@@ -96,6 +98,6 @@ class LDDRTest {
             bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0xB8.toByte()))
         )
 
-        assertEquals("LDIR", instruction.toString())
+        assertEquals("LDDR", instruction.toString())
     }
 }

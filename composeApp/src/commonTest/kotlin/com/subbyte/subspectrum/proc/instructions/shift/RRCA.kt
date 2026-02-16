@@ -33,7 +33,7 @@ class RRCATest {
 
         instruction.execute()
 
-        assertEquals(0x00.toByte(), Registers.registerSet.getA()) // 00000000
+        assertEquals(0x80.toByte(), Registers.registerSet.getA()) // 10000000
         assertFalse(Registers.registerSet.getHFlag())
         assertFalse(Registers.registerSet.getNFlag())
         assertTrue(Registers.registerSet.getCFlag()) // Carry set to bit 0

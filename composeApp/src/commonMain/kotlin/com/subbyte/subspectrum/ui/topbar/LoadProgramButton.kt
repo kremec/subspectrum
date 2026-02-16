@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.ui.topbar.components.TopBarButton
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private const val DISPLAY_FILE_ADDRESS = 0x4000
@@ -23,7 +24,7 @@ fun LoadProgramButton() {
     TopBarButton(
         tooltip = "Load Program",
         onClick = {
-            scope.launch {
+            scope.launch(Dispatchers.Default) {
                 val displayFile = ByteArray(DISPLAY_FILE_SIZE) { index ->
                     val scanline = (index % 256) / 32 // Scanline inside an 8-pixel character row (0-7)
                     val column = index % ATTRIBUTE_COLUMNS

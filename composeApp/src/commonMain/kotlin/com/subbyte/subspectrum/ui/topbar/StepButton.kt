@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.ui.topbar.components.TopBarButton
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -15,7 +16,7 @@ fun StepButton() {
 
     TopBarButton(
         tooltip = "Step",
-        onClick = { scope.launch { Processor.step() } }
+        onClick = { scope.launch(Dispatchers.Default) { Processor.step() } }
     ) {
         Icon(imageVector = Icons.AutoMirrored.Outlined.LastPage, contentDescription = "Step")
     }

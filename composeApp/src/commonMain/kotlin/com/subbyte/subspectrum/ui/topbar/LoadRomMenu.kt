@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.ui.topbar.components.TopBarButton
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import subspectrum.composeapp.generated.resources.Res
 
@@ -49,7 +50,7 @@ fun LoadRomMenu() {
                     text = { Text(romName) },
                     onClick = {
                         showMenu = false
-                        scope.launch {
+                        scope.launch(Dispatchers.Default) {
                             val bytes = Res.readBytes(romPath)
                             Memory.memorySet.setMemoryCells(0.toUShort(), bytes)
                         }

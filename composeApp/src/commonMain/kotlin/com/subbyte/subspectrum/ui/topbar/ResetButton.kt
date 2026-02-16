@@ -8,6 +8,7 @@ import com.subbyte.subspectrum.base.IO
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.base.ULA
+import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.ui.topbar.components.TopBarButton
 
 @Composable
@@ -15,6 +16,7 @@ fun ResetButton() {
     TopBarButton(
         tooltip = "Reset",
         onClick = {
+            Processor.reset()
             Memory.memorySet.reset()
             Registers.normalRegisterSet.reset()
             Registers.shadowRegisterSet.reset()

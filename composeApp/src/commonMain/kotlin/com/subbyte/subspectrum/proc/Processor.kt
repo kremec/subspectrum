@@ -162,15 +162,15 @@ object Processor {
         running.value = true
         val startTime = TimeSource.Monotonic.markNow()
         val startTStates = ULA.totalTStates
-        
+
         try {
             while (running.value) {
                 step()
-                
+
                 if (ULA.isInstructionExecutionRealtime) {
                     continue
                 }
-                
+
                 val stepElapsedTStates = ULA.totalTStates - startTStates
                 val expectedNanos = (stepElapsedTStates * 1_000_000_000L) / ULA.CPU_CLOCK_HZ
                 val actualNanos = startTime.elapsedNow().inWholeNanoseconds
@@ -187,5 +187,20 @@ object Processor {
 
     fun stop() {
         running.value = false
+    }
+
+    fun reset() {
+        NMI_FF= false
+        IFF1= false
+        IFF2= false
+        afterEIDI= false
+        interruptMode= 0
+
+        inHalt= false
+
+        running.value = false
+
+        breakpoints.value = setOf()
+        currentBreakpoint = null
     }
 }

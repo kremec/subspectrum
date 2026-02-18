@@ -28,6 +28,7 @@ fun TopBar() {
                 RunButton()
                 Spacer(Modifier.width(20.dp))
                 ScreenButton()
+                KeyboardInputModeButton()
             }
         }
     }

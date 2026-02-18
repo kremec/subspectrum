@@ -7,7 +7,6 @@ import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
-
 import com.subbyte.subspectrum.units.DataByteArray
 
 data class IND(
@@ -18,8 +17,8 @@ data class IND(
 
     override fun execute() {
         val bRegisterValue = Registers.registerSet.getB()
-        val cRegisterValue = Registers.registerSet.getC()
-        val inputData = IO.ioPortSet.getIOPort(cRegisterValue.toUByte())
+        val inputPortAddress = Registers.registerSet.getBC().toUShort()
+        val inputData = IO.ioPortSet.getIO(inputPortAddress)
 
         val hlRegisterPairValue = Registers.registerSet.getHL()
         Memory.memorySet.setMemoryCell(hlRegisterPairValue.toUShort(), inputData)

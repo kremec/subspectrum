@@ -7,8 +7,8 @@ import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
-
 import com.subbyte.subspectrum.units.DataByteArray
+
 data class OUTI(
     override val address: Address,
     override val bytes: DataByteArray
@@ -20,8 +20,8 @@ data class OUTI(
         val sourceMemoryValue = Memory.memorySet.getMemoryCell(hlRegisterPairValue.toUShort())
 
         val bRegisterValue = Registers.registerSet.getB()
-        val cRegisterValue = Registers.registerSet.getC()
-        IO.ioPortSet.setIOPort(cRegisterValue.toUByte(), sourceMemoryValue)
+        val outputPortAddress = Registers.registerSet.getBC().toUShort()
+        IO.ioPortSet.setIO(outputPortAddress, sourceMemoryValue)
 
         val newBValue = bRegisterValue.dec()
         Registers.registerSet.setB(newBValue)

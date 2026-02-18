@@ -2,7 +2,8 @@ package com.subbyte.subspectrum.proc.instructions.load8
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import com.subbyte.subspectrum.base.ULA
+import com.subbyte.subspectrum.base.ULAKeyboard
+import com.subbyte.subspectrum.base.ULATiming
 import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
@@ -50,7 +51,8 @@ class LDARTest {
         Memory.memorySet.reset()
         Registers.registerSet.reset()
         Registers.specialPurposeRegisters.reset()
-        ULA.reset()
+        ULATiming.reset()
+        ULAKeyboard.releaseAllKeyboardKeys()
 
         Registers.specialPurposeRegisters.setR(0x01.toByte())
         Registers.specialPurposeRegisters.setPC(0x0000)
@@ -64,7 +66,7 @@ class LDARTest {
         Processor.IFF2 = true
         Processor.afterEIDI = false
 
-        ULA.advanceCycles(ULA.T_STATES_PER_FRAME - 9)
+        ULATiming.advanceCycles(ULATiming.T_STATES_PER_FRAME - 9)
 
         Processor.step()
 

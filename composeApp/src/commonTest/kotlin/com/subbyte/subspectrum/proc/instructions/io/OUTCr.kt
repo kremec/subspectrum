@@ -49,8 +49,8 @@ class OUTCrTest {
 
     @Test
     fun executeOutputFromA() {
-        // Set up registers
         Registers.registerSet.setA(0x42.toByte())
+        Registers.registerSet.setB(0x12.toByte())
         Registers.registerSet.setC(0x01.toByte())
 
         val instruction = OUTCr(
@@ -61,7 +61,7 @@ class OUTCrTest {
 
         instruction.execute()
 
-        assertEquals(0x42.toByte(), IO.ioPortSet.getIOPort(0x01u))
+        assertEquals(0x42.toByte(), IO.ioPortSet.getIO(0x1201u))
     }
 
     @Test
@@ -78,13 +78,13 @@ class OUTCrTest {
 
         instruction.execute()
 
-        assertEquals(0x55.toByte(), IO.ioPortSet.getIOPort(0x02u))
+        assertEquals(0x55.toByte(), IO.ioPortSet.getIO(0x5502u))
     }
 
     @Test
     fun executeOutputFromD() {
-        // Set up registers
         Registers.registerSet.setD(0xAA.toByte())
+        Registers.registerSet.setB(0x33.toByte())
         Registers.registerSet.setC(0x03.toByte())
 
         val instruction = OUTCr(
@@ -95,7 +95,7 @@ class OUTCrTest {
 
         instruction.execute()
 
-        assertEquals(0xAA.toByte(), IO.ioPortSet.getIOPort(0x03u))
+        assertEquals(0xAA.toByte(), IO.ioPortSet.getIO(0x3303u))
     }
 
     @Test

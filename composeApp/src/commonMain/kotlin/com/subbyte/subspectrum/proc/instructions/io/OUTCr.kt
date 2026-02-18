@@ -7,7 +7,6 @@ import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
-
 import com.subbyte.subspectrum.units.DataByteArray
 
 data class OUTCr(
@@ -19,8 +18,8 @@ data class OUTCr(
 
     override fun execute() {
         val sourceRegisterValue = Registers.registerSet.getRegister(sourceRegister)
-        val cRegisterValue = Registers.registerSet.getC()
-        IO.ioPortSet.setIOPort(cRegisterValue.toUByte(), sourceRegisterValue)
+        val destinationIOPortAddress = Registers.registerSet.getBC().toUShort()
+        IO.ioPortSet.setIO(destinationIOPortAddress, sourceRegisterValue)
     }
 
     override fun toString(): String = "OUT (C), $sourceRegister"

@@ -1,11 +1,18 @@
 package com.subbyte.subspectrum.base
 
+import com.subbyte.subspectrum.units.UWord
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
+typealias IOAddress = UWord
 typealias IOPort = UByte
+
+fun IOAddress.toIOPort(): IOPort {
+    return (this.toInt() and IOPort.MAX_VALUE.toInt()).toUByte()
+}
+
 val IO_SIZE = IOPort.MAX_VALUE.toInt() + 1
 
 data class IOPortSet (
@@ -18,15 +25,24 @@ data class IOPortSet (
     )
     val invalidations: SharedFlow<Unit> = _invalidations.asSharedFlow()
     private fun invalidate() {
-        _invalidations.tryEmit(Unit) // never suspends
+        _invalidations.tryEmit(Unit)
     }
 
-    fun getIOPort(port: IOPort): Byte {
-        return ioPorts[port.toInt()]
+    fun getRawIO(portAddress: IOAddress): Byte {
+        return ioPorts[portAddress.toIOPort().toInt()]
     }
 
-    fun setIOPort(port: IOPort, value: Byte) {
-        ioPorts[port.toInt()] = value
+    fun getIO(portAddress: IOAddress): Byte {
+        val ulaPortValue = ULAKeyboard.getIOPortValue(portAddress)
+        if (ulaPortValue != null) {
+            return ulaPortValue
+        }
+
+        return getRawIO(portAddress)
+    }
+
+    fun setIO(portAddress: IOAddress, value: Byte) {
+        ioPorts[portAddress.toIOPort().toInt()] = value
         invalidate()
     }
 

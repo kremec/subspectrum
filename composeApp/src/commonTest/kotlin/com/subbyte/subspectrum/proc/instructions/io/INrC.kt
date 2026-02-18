@@ -47,11 +47,10 @@ class INrCTest {
 
     @Test
     fun executeInputToA() {
-        // Set up C register with port number
+        Registers.registerSet.setB(0x12.toByte())
         Registers.registerSet.setC(0x01.toByte())
 
-        // Set up IO port
-        IO.ioPortSet.setIOPort(0x01u, 0x42.toByte())
+        IO.ioPortSet.setIO(0x1201u, 0x42.toByte())
 
         val instruction = INrC(
             address = 0x1000u,
@@ -72,11 +71,10 @@ class INrCTest {
 
     @Test
     fun executeInputToB() {
-        // Set up C register with port number
+        Registers.registerSet.setB(0x34.toByte())
         Registers.registerSet.setC(0x02.toByte())
 
-        // Set up IO port
-        IO.ioPortSet.setIOPort(0x02u, 0x80.toByte())
+        IO.ioPortSet.setIO(0x3402u, 0x80.toByte())
 
         val instruction = INrC(
             address = 0x1000u,
@@ -97,11 +95,10 @@ class INrCTest {
 
     @Test
     fun executeInputZeroValue() {
-        // Set up C register with port number
+        Registers.registerSet.setB(0x56.toByte())
         Registers.registerSet.setC(0x03.toByte())
 
-        // Set up IO port with zero
-        IO.ioPortSet.setIOPort(0x03u, 0x00.toByte())
+        IO.ioPortSet.setIO(0x5603u, 0x00.toByte())
 
         val instruction = INrC(
             address = 0x1000u,

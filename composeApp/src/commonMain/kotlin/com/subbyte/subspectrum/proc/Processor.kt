@@ -3,7 +3,7 @@ package com.subbyte.subspectrum.proc
 import androidx.compose.runtime.mutableStateOf
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import com.subbyte.subspectrum.base.ULA
+import com.subbyte.subspectrum.base.ULATiming
 import com.subbyte.subspectrum.proc.instructions.Instructions
 import com.subbyte.subspectrum.units.toBytes
 import kotlinx.coroutines.delay
@@ -50,11 +50,11 @@ object Processor {
         Registers.specialPurposeRegisters.setPC((pc + instruction.bytes.size).toShort())
 
         instruction.execute()
-        ULA.advanceCycles(instruction.getTStates())
+        ULATiming.advanceCycles(instruction.getTStates())
 
         // Check for interrupt at the end of instruction (sampled on last T-state)
-        if (IFF1 && ULA.isInterruptPending()) {
-            ULA.clearInterrupt()
+        if (IFF1 && !afterEIDI && ULATiming.isInterruptPending()) {
+            ULATiming.clearInterrupt()
             handleInterrupt()
         }
     }
@@ -68,6 +68,7 @@ object Processor {
         Registers.specialPurposeRegisters.setSP(spRegisterValue.minus(2).toShort())
 
         if (inHalt) {
+            // If in halt, PC must point to instruction after halt
             val pcRegisterValue = Registers.specialPurposeRegisters.getPC()
             Registers.specialPurposeRegisters.setPC(pcRegisterValue.inc())
         }
@@ -82,97 +83,62 @@ object Processor {
 
         Registers.specialPurposeRegisters.setPC(0x0066)
 
-        ULA.advanceNmiCycles()
+        ULATiming.advanceNmiCycles()
     }
 
     private fun handleInterrupt() {
         IFF1 = false
         IFF2 = false
 
-        // TODO: Implement interrupt mode handling
-        when (interruptMode) {
-            0 -> { /* Mode 0: Variable cycles based on instruction */ }
-            1 -> { /* Mode 1: RST 0x38 - 13 cycles */ }
-            2 -> { /* Mode 2: Vector table lookup - 19 cycles */ }
+        if (inHalt) {
+            // If in halt, PC must point to instruction after halt
+            val pcRegisterValue = Registers.specialPurposeRegisters.getPC()
+            Registers.specialPurposeRegisters.setPC(pcRegisterValue.inc())
+            inHalt = false
         }
 
-        ULA.advanceInterruptCycles(interruptMode)
+        when (interruptMode) {
+            0 -> {
+                // On Spectrum, IM0 commonly behaves like RST 0x38 because 0xFF is on data bus.
+                handleInterruptMode1()
+            }
+            1 -> handleInterruptMode1()
+            2 -> {
+                // TODO: Implement interrupt mode 2 vector table lookup.
+                ULATiming.advanceInterruptCycles(interruptMode)
+            }
+        }
     }
 
-    /*
-    // TODO: Implement interrupt mode handling
-
-    // Mode 0: In this mode, the interrupting device can insert any instruction on the data bus for execution by the CPU.
-    //         The first byte of a multibyte instruction is read during the interrupt acknowledge cycle.
-    private fun handleInterruptMode0() {
-
-    }
-
-    // Mode 1: In this mode, the processor responds to an interrupt by executing a restart at address 0038h.
     private fun handleInterruptMode1() {
-        // Push PC onto stack
-        val pc = Registers.specialPurposeRegisters.getPC()
-        val (highByte, lowByte) = pc.toBytes()
-        val sp = Registers.specialPurposeRegisters.getSP()
-        Registers.specialPurposeRegisters.setSP(sp.minus(2).toShort())
+        val pcRegisterValue = Registers.specialPurposeRegisters.getPC()
+        val (highByte, lowByte) = pcRegisterValue.toBytes()
+        Registers.specialPurposeRegisters.setSP(Registers.specialPurposeRegisters.getSP().minus(2).toShort())
         Memory.memorySet.setMemoryCells(
             Registers.specialPurposeRegisters.getSP().toUShort(),
             byteArrayOf(lowByte, highByte)
         )
 
-        // Jump to 0x0038
         Registers.specialPurposeRegisters.setPC(0x0038)
 
-        // Mode 1 takes 13 T-states
-        ULA.advanceCycles(13)
+        ULATiming.advanceInterruptCycles(1)
     }
-
-    // Mode 2: This mode allows an indirect call to any memory location by an 8-bit vector supplied from the peripheral device.
-    //         This vector then becomes the least-significant eight bits of the indirect pointer, while the I Register in the CPU provides the most-significant eight bits.
-    //         This address points to an address in a vector table that is the starting address for the interrupt service routine.
-    private fun handleInterruptMode2() {
-        // Get vector from I register and data bus (0xFF on Spectrum)
-        val iRegister = Registers.specialPurposeRegisters.getI()
-        val vector = 0xFF  // Data bus value on Spectrum
-        val vectorAddress = ((iRegister.toInt() and 0xFF) shl 8) or (vector and 0xFE)
-
-        // Push PC onto stack
-        val pc = Registers.specialPurposeRegisters.getPC()
-        val (highByte, lowByte) = pc.toBytes()
-        val sp = Registers.specialPurposeRegisters.getSP()
-        Registers.specialPurposeRegisters.setSP(sp.minus(2).toShort())
-        Memory.memorySet.setMemoryCells(
-            Registers.specialPurposeRegisters.getSP().toUShort(),
-            byteArrayOf(lowByte, highByte)
-        )
-
-        // Read jump address from vector table
-        val low = Memory.memorySet.getMemoryCell(vectorAddress.toUShort())
-        val high = Memory.memorySet.getMemoryCell((vectorAddress + 1).toUShort())
-        val jumpAddress = ((high.toInt() and 0xFF) shl 8) or (low.toInt() and 0xFF)
-
-        Registers.specialPurposeRegisters.setPC(jumpAddress.toShort())
-
-        // Mode 2 takes 19 T-states
-        ULA.advanceCycles(19)
-    }
-    */
 
     suspend fun run() {
         running.value = true
         val startTime = TimeSource.Monotonic.markNow()
-        val startTStates = ULA.totalTStates
+        val startTStates = ULATiming.totalTStates
 
         try {
             while (running.value) {
                 step()
 
-                if (ULA.isInstructionExecutionRealtime) {
+                if (ULATiming.isInstructionExecutionRealtime.value) {
                     continue
                 }
 
-                val stepElapsedTStates = ULA.totalTStates - startTStates
-                val expectedNanos = (stepElapsedTStates * 1_000_000_000L) / ULA.CPU_CLOCK_HZ
+                val stepElapsedTStates = ULATiming.totalTStates - startTStates
+                val expectedNanos = (stepElapsedTStates * 1_000_000_000L) / ULATiming.CPU_CLOCK_HZ
                 val actualNanos = startTime.elapsedNow().inWholeNanoseconds
 
                 val behind = expectedNanos - actualNanos

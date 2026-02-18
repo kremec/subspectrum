@@ -52,8 +52,7 @@ class OTDRTest {
         assertEquals(0x01.toByte(), Registers.registerSet.getB())
         // Verify HL decremented
         assertEquals(0x0FFF.toShort(), Registers.registerSet.getHL())
-        // Verify data written to IO port (C port number)
-        assertEquals(0x42.toByte(), IO.ioPortSet.getIOPort(0x01u))
+        assertEquals(0x42.toByte(), IO.ioPortSet.getIO(0x0201u))
         // PC should go back by 2 (repeat the instruction)
         assertEquals(0x0FFE.toShort(), Registers.specialPurposeRegisters.getPC())
         // Z flag should be true
@@ -86,8 +85,7 @@ class OTDRTest {
         assertEquals(0x00.toByte(), Registers.registerSet.getB())
         // Verify HL decremented
         assertEquals(0x1FFF.toShort(), Registers.registerSet.getHL())
-        // Verify data written to IO port
-        assertEquals(0xAA.toByte(), IO.ioPortSet.getIOPort(0x02u))
+        assertEquals(0xAA.toByte(), IO.ioPortSet.getIO(0x0102u))
         // PC should continue (not go back)
         assertEquals(0x1000.toShort(), Registers.specialPurposeRegisters.getPC())
         // Z flag should be true

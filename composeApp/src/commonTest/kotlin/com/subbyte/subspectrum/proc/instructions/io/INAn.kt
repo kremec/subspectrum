@@ -32,8 +32,8 @@ class INAnTest {
 
     @Test
     fun executeInputFromPort() {
-        // Set up IO port with value
-        IO.ioPortSet.setIOPort(0xA5u, 0x42.toByte())
+        Registers.registerSet.setA(0x12.toByte())
+        IO.ioPortSet.setIO(0x12A5u, 0x42.toByte())
 
         val instruction = INAn(
             address = 0x1000u,
@@ -48,8 +48,8 @@ class INAnTest {
 
     @Test
     fun executeInputFromPortZero() {
-        // Set up IO port with value
-        IO.ioPortSet.setIOPort(0x00u, 0xFF.toByte())
+        Registers.registerSet.setA(0x34.toByte())
+        IO.ioPortSet.setIO(0x3400u, 0xFF.toByte())
 
         val instruction = INAn(
             address = 0x1000u,

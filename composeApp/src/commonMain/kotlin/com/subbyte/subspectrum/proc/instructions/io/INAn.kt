@@ -8,6 +8,7 @@ import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 import com.subbyte.subspectrum.units.DataByteArray
 import com.subbyte.subspectrum.units.displayString
+import com.subbyte.subspectrum.units.uWordFromBytes
 
 data class INAn(
     override val address: Address,
@@ -17,7 +18,9 @@ data class INAn(
     override fun getTStates(): Int = 11
 
     override fun execute() {
-        val sourceIOPortValue = IO.ioPortSet.getIOPort(sourceUByte)
+        val aRegisterValue = Registers.registerSet.getA()
+        val sourceIOPortAddress = Pair(aRegisterValue, sourceUByte.toByte()).uWordFromBytes()
+        val sourceIOPortValue = IO.ioPortSet.getIO(sourceIOPortAddress)
         Registers.registerSet.setA(sourceIOPortValue)
     }
 

@@ -8,6 +8,7 @@ import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 import com.subbyte.subspectrum.units.DataByteArray
 import com.subbyte.subspectrum.units.displayString
+import com.subbyte.subspectrum.units.uWordFromBytes
 
 data class OUTnA(
     override val address: Address,
@@ -18,7 +19,8 @@ data class OUTnA(
 
     override fun execute() {
         val aRegisterValue = Registers.registerSet.getA()
-        IO.ioPortSet.setIOPort(destinationByte, aRegisterValue)
+        val destinationPortAddress = Pair(aRegisterValue, destinationByte.toByte()).uWordFromBytes()
+        IO.ioPortSet.setIO(destinationPortAddress, aRegisterValue)
     }
 
     override fun toString(): String = "OUT (${destinationByte.displayString()}), A"

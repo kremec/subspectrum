@@ -32,8 +32,7 @@ class INDTest {
         Registers.registerSet.setC(0x01.toByte())
         Registers.registerSet.setHL(0x1000.toShort())
 
-        // Set up IO port
-        IO.ioPortSet.setIOPort(0x01u, 0x42.toByte())
+        IO.ioPortSet.setIO(0x0501u, 0x42.toByte())
 
         val instruction = IND(
             address = 0x1000u,
@@ -61,8 +60,7 @@ class INDTest {
         Registers.registerSet.setC(0x02.toByte())
         Registers.registerSet.setHL(0x2000.toShort())
 
-        // Set up IO port
-        IO.ioPortSet.setIOPort(0x02u, 0xAA.toByte())
+        IO.ioPortSet.setIO(0x0102u, 0xAA.toByte())
 
         val instruction = IND(
             address = 0x1000u,

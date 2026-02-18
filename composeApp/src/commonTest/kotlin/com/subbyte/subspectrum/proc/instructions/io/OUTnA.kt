@@ -32,7 +32,6 @@ class OUTnATest {
 
     @Test
     fun executeOutputToPort() {
-        // Set up A register
         Registers.registerSet.setA(0x42.toByte())
 
         val instruction = OUTnA(
@@ -43,12 +42,11 @@ class OUTnATest {
 
         instruction.execute()
 
-        assertEquals(0x42.toByte(), IO.ioPortSet.getIOPort(0xA5u))
+        assertEquals(0x42.toByte(), IO.ioPortSet.getIO(0x42A5u))
     }
 
     @Test
     fun executeOutputToPortZero() {
-        // Set up A register
         Registers.registerSet.setA(0xFF.toByte())
 
         val instruction = OUTnA(
@@ -59,7 +57,7 @@ class OUTnATest {
 
         instruction.execute()
 
-        assertEquals(0xFF.toByte(), IO.ioPortSet.getIOPort(0x00u))
+        assertEquals(0xFF.toByte(), IO.ioPortSet.getIO(0xFF00u))
     }
 
     @Test

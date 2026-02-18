@@ -7,7 +7,6 @@ import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
-
 import com.subbyte.subspectrum.units.DataByteArray
 
 data class INrC(
@@ -18,8 +17,8 @@ data class INrC(
     override fun getTStates(): Int = 12
 
     override fun execute() {
-        val cRegisterValue = Registers.registerSet.getC()
-        val sourceIOPortValue = IO.ioPortSet.getIOPort(cRegisterValue.toUByte())
+        val sourceIOPortAddress = Registers.registerSet.getBC().toUShort()
+        val sourceIOPortValue = IO.ioPortSet.getIO(sourceIOPortAddress)
         Registers.registerSet.setRegister(destinationRegister, sourceIOPortValue)
 
         Registers.registerSet.setSFlag(sourceIOPortValue < 0)

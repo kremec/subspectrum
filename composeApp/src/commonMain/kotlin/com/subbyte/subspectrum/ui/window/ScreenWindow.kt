@@ -20,7 +20,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import com.subbyte.subspectrum.base.Memory
-import com.subbyte.subspectrum.base.ULA
+import com.subbyte.subspectrum.base.ULAScreen
+import com.subbyte.subspectrum.base.ULATiming
 import com.subbyte.subspectrum.units.getBit
 import kotlinx.coroutines.flow.conflate
 
@@ -43,32 +44,32 @@ object ScreenWindowState {
 fun ScreenWindowContent() {
     var frameVersion by remember { mutableIntStateOf(0) }
     LaunchedEffect(Unit) {
-        ULA.frameInvalidations
+        ULATiming.frameInvalidations
             .conflate()
             .collect { frameVersion++ }
     }
 
     val displayFile = remember(frameVersion) {
         Memory.memorySet.getMemoryCells(
-            ULA.DISPLAY_FILE_START.toUShort(),
-            ULA.DISPLAY_FILE_END.toUShort(),
+            ULAScreen.DISPLAY_FILE_START.toUShort(),
+            ULAScreen.DISPLAY_FILE_END.toUShort(),
         )
     }
     val attributes = remember(frameVersion) {
         Memory.memorySet.getMemoryCells(
-            ULA.ATTRIBUTE_FILE_START.toUShort(),
-            ULA.ATTRIBUTE_FILE_END.toUShort(),
+            ULAScreen.ATTRIBUTE_FILE_START.toUShort(),
+            ULAScreen.ATTRIBUTE_FILE_END.toUShort(),
         )
     }
-    val flashPhaseOn = ULA.isScreenFlashAttributeInverted()
-    val borderColor = ULA.getCurrentBorderColor()
+    val flashPhaseOn = ULAScreen.isScreenFlashAttributeInverted(ULATiming.frameCount)
+    val borderColor = ULAScreen.getCurrentBorderColor()
 
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize().background(Color.Black),
         contentAlignment = Alignment.Center
     ) {
-        val totalPixelWidth = ULA.FULL_SCREEN_PIXEL_WIDTH
-        val totalPixelHeight = ULA.FULL_SCREEN_PIXEL_HEIGHT
+        val totalPixelWidth = ULAScreen.FULL_SCREEN_PIXEL_WIDTH
+        val totalPixelHeight = ULAScreen.FULL_SCREEN_PIXEL_HEIGHT
 
         // Calculate integer pixel size (no fractions = no gaps)
         val pixelSize = minOf(
@@ -92,20 +93,20 @@ fun ScreenWindowContent() {
             )
 
             // Draw each individual pixel
-            for (row in 0 until ULA.FRAME_ATTRIBUTE_ROWS) {
-                for (col in 0 until ULA.FRAME_ATTRIBUTE_COLS) {
+            for (row in 0 until ULAScreen.FRAME_ATTRIBUTE_ROWS) {
+                for (col in 0 until ULAScreen.FRAME_ATTRIBUTE_COLS) {
 
-                    val attributeByteIndex = row * ULA.FRAME_ATTRIBUTE_COLS + col
+                    val attributeByteIndex = row * ULAScreen.FRAME_ATTRIBUTE_COLS + col
                     val attributeByteValue = attributes[attributeByteIndex]
 
-                    val pixelColors = ULA.resolvePixelColors(attributeByteValue, flashPhaseOn)
+                    val pixelColors = ULAScreen.resolvePixelColors(attributeByteValue, flashPhaseOn)
 
-                    for (py in 0 until ULA.PIXELS_PER_ATTRIBUTE) {
-                        for (px in 0 until ULA.PIXELS_PER_ATTRIBUTE) {
-                            val absX = col * ULA.PIXELS_PER_ATTRIBUTE + px
-                            val absY = row * ULA.PIXELS_PER_ATTRIBUTE + py
+                    for (py in 0 until ULAScreen.PIXELS_PER_ATTRIBUTE) {
+                        for (px in 0 until ULAScreen.PIXELS_PER_ATTRIBUTE) {
+                            val absX = col * ULAScreen.PIXELS_PER_ATTRIBUTE + px
+                            val absY = row * ULAScreen.PIXELS_PER_ATTRIBUTE + py
 
-                            val byteIndex = ULA.getDisplayFileByteIndex(
+                            val byteIndex = ULAScreen.getDisplayFileByteIndex(
                                 attributeRow = row,
                                 attributeCol = col,
                                 pixelRowInAttribute = py,
@@ -119,8 +120,8 @@ fun ScreenWindowContent() {
                             drawRect(
                                 color = if (isInk) pixelColors.ink else pixelColors.paper,
                                 topLeft = Offset(
-                                    (ULA.BORDER_PIXEL_WIDTH + absX) * pixelSize.toFloat(),
-                                    (ULA.BORDER_PIXEL_HEIGHT + absY) * pixelSize.toFloat(),
+                                    (ULAScreen.BORDER_PIXEL_WIDTH + absX) * pixelSize.toFloat(),
+                                    (ULAScreen.BORDER_PIXEL_HEIGHT + absY) * pixelSize.toFloat(),
                                 ),
                                 size = Size(pixelSize.toFloat(), pixelSize.toFloat())
                             )

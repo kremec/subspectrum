@@ -2,9 +2,12 @@ package com.subbyte.subspectrum.proc
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.base.ULAKeyboard
+import com.subbyte.subspectrum.base.ULATiming
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class ProcessorTest {
     @BeforeTest
@@ -12,6 +15,9 @@ class ProcessorTest {
         Memory.memorySet.reset()
         Registers.registerSet.reset()
         Registers.specialPurposeRegisters.reset()
+        ULATiming.reset()
+        ULAKeyboard.releaseAllKeyboardKeys()
+        Processor.reset()
     }
 
     @Test
@@ -69,5 +75,68 @@ class ProcessorTest {
 
         // PC should wrap to 0x0000
         assertEquals(0x0000, Registers.specialPurposeRegisters.getPC())
+    }
+
+    @Test
+    fun im1InterruptPushesPCAndJumpsTo0038() {
+        Memory.memorySet.setMemoryCell(0x0000u, 0x00) // NOP
+        Registers.specialPurposeRegisters.setPC(0x0000)
+        Registers.specialPurposeRegisters.setSP(0xFFFE.toShort())
+
+        Processor.interruptMode = 1
+        Processor.IFF1 = true
+        Processor.IFF2 = true
+
+        ULATiming.advanceCycles(ULATiming.T_STATES_PER_FRAME)
+
+        Processor.step()
+
+        assertEquals(0x0038, Registers.specialPurposeRegisters.getPC())
+        assertEquals(0xFFFC.toShort(), Registers.specialPurposeRegisters.getSP())
+        assertEquals(0x01.toByte(), Memory.memorySet.getMemoryCell(0xFFFCu))
+        assertEquals(0x00.toByte(), Memory.memorySet.getMemoryCell(0xFFFDu))
+        assertFalse(Processor.IFF1)
+        assertFalse(Processor.IFF2)
+    }
+
+    @Test
+    fun eiDelaysInterruptUntilAfterFollowingInstruction() {
+        Memory.memorySet.setMemoryCells(0x0000u, byteArrayOf(0xFB.toByte(), 0x00.toByte())) // EI; NOP
+        Registers.specialPurposeRegisters.setPC(0x0000)
+        Registers.specialPurposeRegisters.setSP(0xFFFE.toShort())
+
+        Processor.interruptMode = 1
+        Processor.IFF1 = false
+        Processor.IFF2 = false
+
+        ULATiming.advanceCycles(ULATiming.T_STATES_PER_FRAME)
+
+        Processor.step()
+        assertEquals(0x0001, Registers.specialPurposeRegisters.getPC())
+
+        Processor.step()
+        assertEquals(0x0038, Registers.specialPurposeRegisters.getPC())
+        assertEquals(0x02.toByte(), Memory.memorySet.getMemoryCell(0xFFFCu))
+        assertEquals(0x00.toByte(), Memory.memorySet.getMemoryCell(0xFFFDu))
+    }
+
+    @Test
+    fun interruptExitsHALTAndPushesNextInstructionAddress() {
+        Memory.memorySet.setMemoryCell(0x0000u, 0x76.toByte()) // HALT
+        Registers.specialPurposeRegisters.setPC(0x0000)
+        Registers.specialPurposeRegisters.setSP(0xFFFE.toShort())
+
+        Processor.interruptMode = 1
+        Processor.IFF1 = true
+        Processor.IFF2 = true
+
+        ULATiming.advanceCycles(ULATiming.T_STATES_PER_FRAME)
+
+        Processor.step()
+
+        assertEquals(0x0038, Registers.specialPurposeRegisters.getPC())
+        assertEquals(0x01.toByte(), Memory.memorySet.getMemoryCell(0xFFFCu))
+        assertEquals(0x00.toByte(), Memory.memorySet.getMemoryCell(0xFFFDu))
+        assertFalse(Processor.inHalt)
     }
 }

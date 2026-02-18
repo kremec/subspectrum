@@ -7,7 +7,8 @@ import androidx.compose.runtime.Composable
 import com.subbyte.subspectrum.base.IO
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
-import com.subbyte.subspectrum.base.ULA
+import com.subbyte.subspectrum.base.ULAKeyboard
+import com.subbyte.subspectrum.base.ULATiming
 import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.ui.topbar.components.TopBarButton
 
@@ -22,7 +23,8 @@ fun ResetButton() {
             Registers.shadowRegisterSet.reset()
             Registers.specialPurposeRegisters.reset()
             IO.ioPortSet.reset()
-            ULA.reset()
+            ULATiming.reset()
+            ULAKeyboard.releaseAllKeyboardKeys()
         }
     ) {
         Icon(imageVector = Icons.Default.Replay, contentDescription = "Reset")

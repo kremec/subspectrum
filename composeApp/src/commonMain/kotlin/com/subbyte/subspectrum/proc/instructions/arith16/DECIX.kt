@@ -22,7 +22,7 @@ data class DECIX(
     override fun toString(): String = "DEC IX"
 
     companion object : InstructionDefinition {
-        override val bitPattern = BitPattern.of("110111101 00101011")
+        override val bitPattern = BitPattern.of("11011101 00101011")
         override fun decode(word: Long, address: Address): Instruction {
             val bytes = bitPattern.toInstructionByteArray(word)
 

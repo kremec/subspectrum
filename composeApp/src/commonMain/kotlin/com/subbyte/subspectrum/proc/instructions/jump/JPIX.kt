@@ -23,7 +23,7 @@ data class JPIX(
 
 
     companion object : InstructionDefinition {
-        override val bitPattern = BitPattern.of("1101110111101001")
+        override val bitPattern = BitPattern.of("11011101 11101001")
         override fun decode(word: Long, address: Address): Instruction {
             val bytes = bitPattern.toInstructionByteArray(word)
 

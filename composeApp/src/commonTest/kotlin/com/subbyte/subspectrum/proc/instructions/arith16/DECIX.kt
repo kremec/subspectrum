@@ -17,13 +17,12 @@ class DECIXTest {
 
     @Test
     fun decodeInstruction() {
-        val instruction = DECIX.decode(0xDD002BL, 0x1000u)
+        val instruction = DECIX.decode(0xDD2BL, 0x1000u)
 
         assertEquals(0x1000u, instruction.address)
-        assertEquals(3, instruction.bytes.size)
+        assertEquals(2, instruction.bytes.size)
         assertEquals(0xDD.toByte(), instruction.bytes[0])
-        assertEquals(0x00.toByte(), instruction.bytes[1])
-        assertEquals(0x2B.toByte(), instruction.bytes[2])
+        assertEquals(0x2B.toByte(), instruction.bytes[1])
     }
 
     @Test
@@ -32,7 +31,7 @@ class DECIXTest {
 
         val instruction = DECIX(
             address = 0x1000u,
-            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x00.toByte(), 0x2B.toByte()))
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x2B.toByte()))
         )
 
         instruction.execute()
@@ -44,7 +43,7 @@ class DECIXTest {
     fun toStringFormat() {
         val instruction = DECIX(
             address = 0x0000u,
-            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x00.toByte(), 0x2B.toByte()))
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x2B.toByte()))
         )
 
         assertEquals("DEC IX", instruction.toString())

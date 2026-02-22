@@ -23,7 +23,7 @@ data class INCIX(
     override fun toString(): String = "INC IX"
 
     companion object : InstructionDefinition {
-        override val bitPattern = BitPattern.of("110111101 00100011")
+        override val bitPattern = BitPattern.of("11011101 00100011")
         override fun decode(word: Long, address: Address): Instruction {
             val bytes = bitPattern.toInstructionByteArray(word)
 

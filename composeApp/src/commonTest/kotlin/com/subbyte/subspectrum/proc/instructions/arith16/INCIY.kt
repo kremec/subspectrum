@@ -17,13 +17,12 @@ class INCIYTest {
 
     @Test
     fun decodeInstruction() {
-        val instruction = INCIY.decode(0xFD0023L, 0x1000u)
+        val instruction = INCIY.decode(0xFD23L, 0x1000u)
 
         assertEquals(0x1000u, instruction.address)
-        assertEquals(3, instruction.bytes.size)
+        assertEquals(2, instruction.bytes.size)
         assertEquals(0xFD.toByte(), instruction.bytes[0])
-        assertEquals(0x00.toByte(), instruction.bytes[1])
-        assertEquals(0x23.toByte(), instruction.bytes[2])
+        assertEquals(0x23.toByte(), instruction.bytes[1])
     }
 
     @Test
@@ -32,7 +31,7 @@ class INCIYTest {
 
         val instruction = INCIY(
             address = 0x1000u,
-            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0x00.toByte(), 0x23.toByte()))
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0x23.toByte()))
         )
 
         instruction.execute()
@@ -44,7 +43,7 @@ class INCIYTest {
     fun toStringFormat() {
         val instruction = INCIY(
             address = 0x0000u,
-            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0x00.toByte(), 0x23.toByte()))
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0x23.toByte()))
         )
 
         assertEquals("INC IY", instruction.toString())

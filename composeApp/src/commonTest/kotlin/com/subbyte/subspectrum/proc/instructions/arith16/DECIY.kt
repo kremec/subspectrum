@@ -17,13 +17,12 @@ class DECIYTest {
 
     @Test
     fun decodeInstruction() {
-        val instruction = DECIY.decode(0xFD002BL, 0x1000u)
+        val instruction = DECIY.decode(0xFD2BL, 0x1000u)
 
         assertEquals(0x1000u, instruction.address)
-        assertEquals(3, instruction.bytes.size)
+        assertEquals(2, instruction.bytes.size)
         assertEquals(0xFD.toByte(), instruction.bytes[0])
-        assertEquals(0x00.toByte(), instruction.bytes[1])
-        assertEquals(0x2B.toByte(), instruction.bytes[2])
+        assertEquals(0x2B.toByte(), instruction.bytes[1])
     }
 
     @Test
@@ -32,7 +31,7 @@ class DECIYTest {
 
         val instruction = DECIY(
             address = 0x1000u,
-            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0x00.toByte(), 0x2B.toByte()))
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0x2B.toByte()))
         )
 
         instruction.execute()
@@ -44,7 +43,7 @@ class DECIYTest {
     fun toStringFormat() {
         val instruction = DECIY(
             address = 0x0000u,
-            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0x00.toByte(), 0x2B.toByte()))
+            bytes = DataByteArray(byteArrayOf(0xFD.toByte(), 0x2B.toByte()))
         )
 
         assertEquals("DEC IY", instruction.toString())

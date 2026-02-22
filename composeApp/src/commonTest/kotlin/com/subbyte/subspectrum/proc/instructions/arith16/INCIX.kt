@@ -17,13 +17,12 @@ class INCIXTest {
 
     @Test
     fun decodeInstruction() {
-        val instruction = INCIX.decode(0xDD0023L, 0x1000u)
+        val instruction = INCIX.decode(0xDD23L, 0x1000u)
 
         assertEquals(0x1000u, instruction.address)
-        assertEquals(3, instruction.bytes.size)
+        assertEquals(2, instruction.bytes.size)
         assertEquals(0xDD.toByte(), instruction.bytes[0])
-        assertEquals(0x00.toByte(), instruction.bytes[1])
-        assertEquals(0x23.toByte(), instruction.bytes[2])
+        assertEquals(0x23.toByte(), instruction.bytes[1])
     }
 
     @Test
@@ -32,7 +31,7 @@ class INCIXTest {
 
         val instruction = INCIX(
             address = 0x1000u,
-            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x00.toByte(), 0x23.toByte()))
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x23.toByte()))
         )
 
         instruction.execute()
@@ -44,7 +43,7 @@ class INCIXTest {
     fun toStringFormat() {
         val instruction = INCIX(
             address = 0x0000u,
-            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x00.toByte(), 0x23.toByte()))
+            bytes = DataByteArray(byteArrayOf(0xDD.toByte(), 0x23.toByte()))
         )
 
         assertEquals("INC IX", instruction.toString())

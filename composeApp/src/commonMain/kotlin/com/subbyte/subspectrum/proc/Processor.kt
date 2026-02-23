@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc
 import androidx.compose.runtime.mutableStateOf
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.base.ULATapeDeck
 import com.subbyte.subspectrum.base.ULATiming
 import com.subbyte.subspectrum.proc.instructions.Instructions
 import com.subbyte.subspectrum.units.toBytes
@@ -25,6 +26,7 @@ object Processor {
 
     fun step() {
         val pc = Registers.specialPurposeRegisters.getPC()
+
         if (breakpoints.value.contains(pc.toInt())) {
             if (currentBreakpoint != pc.toInt()) {
                 if (running.value) {
@@ -42,6 +44,12 @@ object Processor {
         }
         inHalt = false
         afterEIDI = false
+
+        if (ULATapeDeck.tryHandleLdBytesRoutine()) {
+            Registers.specialPurposeRegisters.incrementR(1)
+            ULATiming.advanceCycles(1)
+            return
+        }
 
         val decodedInstruction = Instructions.decode(pc.toUShort())
         Registers.specialPurposeRegisters.incrementR(decodedInstruction.opcodeFetchCount)

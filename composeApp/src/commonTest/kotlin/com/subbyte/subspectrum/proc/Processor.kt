@@ -4,10 +4,15 @@ import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.base.ULAKeyboard
 import com.subbyte.subspectrum.base.ULATiming
+import com.subbyte.subspectrum.base.ULATapeDeck
+import com.subbyte.subspectrum.units.SpectrumTapeDataBlock
+import com.subbyte.subspectrum.units.SpectrumTapeImage
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ProcessorTest {
     @BeforeTest
@@ -17,6 +22,7 @@ class ProcessorTest {
         Registers.specialPurposeRegisters.reset()
         ULATiming.reset()
         ULAKeyboard.releaseAllKeyboardKeys()
+        ULATapeDeck.ejectTape()
         Processor.reset()
     }
 
@@ -138,5 +144,102 @@ class ProcessorTest {
         assertEquals(0x01.toByte(), Memory.memorySet.getMemoryCell(0xFFFCu))
         assertEquals(0x00.toByte(), Memory.memorySet.getMemoryCell(0xFFFDu))
         assertFalse(Processor.inHalt)
+    }
+
+    @Test
+    fun fastLoadTrapLoadsMatchingTapeBlock() {
+        installLdBytesRoutineSignature()
+
+        val destinationAddress = 0x8000
+        val payload = byteArrayOf(0x11, 0x22, 0x33)
+        ULATapeDeck.insertTape(
+            SpectrumTapeImage(
+                blocks = listOf(buildTapeBlock(flag = 0x00, payload = payload))
+            )
+        )
+
+        Registers.registerSet.setA(0x00.toByte())
+        Registers.registerSet.setCFlag(true)
+        Registers.registerSet.setDE(payload.size.toShort())
+        Registers.specialPurposeRegisters.setIX(destinationAddress.toShort())
+
+        val initialSp = 0xFF00
+        val returnAddress = 0x1234
+        Registers.specialPurposeRegisters.setSP(initialSp.toShort())
+        Memory.memorySet.setMemoryCells(initialSp.toUShort(), byteArrayOf(0x34, 0x12))
+
+        Registers.specialPurposeRegisters.setPC(0x0556)
+
+        Processor.step()
+
+        val loadedBytes = Memory.memorySet.getMemoryCells(
+            destinationAddress.toUShort(),
+            (destinationAddress + payload.size - 1).toUShort(),
+        )
+
+        assertContentEquals(payload, loadedBytes)
+        assertEquals(0.toShort(), Registers.registerSet.getDE())
+        assertEquals((destinationAddress + payload.size).toShort(), Registers.specialPurposeRegisters.getIX())
+        assertTrue(Registers.registerSet.getCFlag())
+        assertEquals((initialSp + 2).toShort(), Registers.specialPurposeRegisters.getSP())
+        assertEquals(returnAddress.toShort(), Registers.specialPurposeRegisters.getPC())
+    }
+
+    @Test
+    fun fastLoadTrapFailsVerifyOnMismatch() {
+        installLdBytesRoutineSignature()
+
+        val destinationAddress = 0x8100
+        Memory.memorySet.setMemoryCells(destinationAddress.toUShort(), byteArrayOf(0x11, 0x22, 0x99.toByte()))
+
+        val payload = byteArrayOf(0x11, 0x22, 0x33)
+        ULATapeDeck.insertTape(
+            SpectrumTapeImage(
+                blocks = listOf(buildTapeBlock(flag = 0xFF, payload = payload))
+            )
+        )
+
+        Registers.registerSet.setA(0xFF.toByte())
+        Registers.registerSet.setCFlag(false)
+        Registers.registerSet.setDE(payload.size.toShort())
+        Registers.specialPurposeRegisters.setIX(destinationAddress.toShort())
+
+        val initialSp = 0xFF20
+        val returnAddress = 0x2000
+        Registers.specialPurposeRegisters.setSP(initialSp.toShort())
+        Memory.memorySet.setMemoryCells(initialSp.toUShort(), byteArrayOf(0x00, 0x20))
+
+        Registers.specialPurposeRegisters.setPC(0x0556)
+
+        Processor.step()
+
+        val memoryAfterVerify = Memory.memorySet.getMemoryCells(
+            destinationAddress.toUShort(),
+            (destinationAddress + payload.size - 1).toUShort(),
+        )
+
+        assertContentEquals(byteArrayOf(0x11, 0x22, 0x99.toByte()), memoryAfterVerify)
+        assertFalse(Registers.registerSet.getCFlag())
+        assertEquals(returnAddress.toShort(), Registers.specialPurposeRegisters.getPC())
+    }
+
+    private fun installLdBytesRoutineSignature() {
+        Memory.memorySet.setMemoryCells(
+            0x0556u,
+            byteArrayOf(0x14, 0x08, 0x15, 0xF3.toByte()),
+        )
+    }
+
+    private fun buildTapeBlock(flag: Int, payload: ByteArray): SpectrumTapeDataBlock {
+        var checksum = flag and 0xFF
+        for (byteValue in payload) {
+            checksum = checksum xor (byteValue.toInt() and 0xFF)
+        }
+
+        return SpectrumTapeDataBlock(
+            flag = flag.toUByte(),
+            payload = payload,
+            checksum = checksum.toUByte(),
+        )
     }
 }

@@ -7,7 +7,7 @@ class RegistersTest {
     @Test
     fun getInitialRegisterValue() {
         val registerAValue = Registers.registerSet.getA()
-        assertEquals(0, registerAValue)
+        assertEquals(0xFF.toByte(), registerAValue)
     }
 
     @Test

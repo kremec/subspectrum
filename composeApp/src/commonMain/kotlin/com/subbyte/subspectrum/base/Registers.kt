@@ -67,14 +67,14 @@ enum class RegisterPairRRCode(val code: Int) {
 }
 
 data class RegisterSet(
-    private var A: Byte = 0,
-    private var F: Byte = 0,
-    private var B: Byte = 0,
-    private var C: Byte = 0,
-    private var D: Byte = 0,
-    private var E: Byte = 0,
-    private var H: Byte = 0,
-    private var L: Byte = 0,
+    private var A: Byte = 0xFF.toByte(),
+    private var F: Byte = 0xFF.toByte(),
+    private var B: Byte = 0xFF.toByte(),
+    private var C: Byte = 0xFF.toByte(),
+    private var D: Byte = 0xFF.toByte(),
+    private var E: Byte = 0xFF.toByte(),
+    private var H: Byte = 0xFF.toByte(),
+    private var L: Byte = 0xFF.toByte(),
 ) {
     fun getA(): Byte = A
     fun setA(value: Byte) {
@@ -265,11 +265,11 @@ data class RegisterSet(
 }
 
 data class SpecialPurposeRegisters(
-    private var I: Byte = 0,
-    private var R: Byte = 0,
-    private var IX: Word = 0,
-    private var IY: Word = 0,
-    private var SP: Word = 0,
+    private var I: Byte = 0xFF.toByte(),
+    private var R: Byte = 0xFF.toByte(),
+    private var IX: Word = 0xFFFF.toShort(),
+    private var IY: Word = 0xFFFF.toShort(),
+    private var SP: Word = 0xFFFF.toShort(),
     private var PC: Word = 0,
 ) {
     fun getI(): Byte = I

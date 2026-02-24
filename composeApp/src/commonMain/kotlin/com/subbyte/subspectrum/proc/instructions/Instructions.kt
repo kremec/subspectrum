@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
+import com.subbyte.subspectrum.units.DataByteArray
 
 import com.subbyte.subspectrum.proc.instructions.arith16.*
 import com.subbyte.subspectrum.proc.instructions.arith8.*
@@ -16,7 +17,31 @@ import com.subbyte.subspectrum.proc.instructions.jump.*
 import com.subbyte.subspectrum.proc.instructions.load16.*
 import com.subbyte.subspectrum.proc.instructions.load8.*
 import com.subbyte.subspectrum.proc.instructions.shift.*
-import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.proc.instructions.undocumented.cb.*
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.IM0_1
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.IM0_2
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.IM0_3
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.IM1_1
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.IM2_1
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.INFC
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.LDHLnn_1
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.LDnnHL_1
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.NEG_1
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.NEG_2
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.NEG_3
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.NEG_4
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.NEG_5
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.NEG_6
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.NEG_7
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.NOP_1
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.NOP_2
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.OUTC0
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.RETN_1
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.RETN_2
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.RETN_3
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.RETN_4
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.RETN_5
+import com.subbyte.subspectrum.proc.instructions.undocumented.ed.RETN_6
 
 interface Instruction {
     val address: Address
@@ -262,7 +287,37 @@ object Instructions {
         OUTI,
         OTIR,
         OUTD,
-        OTDR
+        OTDR,
+
+        // undocumented 0xCB
+        SLLr,
+        SLLHL,
+
+        // undocumented 0xED
+        NEG_1,
+        IM0_1,
+        NEG_2,
+        RETN_1,
+        NEG_3,
+        RETN_2,
+        LDnnHL_1,
+        NEG_4,
+        RETN_3,
+        IM0_2,
+        LDHLnn_1,
+        NEG_5,
+        RETN_4,
+        IM0_3,
+        INFC,
+        OUTC0,
+        NEG_6,
+        RETN_5,
+        IM1_1,
+        NOP_1,
+        NEG_7,
+        RETN_6,
+        IM2_1,
+        NOP_2
     )
 
     fun decode(pc: Address): DecodedInstruction {

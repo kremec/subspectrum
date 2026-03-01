@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.bit
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
+import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
@@ -14,7 +15,8 @@ data class SETbIXd(
     override val address: Address,
     override val bytes: DataByteArray,
     val bitPosition: Int,
-    val displacement: Byte
+    val displacement: Byte,
+    val destinationRegister: RegisterCode? = null
 ) : Instruction {
     override fun getTStates(): Int = 23
 
@@ -24,19 +26,21 @@ data class SETbIXd(
         val memoryValue = Memory.memorySet.getMemoryCell(targetAddress)
         val newValue = memoryValue.setBit(bitPosition, true)
         Memory.memorySet.setMemoryCell(targetAddress, newValue)
+        destinationRegister?.let { Registers.registerSet.setRegister(it, newValue) }
     }
 
-    override fun toString(): String = "SET $bitPosition, (IX${displacement.displayStringDisplacement()})"
+    override fun toString(): String = "SET $bitPosition, (IX${displacement.displayStringDisplacement()})${destinationRegister?.let { ", $it" } ?: ""}"
 
     companion object : InstructionDefinition {
-        override val bitPattern = BitPattern.of("11011101 11001011 dddddddd 11bbb110")
+        override val bitPattern = BitPattern.of("11011101 11001011 dddddddd 11bbbrrr")
         override fun decode(word: Long, address: Address): Instruction {
             val bytes = bitPattern.toInstructionByteArray(word)
 
             val bitPosition = bitPattern.getBitPosition(word, 'b')
             val displacement = bitPattern.getByte(word, 'd')
+            val destinationRegister = bitPattern.getRegisterCodeOrNull(word, 'r')
 
-            return SETbIXd(address, bytes, bitPosition, displacement)
+            return SETbIXd(address, bytes, bitPosition, displacement, destinationRegister)
         }
     }
 }

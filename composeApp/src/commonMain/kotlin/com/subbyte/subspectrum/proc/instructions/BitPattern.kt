@@ -32,6 +32,13 @@ data class BitPattern constructor(
         val bitValue = get(word, name)
         return RegisterCode.entries.first { it.code == bitValue }
     }
+    fun getRegisterCodeOrNull(word: Long, name: Char): RegisterCode? {
+        val bitValue = get(word, name)
+        if (bitValue == 0b110) {
+            return null
+        }
+        return RegisterCode.entries.first { it.code == bitValue }
+    }
 
     fun getRegisterPairSSCode(word: Long, name: Char): RegisterPairSSCode {
         val bitValue = get(word, name)

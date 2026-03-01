@@ -2,7 +2,9 @@ package com.subbyte.subspectrum.proc.instructions
 
 import BitPattern
 import com.subbyte.subspectrum.base.Address
+import com.subbyte.subspectrum.base.IndexedPrefixMode
 import com.subbyte.subspectrum.base.Memory
+import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.units.DataByteArray
 
 import com.subbyte.subspectrum.proc.instructions.arith16.*
@@ -56,12 +58,38 @@ interface InstructionDefinition {
     fun decode(word: Long, address: Address): Instruction
 }
 
+interface IndexedByteRemappable
+
 data class DecodedInstruction(
     val instruction: Instruction,
     val opcodeFetchCount: Int
 )
 
+private data class PrefixWrappedInstruction(
+    override val address: Address,
+    override val bytes: DataByteArray,
+    private val sourceInstruction: Instruction,
+    private val extraTStates: Int,
+    private val indexedPrefixMode: IndexedPrefixMode?
+) : Instruction {
+    override fun getTStates(): Int = sourceInstruction.getTStates() + extraTStates
+
+    override fun execute() {
+        Registers.withIndexedPrefixMode(indexedPrefixMode) {
+            sourceInstruction.execute()
+        }
+    }
+
+    override fun toString(): String = sourceInstruction.toString()
+}
+
 object Instructions {
+    private data class IndexPrefixState(
+        val mode: IndexedPrefixMode,
+        val prefixBytes: ByteArray,
+        val opcodeAddress: Address,
+    )
+
     private val definitions: List<InstructionDefinition> = listOf(
         // load8
         LDrr,
@@ -321,16 +349,136 @@ object Instructions {
     )
 
     fun decode(pc: Address): DecodedInstruction {
-        val pcInt = pc.toInt()
+        val indexPrefixState = parseIndexPrefixes(pc)
 
+        // Handle non-prefixed instructions
+        if (indexPrefixState == null){
+            return decodeByDefinitions(pc)
+        }
+
+        // Handle CB/ED prefix exceptions
+        val opcode = Memory.memorySet.getMemoryCell(indexPrefixState.opcodeAddress)
+        if (opcode == 0xCB.toByte()) {
+            val lastPrefixAddress = indexPrefixState.opcodeAddress.dec()
+            val decoded = decodeByDefinitions(lastPrefixAddress)
+            return wrapWithPrefixes(
+                originalAddress = pc,
+                decoded = decoded,
+                prefixBytes = indexPrefixState.prefixBytes,
+                baseAlreadyContainsLastPrefix = true,
+                indexedPrefixMode = null,
+            )
+        }
+        if (opcode == 0xED.toByte()) {
+            val decoded = decodeByDefinitions(indexPrefixState.opcodeAddress)
+            return wrapWithPrefixes(
+                originalAddress = pc,
+                decoded = decoded,
+                prefixBytes = indexPrefixState.prefixBytes,
+                baseAlreadyContainsLastPrefix = false,
+                indexedPrefixMode = null,
+            )
+        }
+
+        // Handle instructions with opcodes with prefixes
+        val lastPrefixAddress = indexPrefixState.opcodeAddress.dec()
+        val prefixedDecoded = tryDecodeByDefinitions(lastPrefixAddress)
+        if (prefixedDecoded != null) {
+            return wrapWithPrefixes(
+                originalAddress = pc,
+                decoded = prefixedDecoded,
+                prefixBytes = indexPrefixState.prefixBytes,
+                baseAlreadyContainsLastPrefix = true,
+                indexedPrefixMode = null,
+            )
+        }
+
+        // Handle all instructions based on prefix
+        val decoded = decodeByDefinitions(indexPrefixState.opcodeAddress)
+        return wrapWithPrefixes(
+            originalAddress = pc,
+            decoded = decoded,
+            prefixBytes = indexPrefixState.prefixBytes,
+            baseAlreadyContainsLastPrefix = false,
+            indexedPrefixMode = if (decoded.instruction is IndexedByteRemappable) indexPrefixState.mode else null,
+        )
+    }
+
+    private fun parseIndexPrefixes(pc: Address): IndexPrefixState? {
+        var currentAddress = pc
+        var mode: IndexedPrefixMode? = null
+        val prefixBytes = mutableListOf<Byte>()
+
+        while (true) {
+            when (Memory.memorySet.getMemoryCell(currentAddress)) {
+                0xDD.toByte() -> {
+                    mode = IndexedPrefixMode.DDIX
+                    prefixBytes.add(0xDD.toByte())
+                    currentAddress = currentAddress.inc()
+                }
+                0xFD.toByte() -> {
+                    mode = IndexedPrefixMode.FDIY
+                    prefixBytes.add(0xFD.toByte())
+                    currentAddress = currentAddress.inc()
+                }
+                else -> break
+            }
+        }
+
+        if (prefixBytes.isEmpty()) {
+            return null
+        }
+
+        return IndexPrefixState(
+            mode = mode ?: error("Missing index prefix mode"),
+            prefixBytes = prefixBytes.toByteArray(),
+            opcodeAddress = currentAddress,
+        )
+    }
+
+    private fun wrapWithPrefixes(
+        originalAddress: Address,
+        decoded: DecodedInstruction,
+        prefixBytes: ByteArray,
+        baseAlreadyContainsLastPrefix: Boolean,
+        indexedPrefixMode: IndexedPrefixMode?,
+    ): DecodedInstruction {
+        val extraPrefixByteCount = prefixBytes.size - if (baseAlreadyContainsLastPrefix) 1 else 0
+        val sourceBytes = decoded.instruction.bytes
+        val wrappedBytes = ByteArray(extraPrefixByteCount + sourceBytes.size).apply {
+            prefixBytes.copyInto(this, endIndex = extraPrefixByteCount)
+            for (index in 0 until sourceBytes.size) {
+                this[extraPrefixByteCount + index] = sourceBytes[index]
+            }
+        }
+
+        return DecodedInstruction(
+            instruction = PrefixWrappedInstruction(
+                address = originalAddress,
+                bytes = DataByteArray(wrappedBytes),
+                sourceInstruction = decoded.instruction,
+                extraTStates = extraPrefixByteCount * 4,
+                indexedPrefixMode = indexedPrefixMode,
+            ),
+            opcodeFetchCount = decoded.opcodeFetchCount + extraPrefixByteCount,
+        )
+    }
+
+    private fun decodeByDefinitions(pc: Address): DecodedInstruction {
+        return tryDecodeByDefinitions(pc) ?: run {
+            val opcode = Memory.memorySet.getMemoryCell(pc)
+            error("Unknown opcode 0x${opcode} at 0x${pc}")
+        }
+    }
+    private fun tryDecodeByDefinitions(pc: Address): DecodedInstruction? {
         for (def in definitions) {
             val pattern = def.bitPattern
             val byteCount = pattern.byteCount
 
             // Read bytes as long (big-endian)
             var word = 0L
-            for (i in 0 until byteCount) {
-                val b = Memory.memorySet.getMemoryCell((pcInt + i).toUShort())
+            for (index in 0 until byteCount) {
+                val b = Memory.memorySet.getMemoryCell((pc.toInt() + index).toUShort())
                 word = (word shl 8) or (b.toLong() and 0xFF)
             }
 
@@ -345,7 +493,6 @@ object Instructions {
             }
         }
 
-        val opcode = Memory.memorySet.getMemoryCell(pc)
-        error("Unknown opcode 0x${opcode.toInt() and 0xFF} at 0x${pc.toInt()}")
+        return null
     }
 }

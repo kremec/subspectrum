@@ -3,6 +3,7 @@ package com.subbyte.subspectrum.proc.instructions.shift
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
+import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
@@ -14,7 +15,8 @@ data class SRAIYd(
     override val address: Address,
     override val bytes: DataByteArray,
 
-    val displacement: Byte
+    val displacement: Byte,
+    val destinationRegister: RegisterCode? = null
 ) : Instruction {
     override fun getTStates(): Int = 23
 
@@ -24,6 +26,7 @@ data class SRAIYd(
         val carryValue = sourceValue.getBit(0)
         val result = (sourceValue.toInt() shr 1).toByte()
         Memory.memorySet.setMemoryCell(iyRegisterPairValue.plus(displacement).toUShort(), result)
+        destinationRegister?.let { Registers.registerSet.setRegister(it, result) }
 
         Registers.registerSet.setSFlag(result < 0)
         Registers.registerSet.setZFlag(result == 0.toByte())
@@ -33,16 +36,17 @@ data class SRAIYd(
         Registers.registerSet.setCFlag(carryValue)
     }
 
-    override fun toString(): String = "SRA (IY${displacement.displayStringDisplacement()})"
+    override fun toString(): String = "SRA (IY${displacement.displayStringDisplacement()})${destinationRegister?.let { ", $it" } ?: ""}"
 
     companion object : InstructionDefinition {
-        override val bitPattern = BitPattern.of("11111101 11001011 dddddddd 00101110")
+        override val bitPattern = BitPattern.of("11111101 11001011 dddddddd 00101rrr")
         override fun decode(word: Long, address: Address): Instruction {
             val bytes = bitPattern.toInstructionByteArray(word)
 
             val displacement = bitPattern.getByte(word, 'd')
+            val destinationRegister = bitPattern.getRegisterCodeOrNull(word, 'r')
 
-            return SRAIYd(address, bytes, displacement)
+            return SRAIYd(address, bytes, displacement, destinationRegister)
         }
     }
 }

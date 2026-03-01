@@ -4,6 +4,7 @@ import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.proc.instructions.IndexedByteRemappable
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
@@ -13,7 +14,7 @@ data class CPr(
     override val address: Address,
     override val bytes: DataByteArray,
     val sourceRegister: RegisterCode
-) : Instruction {
+) : Instruction, IndexedByteRemappable {
     override fun getTStates(): Int = 4
 
     override fun execute() {

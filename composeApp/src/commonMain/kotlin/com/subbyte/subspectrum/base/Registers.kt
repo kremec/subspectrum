@@ -66,6 +66,11 @@ enum class RegisterPairRRCode(val code: Int) {
     SP(0b11)
 }
 
+enum class IndexedPrefixMode {
+    DDIX,
+    FDIY,
+}
+
 data class RegisterSet(
     private var A: Byte = 0xFF.toByte(),
     private var F: Byte = 0xFF.toByte(),
@@ -148,12 +153,22 @@ data class RegisterSet(
         invalidate()
     }
 
-    fun getHL(): Word = Pair(H, L).wordFromBytes()
+    fun getHL(): Word = when (Registers.getIndexedPrefixMode()) {
+        IndexedPrefixMode.DDIX -> Registers.specialPurposeRegisters.getIX()
+        IndexedPrefixMode.FDIY -> Registers.specialPurposeRegisters.getIY()
+        null -> Pair(H, L).wordFromBytes()
+    }
     fun setHL(value: Word) {
-        val bytes = value.toBytes()
-        setH(bytes.first)
-        setL(bytes.second)
-        invalidate()
+        when (Registers.getIndexedPrefixMode()) {
+            IndexedPrefixMode.DDIX -> Registers.specialPurposeRegisters.setIX(value)
+            IndexedPrefixMode.FDIY -> Registers.specialPurposeRegisters.setIY(value)
+            null -> {
+                val bytes = value.toBytes()
+                setH(bytes.first)
+                setL(bytes.second)
+                invalidate()
+            }
+        }
     }
 
     fun getRegister(code: RegisterCode): Byte = when (code) {
@@ -162,8 +177,20 @@ data class RegisterSet(
         RegisterCode.C -> C
         RegisterCode.D -> D
         RegisterCode.E -> E
-        RegisterCode.H -> H
-        RegisterCode.L -> L
+        RegisterCode.H -> {
+            when (Registers.getIndexedPrefixMode()) {
+                IndexedPrefixMode.DDIX -> Registers.specialPurposeRegisters.getIXHigh()
+                IndexedPrefixMode.FDIY -> Registers.specialPurposeRegisters.getIYHigh()
+                null -> H
+            }
+        }
+        RegisterCode.L -> {
+            when (Registers.getIndexedPrefixMode()) {
+                IndexedPrefixMode.DDIX -> Registers.specialPurposeRegisters.getIXLow()
+                IndexedPrefixMode.FDIY -> Registers.specialPurposeRegisters.getIYLow()
+                null -> L
+            }
+        }
     }
 
     fun setRegister(code: RegisterCode, value: Byte) {
@@ -173,23 +200,26 @@ data class RegisterSet(
             RegisterCode.C -> C = value
             RegisterCode.D -> D = value
             RegisterCode.E -> E = value
-            RegisterCode.H -> H = value
-            RegisterCode.L -> L = value
+            RegisterCode.H -> {
+                when (Registers.getIndexedPrefixMode()) {
+                    IndexedPrefixMode.DDIX -> Registers.specialPurposeRegisters.setIXHigh(value)
+                    IndexedPrefixMode.FDIY -> Registers.specialPurposeRegisters.setIYHigh(value)
+                    null -> H = value
+                }
+            }
+
+            RegisterCode.L -> {
+                when (Registers.getIndexedPrefixMode()) {
+                    IndexedPrefixMode.DDIX -> Registers.specialPurposeRegisters.setIXLow(value)
+                    IndexedPrefixMode.FDIY -> Registers.specialPurposeRegisters.setIYLow(value)
+                    null -> L = value
+                }
+            }
         }
         invalidate()
     }
     fun setRegister(code: RegisterCode, value: UByte) {
-        val registerValue = value.toByte()
-        when (code) {
-            RegisterCode.A -> A = registerValue
-            RegisterCode.B -> B = registerValue
-            RegisterCode.C -> C = registerValue
-            RegisterCode.D -> D = registerValue
-            RegisterCode.E -> E = registerValue
-            RegisterCode.H -> H = registerValue
-            RegisterCode.L -> L = registerValue
-        }
-        invalidate()
+        setRegister(code, value.toByte())
     }
 
     fun reset() {
@@ -297,6 +327,16 @@ data class SpecialPurposeRegisters(
         IX = value
         invalidate()
     }
+    fun getIXHigh(): Byte = IX.toBytes().first
+    fun setIXHigh(value: Byte) {
+        IX = Pair(value, IX.toBytes().second).wordFromBytes()
+        invalidate()
+    }
+    fun getIXLow(): Byte = IX.toBytes().second
+    fun setIXLow(value: Byte) {
+        IX = Pair(IX.toBytes().first, value).wordFromBytes()
+        invalidate()
+    }
 
     fun setIX(value: UWord) {
         IX = value.toShort()
@@ -306,6 +346,16 @@ data class SpecialPurposeRegisters(
     fun getIY(): Word = IY
     fun setIY(value: Word) {
         IY = value
+        invalidate()
+    }
+    fun getIYHigh(): Byte = IY.toBytes().first
+    fun setIYHigh(value: Byte) {
+        IY = Pair(value, IY.toBytes().second).wordFromBytes()
+        invalidate()
+    }
+    fun getIYLow(): Byte = IY.toBytes().second
+    fun setIYLow(value: Byte) {
+        IY = Pair(IY.toBytes().first, value).wordFromBytes()
         invalidate()
     }
 
@@ -364,6 +414,18 @@ object Registers {
     val shadowRegisterSet = RegisterSet()
     val registerSet: RegisterSet = normalRegisterSet
     val specialPurposeRegisters: SpecialPurposeRegisters = SpecialPurposeRegisters()
+
+    private var indexedPrefixMode: IndexedPrefixMode? = null
+    fun getIndexedPrefixMode(): IndexedPrefixMode? = indexedPrefixMode
+    fun <T> withIndexedPrefixMode(mode: IndexedPrefixMode?, block: () -> T): T {
+        val previousMode = indexedPrefixMode
+        indexedPrefixMode = mode
+        return try {
+            block()
+        } finally {
+            indexedPrefixMode = previousMode
+        }
+    }
 
     fun getRegisterPair(code: RegisterPairSSCode): Word = when (code) {
         RegisterPairSSCode.BC -> registerSet.getBC()

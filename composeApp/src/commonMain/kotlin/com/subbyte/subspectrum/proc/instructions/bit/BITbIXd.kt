@@ -32,7 +32,7 @@ data class BITbIXd(
     override fun toString(): String = "BIT $bitPosition, (IX${displacement.displayStringDisplacement()})"
 
     companion object : InstructionDefinition {
-        override val bitPattern = BitPattern.of("11011101 11001011 dddddddd 01bbb110")
+        override val bitPattern = BitPattern.of("11011101 11001011 dddddddd 01bbbrrr")
         override fun decode(word: Long, address: Address): Instruction {
             val bytes = bitPattern.toInstructionByteArray(word)
 

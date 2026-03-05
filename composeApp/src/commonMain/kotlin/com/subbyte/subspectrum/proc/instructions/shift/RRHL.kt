@@ -35,7 +35,7 @@ data class RRHL(
     override fun toString(): String = "RR (HL)"
 
     companion object : InstructionDefinition {
-        override val bitPattern = BitPattern.of("11001011 00001110")
+        override val bitPattern = BitPattern.of("11001011 00011110")
         override fun decode(word: Long, address: Address): Instruction {
             val bytes = bitPattern.toInstructionByteArray(word)
 

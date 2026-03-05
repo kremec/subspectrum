@@ -320,6 +320,8 @@ object Instructions {
         // undocumented 0xCB
         SLLr,
         SLLHL,
+        SLLIXd,
+        SLLIYd,
 
         // undocumented 0xED
         NEG_1,

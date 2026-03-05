@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import com.subbyte.subspectrum.base.ULABeeper
 import com.subbyte.subspectrum.base.ULAKeyboard
 import com.subbyte.subspectrum.ui.topbar.TopBar
 import com.subbyte.subspectrum.ui.window.ScreenWindowContent
@@ -11,7 +12,10 @@ import com.subbyte.subspectrum.ui.window.ScreenWindowState
 
 fun main() = application {
     Window(
-        onCloseRequest = ::exitApplication,
+        onCloseRequest = {
+            ULABeeper.shutdown()
+            exitApplication()
+        },
         title = "subspectrum",
     ) {
         window.rootPane.apply {

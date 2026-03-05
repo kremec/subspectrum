@@ -43,11 +43,13 @@ data class IOPortSet (
 
     fun setIO(portAddress: IOAddress, value: Byte) {
         ioPorts[portAddress.toIOPort().toInt()] = value
+        ULABeeper.onPortWrite(portAddress, value)
         invalidate()
     }
 
     fun reset() {
         ioPorts.fill(0x00)
+        ULABeeper.reset()
         invalidate()
     }
 }

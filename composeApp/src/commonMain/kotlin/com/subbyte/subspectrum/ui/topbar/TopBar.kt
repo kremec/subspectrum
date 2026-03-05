@@ -29,6 +29,7 @@ fun TopBar() {
                 Spacer(Modifier.width(20.dp))
                 ScreenButton()
                 KeyboardInputModeButton()
+                MuteButton()
             }
         }
     }

@@ -21,7 +21,7 @@ fun LoadProgramButton() {
         tooltip = "Load Tape",
         onClick = {
             scope.launch {
-                val selectedFileBytes = ProgramFilePicker.pickTzxProgramBytes() ?: return@launch
+                val selectedFileBytes = ProgramFilePicker.pickTapeProgramBytes() ?: return@launch
                 withContext(Dispatchers.Default) {
                     val tape = ULATapeParser.parse(selectedFileBytes)
                     ULATapeDeck.insertTape(tape)

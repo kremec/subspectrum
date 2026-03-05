@@ -23,12 +23,37 @@ class ULATapeParserTest {
     }
 
     @Test
-    fun rejectsInvalidTzxSignature() {
+    fun rejectsInvalidTapeData() {
         val invalidBytes = byteArrayOf(0x00, 0x01, 0x02)
 
         assertFailsWith<IllegalArgumentException> {
             ULATapeParser.parse(invalidBytes)
         }
+    }
+
+    @Test
+    fun parsesTapBlocks() {
+        val firstPayload = byteArrayOf(0x01, 0x02)
+        val secondPayload = byteArrayOf(0x7A)
+
+        val tapBytes = buildTapWithBlocks(
+            buildSpectrumTapeBlock(flag = 0x00, payload = firstPayload),
+            buildSpectrumTapeBlock(flag = 0xFF, payload = secondPayload),
+        )
+
+        val tapeImage = ULATapeParser.parse(tapBytes)
+
+        assertEquals(2, tapeImage.blocks.size)
+
+        val firstBlock = tapeImage.blocks[0]
+        assertEquals(0x00u.toUByte(), firstBlock.flag)
+        assertContentEquals(firstPayload, firstBlock.payload)
+        assertTrue(firstBlock.checksumIsValid)
+
+        val secondBlock = tapeImage.blocks[1]
+        assertEquals(0xFFu.toUByte(), secondBlock.flag)
+        assertContentEquals(secondPayload, secondBlock.payload)
+        assertTrue(secondBlock.checksumIsValid)
     }
 }
 
@@ -72,4 +97,17 @@ private fun buildSpectrumTapeBlock(flag: Int, payload: ByteArray): ByteArray {
     payload.copyInto(block, destinationOffset = 1)
     block[block.lastIndex] = checksum.toByte()
     return block
+}
+
+private fun buildTapWithBlocks(vararg rawSpectrumBlocks: ByteArray): ByteArray {
+    val bytes = mutableListOf<Byte>()
+
+    for (rawSpectrumBlock in rawSpectrumBlocks) {
+        val length = rawSpectrumBlock.size
+        bytes += (length and 0xFF).toByte()
+        bytes += ((length shr 8) and 0xFF).toByte()
+        bytes += rawSpectrumBlock.toList()
+    }
+
+    return bytes.toByteArray()
 }

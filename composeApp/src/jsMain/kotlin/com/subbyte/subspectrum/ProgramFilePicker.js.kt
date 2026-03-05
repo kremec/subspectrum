@@ -1,7 +1,7 @@
 package com.subbyte.subspectrum
 
 actual object ProgramFilePicker {
-    actual suspend fun pickTzxProgramBytes(): ByteArray? {
+    actual suspend fun pickTapeProgramBytes(): ByteArray? {
         return null
     }
 }

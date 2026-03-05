@@ -16,7 +16,15 @@ private val TZX_SIGNATURE = byteArrayOf(
 
 object ULATapeParser {
     fun parse(fileBytes: ByteArray): SpectrumTapeImage {
-        val reader = TzxReader(fileBytes)
+        return if (hasTzxSignature(fileBytes)) {
+            parseTzx(fileBytes)
+        } else {
+            parseTap(fileBytes)
+        }
+    }
+
+    private fun parseTzx(fileBytes: ByteArray): SpectrumTapeImage {
+        val reader = TapeReader(fileBytes)
 
         validateHeader(reader)
 
@@ -139,7 +147,34 @@ object ULATapeParser {
         return SpectrumTapeImage(dataBlocks)
     }
 
-    private fun validateHeader(reader: TzxReader) {
+    private fun parseTap(fileBytes: ByteArray): SpectrumTapeImage {
+        val reader = TapeReader(fileBytes)
+        val dataBlocks = mutableListOf<SpectrumTapeDataBlock>()
+
+        while (!reader.isAtEnd()) {
+            val blockLength = reader.readByte2()
+            val rawData = reader.readBytes(blockLength)
+            dataBlocks += SpectrumTapeDataBlock.fromRawBlock(rawData)
+        }
+
+        return SpectrumTapeImage(dataBlocks)
+    }
+
+    private fun hasTzxSignature(fileBytes: ByteArray): Boolean {
+        if (fileBytes.size < TZX_SIGNATURE.size) {
+            return false
+        }
+
+        for (index in TZX_SIGNATURE.indices) {
+            if (fileBytes[index] != TZX_SIGNATURE[index]) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    private fun validateHeader(reader: TapeReader) {
         val signature = reader.readBytes(TZX_SIGNATURE.size)
         if (!signature.contentEquals(TZX_SIGNATURE)) {
             throw IllegalArgumentException("Invalid TZX signature")
@@ -150,7 +185,7 @@ object ULATapeParser {
     }
 
     private fun parseStandardSpeedDataBlock(
-        reader: TzxReader,
+        reader: TapeReader,
         dataBlocks: MutableList<SpectrumTapeDataBlock>,
     ) {
         reader.skip(2)
@@ -161,7 +196,7 @@ object ULATapeParser {
     }
 
     private fun parseTurboSpeedDataBlock(
-        reader: TzxReader,
+        reader: TapeReader,
         dataBlocks: MutableList<SpectrumTapeDataBlock>,
     ) {
         reader.skip(15)
@@ -172,7 +207,7 @@ object ULATapeParser {
     }
 
     private fun parsePureDataBlock(
-        reader: TzxReader,
+        reader: TapeReader,
         dataBlocks: MutableList<SpectrumTapeDataBlock>,
     ) {
         reader.skip(7)
@@ -183,7 +218,7 @@ object ULATapeParser {
     }
 }
 
-private class TzxReader(
+private class TapeReader(
     private val bytes: ByteArray,
     private var offset: Int = 0
 ) {
@@ -238,7 +273,7 @@ private class TzxReader(
     private fun requireAvailable(length: Int) {
         require(length >= 0) { "Negative read length: $length" }
         if (offset + length > bytes.size) {
-            throw IllegalArgumentException("Unexpected end of TZX data")
+            throw IllegalArgumentException("Unexpected end of tape data")
         }
     }
 }

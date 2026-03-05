@@ -9,10 +9,11 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 actual object ProgramFilePicker {
-    actual suspend fun pickTzxProgramBytes(): ByteArray? = withContext(Dispatchers.Swing) {
+    actual suspend fun pickTapeProgramBytes(): ByteArray? = withContext(Dispatchers.Swing) {
         val fileDialog = FileDialog(null as Frame?, "Load Program", FileDialog.LOAD)
         fileDialog.setFilenameFilter { _, name ->
-            name.endsWith(".tzx", ignoreCase = true)
+            name.endsWith(".tzx", ignoreCase = true) ||
+                name.endsWith(".tap", ignoreCase = true)
         }
         fileDialog.isVisible = true
 
@@ -20,7 +21,8 @@ actual object ProgramFilePicker {
         val selectedFileName = fileDialog.file ?: return@withContext null
         val selectedPath = Paths.get(selectedDirectory, selectedFileName)
 
-        if (!selectedPath.fileName.toString().endsWith(".tzx", ignoreCase = true)) {
+        val selectedFileNameLower = selectedPath.fileName.toString().lowercase()
+        if (!selectedFileNameLower.endsWith(".tzx") && !selectedFileNameLower.endsWith(".tap")) {
             return@withContext null
         }
 

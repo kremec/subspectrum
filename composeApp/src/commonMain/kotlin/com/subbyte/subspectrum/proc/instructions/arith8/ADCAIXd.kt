@@ -45,7 +45,7 @@ data class ADCAIXd(
     override fun toString(): String = "ADC A, (IX${displacement.displayStringDisplacement()})"
 
     companion object : InstructionDefinition {
-        override val bitPattern = BitPattern.of("11011110 10001110 dddddddd")
+        override val bitPattern = BitPattern.of("11011101 10001110 dddddddd")
         override fun decode(word: Long, address: Address): Instruction {
             val bytes = bitPattern.toInstructionByteArray(word)
 

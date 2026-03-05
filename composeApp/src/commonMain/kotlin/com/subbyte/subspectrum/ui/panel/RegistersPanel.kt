@@ -15,6 +15,8 @@ import com.subbyte.subspectrum.base.RegisterSet
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.units.Word
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.launch
 
 @Composable
 fun Register(registerName: String, registerValueString: String) {
@@ -79,23 +81,24 @@ fun RegisterSetPanel(
 
 @Composable
 fun RegistersPanel() {
-    var normalRegisterSetVersion by remember { mutableIntStateOf(0) }
-    var shadowRegisterSetVersion by remember { mutableIntStateOf(0) }
-    var specialPurposeRegistersVersion by remember { mutableIntStateOf(0) }
+    var uiVersion by remember { mutableIntStateOf(0) }
     LaunchedEffect(Unit) {
-        Registers.normalRegisterSet.invalidations
-            .conflate()
-            .collect { normalRegisterSetVersion++ }
-    }
-    LaunchedEffect(Unit) {
-        Registers.shadowRegisterSet.invalidations
-            .conflate()
-            .collect { shadowRegisterSetVersion++ }
-    }
-    LaunchedEffect(Unit) {
-        Registers.specialPurposeRegisters.invalidations
-            .conflate()
-            .collect { specialPurposeRegistersVersion++ }
+        var dirty = true
+        launch {
+            merge(
+                Registers.normalRegisterSet.invalidations,
+                Registers.shadowRegisterSet.invalidations,
+                Registers.specialPurposeRegisters.invalidations,
+            ).conflate().collect { dirty = true }
+        }
+
+        while (true) {
+            withFrameNanos { }
+            if (dirty) {
+                dirty = false
+                uiVersion++
+            }
+        }
     }
 
     Column(
@@ -120,7 +123,7 @@ fun RegistersPanel() {
                         isActive = Registers.registerSet === Registers.normalRegisterSet,
                         registerSet = Registers.normalRegisterSet,
                         modifier = Modifier.weight(1f),
-                        version = normalRegisterSetVersion
+                        version = uiVersion
                     )
                     RegisterSetPanel(
                         title = "Alternate register set",
@@ -128,7 +131,7 @@ fun RegistersPanel() {
                         isActive = Registers.registerSet === Registers.shadowRegisterSet,
                         registerSet = Registers.shadowRegisterSet,
                         modifier = Modifier.weight(1f),
-                        version = shadowRegisterSetVersion
+                        version = uiVersion
                     )
                 }
             } else {
@@ -143,7 +146,7 @@ fun RegistersPanel() {
                         isActive = Registers.registerSet === Registers.normalRegisterSet,
                         registerSet = Registers.normalRegisterSet,
                         modifier = Modifier.fillMaxWidth(),
-                        version = normalRegisterSetVersion
+                        version = uiVersion
                     )
                     RegisterSetPanel(
                         title = "Alternate register set",
@@ -151,7 +154,7 @@ fun RegistersPanel() {
                         isActive = Registers.registerSet === Registers.shadowRegisterSet,
                         registerSet = Registers.shadowRegisterSet,
                         modifier = Modifier.fillMaxWidth(),
-                        version = shadowRegisterSetVersion
+                        version = uiVersion
                     )
                 }
             }
@@ -167,7 +170,7 @@ fun RegistersPanel() {
                 .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val v = specialPurposeRegistersVersion
+            val v = uiVersion
             Text(
                 "Special purpose registers",
                 fontWeight = FontWeight.SemiBold,

@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.icons.Icons
@@ -26,6 +25,8 @@ import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.proc.instructions.Instructions
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.launch
 
 data class DisassemblyRow(
     val address: String,
@@ -36,17 +37,23 @@ data class DisassemblyRow(
 
 @Composable
 fun DisassemblyPanel() {
-    var version by remember { mutableIntStateOf(0) }
-    var pcVersion by remember { mutableIntStateOf(0) }
+    var uiVersion by remember { mutableIntStateOf(0) }
     LaunchedEffect(Unit) {
-        Memory.memorySet.invalidations
-            .conflate()
-            .collect { version++ }
-    }
-    LaunchedEffect(Unit) {
-        Registers.specialPurposeRegisters.pcInvalidations
-            .conflate()
-            .collect { pcVersion++ }
+        var dirty = true
+        launch {
+            merge(
+                Memory.memorySet.invalidations,
+                Registers.specialPurposeRegisters.pcInvalidations,
+            ).conflate().collect { dirty = true }
+        }
+
+        while (true) {
+            withFrameNanos { }
+            if (dirty) {
+                dirty = false
+                uiVersion++
+            }
+        }
     }
 
     Column(
@@ -85,15 +92,11 @@ fun DisassemblyPanel() {
         }
         HorizontalDivider()
 
-        val disassemblyRows = remember(version) {
-            buildDisassemblyRows()
-        }
         val lazyListState = rememberLazyListState()
         val pc = Registers.specialPurposeRegisters.getPC()
 
-        LaunchedEffect(pcVersion) {
-            val pcRowIndex = disassemblyRows.indexOfFirst { row -> row.startAddress == pc.toUShort().toInt() }
-            if (pcRowIndex == -1) return@LaunchedEffect
+        LaunchedEffect(uiVersion) {
+            val pcRowIndex = pc.toUShort().toInt()
 
             val visible = lazyListState.layoutInfo.visibleItemsInfo
             val isPcRowVisible =
@@ -108,10 +111,10 @@ fun DisassemblyPanel() {
 
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(state = lazyListState) {
-                items(
-                    disassemblyRows,
-                    key = { it.startAddress }
-                ) { row ->
+                items(count = 0x10000, key = { it }) { address ->
+                    val row = remember(address, uiVersion) {
+                        decodeDisassemblyRow(address)
+                    }
                     val textColor =
                         if (row.startAddress == pc.toInt()) Color.Red else Color.Black
 
@@ -177,51 +180,25 @@ fun DisassemblyPanel() {
     }
 }
 
-private fun buildDisassemblyRows(): List<DisassemblyRow> {
-    val rows = mutableListOf<DisassemblyRow>()
-    var address = 0
-
-    while (address < 0x10000) {
-        try {
-            val decodedInstruction = Instructions.decode(address.toUShort())
-            val instruction = decodedInstruction.instruction
-            val addressStr =
-                address.toString(16).padStart(4, '0').uppercase()
-            val bytesStr = instruction.bytes.joinToString(" ") { byte ->
-                byte.toInt().and(0xFF).toString(16).padStart(2, '0')
-                    .uppercase()
-            }
-
-            val operation = instruction.toString()
-
-            rows.add(
-                DisassemblyRow(
-                    address = addressStr,
-                    bytes = bytesStr,
-                    operation = operation,
-                    startAddress = address
-                )
-            )
-
-            address += instruction.bytes.size
-        } catch (_: Exception) {
-            // Handle unknown opcodes by showing as data
-            val byte =
-                Memory.memorySet.getMemoryCell(address.toUShort())
-            rows.add(
-                DisassemblyRow(
-                    address = address.toString(16).padStart(4, '0')
-                        .uppercase(),
-                    bytes =
-                        byte.toInt().and(0xFF).toString(16).padStart(2, '0')
-                            .uppercase(),
-                    operation = "BYTE",
-                    startAddress = address
-                )
-            )
-            address++
-        }
+private fun decodeDisassemblyRow(address: Int): DisassemblyRow {
+    return try {
+        val decodedInstruction = Instructions.decode(address.toUShort())
+        val instruction = decodedInstruction.instruction
+        DisassemblyRow(
+            address = address.toString(16).padStart(4, '0').uppercase(),
+            bytes = instruction.bytes.joinToString(" ") { byte ->
+                byte.toInt().and(0xFF).toString(16).padStart(2, '0').uppercase()
+            },
+            operation = instruction.toString(),
+            startAddress = address,
+        )
+    } catch (_: Exception) {
+        val byte = Memory.memorySet.getMemoryCell(address.toUShort())
+        DisassemblyRow(
+            address = address.toString(16).padStart(4, '0').uppercase(),
+            bytes = byte.toInt().and(0xFF).toString(16).padStart(2, '0').uppercase(),
+            operation = "BYTE",
+            startAddress = address,
+        )
     }
-
-    return rows
 }

@@ -19,20 +19,28 @@ import androidx.compose.ui.unit.dp
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.launch
 
 @Composable
 fun MemoryPanel() {
-    var version by remember { mutableIntStateOf(0) }
-    var pcVersion by remember { mutableIntStateOf(0) }
+    var uiVersion by remember { mutableIntStateOf(0) }
     LaunchedEffect(Unit) {
-        Memory.memorySet.invalidations
-            .conflate() // collapses bursts of changes into fewer recomposes
-            .collect { version++ }
-    }
-    LaunchedEffect(Unit) {
-        Registers.specialPurposeRegisters.pcInvalidations
-            .conflate()
-            .collect { pcVersion++ }
+        var dirty = true
+        launch {
+            merge(
+                Memory.memorySet.invalidations,
+                Registers.specialPurposeRegisters.pcInvalidations,
+            ).conflate().collect { dirty = true }
+        }
+
+        while (true) {
+            withFrameNanos { }
+            if (dirty) {
+                dirty = false
+                uiVersion++
+            }
+        }
     }
 
     Column(
@@ -54,14 +62,14 @@ fun MemoryPanel() {
                 else -> 16
             }
 
-            val memoryRows = remember(bytesPerRow, version) {
+            val memoryRows = remember(bytesPerRow) {
                 buildMemoryRows(bytesPerRow)
             }
             val lazyListState = rememberLazyListState()
             val pc = Registers.specialPurposeRegisters.getPC()
             val prevBytesPerRow = remember { mutableStateOf(bytesPerRow) }
 
-            LaunchedEffect(pcVersion) {
+            LaunchedEffect(uiVersion) {
                 val pcRowIndex = memoryRows.indexOfLast { row -> row.startAddress < pc.toUShort().toInt() }
                 if (pcRowIndex == -1) return@LaunchedEffect
 
@@ -93,8 +101,13 @@ fun MemoryPanel() {
                                 fontWeight = FontWeight.Light,
                                 modifier = Modifier.width(60.dp)
                             )
-                            row.bytes.forEachIndexed { index, byteValue ->
+                            repeat(bytesPerRow) { index ->
                                 val byteAddress = (row.startAddress + index).toUShort()
+                                val byteValue = Memory.memorySet.getMemoryCell(byteAddress)
+                                    .toUByte()
+                                    .toString(16)
+                                    .padStart(2, '0')
+                                    .uppercase()
                                 val textColor =
                                     if (byteAddress == pc.toUShort()) Color.Red else Color.Black
                                 Text(
@@ -123,17 +136,10 @@ private fun buildMemoryRows(bytesPerRow: Int): List<MemoryRow> {
     var address = 0
 
     while (address < 0x10000) {
-        val bytes = mutableListOf<String>()
-        for (i in 0 until bytesPerRow) {
-            val byte = Memory.memorySet.getMemoryCell((address + i).toUShort())
-            bytes.add(byte.toUByte().toString(16).padStart(2, '0').uppercase())
-        }
-
         rows.add(
             MemoryRow(
                 address = address.toString(16).padStart(4, '0').uppercase(),
-                startAddress = address,
-                bytes = bytes
+                startAddress = address
             )
         )
 
@@ -145,6 +151,5 @@ private fun buildMemoryRows(bytesPerRow: Int): List<MemoryRow> {
 
 private data class MemoryRow(
     val address: String,
-    val startAddress: Int,
-    val bytes: List<String>
+    val startAddress: Int
 )

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="tests [jvm]" type="GradleRunConfiguration" factoryName="Gradle" folderName="Dev">
+  <configuration default="false" name="package-dmg [jvm]" type="GradleRunConfiguration" factoryName="Gradle" folderName="Build">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -10,16 +10,15 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":composeApp:cleanJvmTest" />
-          <option value=":composeApp:jvmTest" />
+          <option value="composeApp:packageDmg" />
         </list>
       </option>
       <option name="vmOptions" />
     </ExternalSystemSettings>
-    <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
-    <RunAsTest>true</RunAsTest>
+    <RunAsTest>false</RunAsTest>
     <method v="2" />
   </configuration>
 </component>

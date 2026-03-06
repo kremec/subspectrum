@@ -51,12 +51,13 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = libs.versions.app.pkg.get()
+            packageName = libs.versions.app.name.get()
             packageVersion = libs.versions.version.name.get()
             vendor = libs.versions.app.vendor.get()
             description = libs.versions.app.description.get()
 
             macOS {
+                bundleID = libs.versions.app.pkg.get()
                 dockName = libs.versions.app.name.get()
                 iconFile.set(project.file("../media/icon.icns"))
             }

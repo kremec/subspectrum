@@ -14,12 +14,12 @@ fun KeyboardInputModeButton() {
     val isActualMode = ULAKeyboard.keyboardInputMode.value == ULAKeyboardInputMode.Actual
 
     TopBarButton(
-        tooltip = if (isActualMode) "Keyboard: actual keyboard layout" else "Keyboard: authentic Spectrum layout",
+        tooltip = if (isActualMode) "Keyboard: Host" else "Keyboard: ZX",
         onClick = { ULAKeyboard.toggleKeyboardInputMode() }
     ) {
         Icon(
             imageVector = if (isActualMode) Icons.Outlined.Keyboard else Icons.Outlined.Gradient,
-            contentDescription = if (isActualMode) "Keyboard: actual keyboard layout" else "Keyboard: authentic Spectrum layout"
+            contentDescription = if (isActualMode) "Keyboard: Host" else "Keyboard: ZX"
         )
     }
 }

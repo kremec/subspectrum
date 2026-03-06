@@ -23,6 +23,7 @@ object Processor {
 
     var breakpoints = mutableStateOf(setOf<Int>())
     var currentBreakpoint: Int? = null
+    var totalInstructionsExecuted: Long = 0
 
     fun step() {
         val pc = Registers.specialPurposeRegisters.getPC()
@@ -58,6 +59,7 @@ object Processor {
         Registers.specialPurposeRegisters.setPC((pc + instruction.bytes.size).toShort())
 
         instruction.execute()
+        totalInstructionsExecuted += 1
         ULATiming.advanceCycles(instruction.getTStates())
 
         // Check for interrupt at the end of instruction (sampled on last T-state)
@@ -134,20 +136,28 @@ object Processor {
 
     suspend fun run() {
         running.value = true
-        val startTime = TimeSource.Monotonic.markNow()
-        val startTStates = ULATiming.totalTStates
+        var pacingStartTime = TimeSource.Monotonic.markNow()
+        var pacingStartTStates = ULATiming.totalTStates
+        var previousRealtimeMode = ULATiming.isInstructionExecutionRealtime.value
 
         try {
             while (running.value) {
                 step()
 
-                if (ULATiming.isInstructionExecutionRealtime.value) {
+                val realtimeMode = ULATiming.isInstructionExecutionRealtime.value
+                if (realtimeMode != previousRealtimeMode) {
+                    pacingStartTime = TimeSource.Monotonic.markNow()
+                    pacingStartTStates = ULATiming.totalTStates
+                    previousRealtimeMode = realtimeMode
+                }
+
+                if (realtimeMode) {
                     continue
                 }
 
-                val stepElapsedTStates = ULATiming.totalTStates - startTStates
+                val stepElapsedTStates = ULATiming.totalTStates - pacingStartTStates
                 val expectedNanos = (stepElapsedTStates * 1_000_000_000L) / ULATiming.CPU_CLOCK_HZ
-                val actualNanos = startTime.elapsedNow().inWholeNanoseconds
+                val actualNanos = pacingStartTime.elapsedNow().inWholeNanoseconds
 
                 val behind = expectedNanos - actualNanos
                 if (behind > 0) {
@@ -176,5 +186,6 @@ object Processor {
 
         breakpoints.value = setOf()
         currentBreakpoint = null
+        totalInstructionsExecuted = 0
     }
 }

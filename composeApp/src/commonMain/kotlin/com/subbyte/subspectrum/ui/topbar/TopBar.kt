@@ -26,10 +26,13 @@ fun TopBar() {
                 ResetButton()
                 StepButton()
                 RunButton()
+                SpeedButton()
                 Spacer(Modifier.width(20.dp))
                 ScreenButton()
                 KeyboardInputModeButton()
-                MuteButton()
+                SoundButton()
+                Spacer(Modifier.weight(1f))
+                ProfilerButton()
             }
         }
     }

@@ -4,19 +4,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.subbyte.subspectrum.base.SpectrumMachine
 import com.subbyte.subspectrum.ui.panel.DisassemblyPanel
 import com.subbyte.subspectrum.ui.panel.MemoryPanel
 import com.subbyte.subspectrum.ui.panel.RegistersPanel
-import com.subbyte.subspectrum.ui.panel.WatchPanel
-import com.subbyte.subspectrum.ui.panel.components.HorizontalSplitPane
-import com.subbyte.subspectrum.ui.panel.components.VerticalSplitPane
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import com.subbyte.subspectrum.ui.components.HorizontalSplitPane
+import com.subbyte.subspectrum.ui.components.VerticalSplitPane
 
 @Composable
-@Preview
 fun App() {
+    LaunchedEffect(Unit) {
+        SpectrumMachine.loadRom()
+    }
+
     MaterialTheme {
         HorizontalSplitPane(
             modifier = Modifier
@@ -26,18 +29,13 @@ fun App() {
             left = {
                 VerticalSplitPane(
                     modifier = Modifier.fillMaxSize(),
-                    initialSplit = 0.5f,
+                    initialSplit = 0.4f,
                     top = { RegistersPanel() },
-                    bottom = { DisassemblyPanel() }
+                    bottom = { MemoryPanel() }
                 )
             },
             right = {
-                VerticalSplitPane(
-                    modifier = Modifier.fillMaxSize(),
-                    initialSplit = 0.5f,
-                    top = { WatchPanel() },
-                    bottom = { MemoryPanel() }
-                )
+                DisassemblyPanel()
             }
         )
     }

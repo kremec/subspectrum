@@ -44,6 +44,7 @@ import com.subbyte.subspectrum.proc.instructions.undocumented.ed.RETN_3
 import com.subbyte.subspectrum.proc.instructions.undocumented.ed.RETN_4
 import com.subbyte.subspectrum.proc.instructions.undocumented.ed.RETN_5
 import com.subbyte.subspectrum.proc.instructions.undocumented.ed.RETN_6
+import com.subbyte.subspectrum.units.displayString
 
 interface Instruction {
     val address: Address
@@ -469,7 +470,7 @@ object Instructions {
     private fun decodeByDefinitions(pc: Address): DecodedInstruction {
         return tryDecodeByDefinitions(pc) ?: run {
             val opcode = Memory.memorySet.getMemoryCell(pc)
-            error("Unknown opcode 0x${opcode} at 0x${pc}")
+            error("Unknown opcode 0x${opcode.displayString()} at 0x${pc.displayString()}")
         }
     }
     private fun tryDecodeByDefinitions(pc: Address): DecodedInstruction? {

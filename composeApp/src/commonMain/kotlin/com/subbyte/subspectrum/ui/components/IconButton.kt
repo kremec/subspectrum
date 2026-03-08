@@ -1,4 +1,4 @@
-package com.subbyte.subspectrum.ui.topbar.components
+package com.subbyte.subspectrum.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.padding
@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBarButton(
+fun IconButton(
     onClick: () -> Unit,
     tooltip: String,
     content: @Composable (() -> Unit)

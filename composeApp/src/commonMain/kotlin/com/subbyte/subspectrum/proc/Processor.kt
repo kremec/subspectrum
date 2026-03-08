@@ -26,13 +26,13 @@ object Processor {
     var totalInstructionsExecuted: Long = 0
 
     fun step() {
-        val pc = Registers.specialPurposeRegisters.getPC()
+        val initialPc = Registers.specialPurposeRegisters.getPC()
 
-        if (breakpoints.value.contains(pc.toInt())) {
-            if (currentBreakpoint != pc.toInt()) {
+        if (breakpoints.value.contains(initialPc.toInt())) {
+            if (currentBreakpoint != initialPc.toInt()) {
                 if (running.value) {
                     running.value = false
-                    currentBreakpoint = pc.toInt()
+                    currentBreakpoint = initialPc.toInt()
                     return
                 }
             } else {
@@ -46,11 +46,18 @@ object Processor {
         inHalt = false
         afterEIDI = false
 
+        val headerBypassTarget = ULATapeDeck.tryBypassRomHeaderProcessing(Registers.specialPurposeRegisters.getPC())
+        if (headerBypassTarget != null) {
+            Registers.specialPurposeRegisters.setPC(headerBypassTarget)
+        }
+
         if (ULATapeDeck.tryHandleLdBytesRoutine()) {
             Registers.specialPurposeRegisters.incrementR(1)
             ULATiming.advanceCycles(1)
             return
         }
+
+        val pc = Registers.specialPurposeRegisters.getPC()
 
         val decodedInstruction = Instructions.decode(pc.toUShort())
         Registers.specialPurposeRegisters.incrementR(decodedInstruction.opcodeFetchCount)

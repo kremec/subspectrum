@@ -1,4 +1,4 @@
-package com.subbyte.subspectrum.ui.panel.components
+package com.subbyte.subspectrum.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures

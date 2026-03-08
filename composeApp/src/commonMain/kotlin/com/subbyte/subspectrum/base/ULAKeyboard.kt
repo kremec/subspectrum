@@ -8,6 +8,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.key.utf16CodePoint
+import com.subbyte.subspectrum.units.toBytes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -20,12 +21,12 @@ enum class ULAKeyboardInputMode {
 internal object ULAKeyboard {
     private const val CHARACTER_KEY_PULSE_MILLIS = 30L
 
-    private const val ULA_IO_PORT_LOW_BYTE = 0xFE
+    private const val ULA_IO_PORT_LOW_BYTE = 0xFE.toByte()
 
     private const val KEYBOARD_ROW_COUNT = 8
     private const val KEYBOARD_COLUMN_COUNT = 5
     private const val KEYBOARD_ROW_IDLE = (1 shl KEYBOARD_COLUMN_COUNT) - 1
-    private const val KEYBOARD_PORT_HIGH_BITS = 0b1110_0000
+    private const val KEYBOARD_PORT_HIGH_BITS = 0b1010_0000
 
     private data class MatrixKey(
         val row: Int,
@@ -38,8 +39,8 @@ internal object ULAKeyboard {
     var keyboardInputMode: MutableState<ULAKeyboardInputMode> =
         mutableStateOf(ULAKeyboardInputMode.Authentic)
 
-    fun getIOPortValue(portAddress: UShort): Byte? {
-        if ((portAddress.toInt() and 0x00FF) != ULA_IO_PORT_LOW_BYTE) {
+    fun getKeyboardPortValue(portAddress: UShort): Byte? {
+        if (portAddress.toBytes().second != ULA_IO_PORT_LOW_BYTE) {
             return null
         }
 

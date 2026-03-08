@@ -2,12 +2,13 @@ package com.subbyte.subspectrum.base
 
 import androidx.compose.runtime.mutableStateOf
 import com.subbyte.subspectrum.units.getBit
+import com.subbyte.subspectrum.units.toBytes
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.SourceDataLine
 
 internal actual object ULABeeper {
-    private const val ULA_IO_PORT_LOW_BYTE = 0xFE
+    private const val ULA_IO_PORT_LOW_BYTE = 0xFE.toByte()
 
     private const val SAMPLE_RATE = 44_100
     private const val BUFFER_FRAMES = 1_024
@@ -41,7 +42,7 @@ internal actual object ULABeeper {
     }
 
     actual fun onPortWrite(portAddress: IOAddress, value: Byte) {
-        if ((portAddress.toInt() and 0x00FF) != ULA_IO_PORT_LOW_BYTE) {
+        if (portAddress.toBytes().second != ULA_IO_PORT_LOW_BYTE) {
             return
         }
 

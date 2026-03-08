@@ -15,7 +15,7 @@ fun IOAddress.toIOPort(): IOPort {
 
 val IO_SIZE = IOPort.MAX_VALUE.toInt() + 1
 
-data class IOPortSet (
+data class IOPortSet(
     private val ioPorts: ByteArray = ByteArray(IO_SIZE)
 ) {
     private val _invalidations = MutableSharedFlow<Unit>(
@@ -33,9 +33,9 @@ data class IOPortSet (
     }
 
     fun getIO(portAddress: IOAddress): Byte {
-        val ulaPortValue = ULAKeyboard.getIOPortValue(portAddress)
-        if (ulaPortValue != null) {
-            return ulaPortValue
+        val keyboardPortValue = ULAKeyboard.getKeyboardPortValue(portAddress)
+        if (keyboardPortValue != null) {
+            return keyboardPortValue
         }
 
         return getRawIO(portAddress)

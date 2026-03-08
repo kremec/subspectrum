@@ -1,4 +1,4 @@
-package com.subbyte.subspectrum.ui.topbar
+package com.subbyte.subspectrum.ui.topbar.button
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.subbyte.subspectrum.proc.Processor
-import com.subbyte.subspectrum.ui.topbar.components.TopBarButton
+import com.subbyte.subspectrum.ui.components.IconButton
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -56,7 +56,7 @@ fun ProfilerButton() {
     }
 
     Box {
-        TopBarButton(
+        IconButton(
             tooltip = "Profiler",
             onClick = { showMenu = !showMenu }
         ) {

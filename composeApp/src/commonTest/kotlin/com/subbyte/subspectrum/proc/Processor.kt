@@ -22,7 +22,7 @@ class ProcessorTest {
         Registers.specialPurposeRegisters.reset()
         ULATiming.reset()
         ULAKeyboard.releaseAllKeyboardKeys()
-        ULATapeDeck.ejectTape()
+        ULATapeDeck.reset()
         Processor.reset()
     }
 
@@ -171,6 +171,7 @@ class ProcessorTest {
         Registers.specialPurposeRegisters.setPC(0x0556)
 
         Processor.step()
+        runUntilPcEquals(returnAddress.toShort())
 
         val loadedBytes = Memory.memorySet.getMemoryCells(
             destinationAddress.toUShort(),
@@ -212,6 +213,7 @@ class ProcessorTest {
         Registers.specialPurposeRegisters.setPC(0x0556)
 
         Processor.step()
+        runUntilPcEquals(returnAddress.toShort())
 
         val memoryAfterVerify = Memory.memorySet.getMemoryCells(
             destinationAddress.toUShort(),
@@ -223,11 +225,23 @@ class ProcessorTest {
         assertEquals(returnAddress.toShort(), Registers.specialPurposeRegisters.getPC())
     }
 
+    private fun runUntilPcEquals(expectedPc: Short, maxSteps: Int = 64) {
+        repeat(maxSteps) {
+            if (Registers.specialPurposeRegisters.getPC() == expectedPc) {
+                return
+            }
+            Processor.step()
+        }
+
+        assertEquals(expectedPc, Registers.specialPurposeRegisters.getPC())
+    }
+
     private fun installLdBytesRoutineSignature() {
         Memory.memorySet.setMemoryCells(
             0x0556u,
             byteArrayOf(0x14, 0x08, 0x15, 0xF3.toByte()),
         )
+        Memory.memorySet.setMemoryCell(0x053Fu, 0xC9.toByte())
     }
 
     private fun buildTapeBlock(flag: Int, payload: ByteArray): SpectrumTapeDataBlock {

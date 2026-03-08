@@ -9,7 +9,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.outlined.LocationSearching
 import androidx.compose.material.icons.outlined.Circle
+import androidx.compose.material.icons.outlined.MyLocation
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -24,9 +26,11 @@ import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.proc.instructions.Instructions
-import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.merge
+import com.subbyte.subspectrum.ui.components.IconButton
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.conflate
 
 data class DisassemblyRow(
     val address: String,
@@ -37,23 +41,44 @@ data class DisassemblyRow(
 
 @Composable
 fun DisassemblyPanel() {
-    var uiVersion by remember { mutableIntStateOf(0) }
+    var renderVersion by remember { mutableIntStateOf(0) }
+    var rowsVersion by remember { mutableIntStateOf(0) }
+    var trackPc by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
-        var dirty = true
+        var renderDirty = true
+        var rowsDirty = true
+
         launch {
-            merge(
-                Memory.memorySet.invalidations,
-                Registers.specialPurposeRegisters.pcInvalidations,
-            ).conflate().collect { dirty = true }
+            Memory.memorySet.invalidations.conflate().collect {
+                renderDirty = true
+                rowsDirty = true
+            }
+        }
+
+        launch {
+            Registers.specialPurposeRegisters.pcInvalidations.conflate().collect {
+                renderDirty = true
+            }
         }
 
         while (true) {
             withFrameNanos { }
-            if (dirty) {
-                dirty = false
-                uiVersion++
+
+            if (renderDirty) {
+                renderDirty = false
+                renderVersion++
+            }
+            if (rowsDirty) {
+                rowsDirty = false
+                rowsVersion++
             }
         }
+    }
+
+    var rows by remember { mutableStateOf<List<DisassemblyRow>>(emptyList()) }
+    LaunchedEffect(rowsVersion) {
+        rows = withContext(Dispatchers.Default) { decodeDisassemblyRows() }
     }
 
     Column(
@@ -62,10 +87,24 @@ fun DisassemblyPanel() {
             .background(Color.White)
             .padding(8.dp)
     ) {
-        Text(
-            "Disassembly",
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text("Disassembly")
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(
+                onClick = { trackPc = !trackPc },
+                tooltip = if (trackPc) "Disable PC tracking" else "Enable PC tracking"
+            ) {
+                Icon(
+                    imageVector = if (trackPc) Icons.Outlined.MyLocation else Icons.Outlined.LocationSearching,
+                    contentDescription = if (trackPc) "PC tracking enabled" else "PC tracking disabled"
+                )
+            }
+        }
         HorizontalDivider()
 
         // Header
@@ -93,17 +132,18 @@ fun DisassemblyPanel() {
         HorizontalDivider()
 
         val lazyListState = rememberLazyListState()
-        val pc = Registers.specialPurposeRegisters.getPC()
+        val pcAddress = Registers.specialPurposeRegisters.getPC().toUShort().toInt()
+        val breakpoints by Processor.breakpoints
 
-        LaunchedEffect(uiVersion) {
-            val pcRowIndex = pc.toUShort().toInt()
+        LaunchedEffect(renderVersion, trackPc) {
+            if (!trackPc) return@LaunchedEffect
+
+            val pcRowIndex = rows.binarySearchBy(pcAddress) { it.startAddress }
+            if (pcRowIndex < 0) return@LaunchedEffect
 
             val visible = lazyListState.layoutInfo.visibleItemsInfo
-            val isPcRowVisible =
-                visible.any { it.index == pcRowIndex } && visible.indexOfFirst { it.index == pcRowIndex } !in listOf(
-                    0,
-                    visible.size
-                )
+            val pcVisibleIndex = visible.indexOfFirst { it.index == pcRowIndex }
+            val isPcRowVisible = pcVisibleIndex != -1 && pcVisibleIndex !in listOf(0, visible.lastIndex)
             if (isPcRowVisible) return@LaunchedEffect
 
             lazyListState.scrollToItem(pcRowIndex)
@@ -111,14 +151,11 @@ fun DisassemblyPanel() {
 
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(state = lazyListState) {
-                items(count = 0x10000, key = { it }) { address ->
-                    val row = remember(address, uiVersion) {
-                        decodeDisassemblyRow(address)
-                    }
+                items(count = rows.size, key = { rows[it].startAddress }) { index ->
+                    val row = rows[index]
                     val textColor =
-                        if (row.startAddress == pc.toInt()) Color.Red else Color.Black
+                        if (row.startAddress == pcAddress) Color.Red else Color.Black
 
-                    val breakpoints by Processor.breakpoints
                     val breakpointSet = breakpoints.contains(row.startAddress)
 
                     Row(
@@ -178,6 +215,14 @@ fun DisassemblyPanel() {
             )
         }
     }
+}
+
+private fun decodeDisassemblyRows(): List<DisassemblyRow> {
+    val rows = ArrayList<DisassemblyRow>(0x10000)
+    for (address in 0..0xFFFF) {
+        rows += decodeDisassemblyRow(address)
+    }
+    return rows
 }
 
 private fun decodeDisassemblyRow(address: Int): DisassemblyRow {

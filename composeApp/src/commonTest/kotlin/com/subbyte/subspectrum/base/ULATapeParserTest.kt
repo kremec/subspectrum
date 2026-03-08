@@ -55,6 +55,28 @@ class ULATapeParserTest {
         assertContentEquals(secondPayload, secondBlock.payload)
         assertTrue(secondBlock.checksumIsValid)
     }
+
+    @Test
+    fun buildsHeaderDataMetadataForTap() {
+        val headerPayload = ByteArray(17) { 0x00 }
+        val dataPayload = byteArrayOf(0x10, 0x20, 0x30)
+        val secondHeaderPayload = ByteArray(17) { 0x01 }
+        val secondDataPayload = byteArrayOf(0x7F)
+
+        val tapBytes = buildTapWithBlocks(
+            buildSpectrumTapeBlock(flag = 0x00, payload = headerPayload),
+            buildSpectrumTapeBlock(flag = 0xFF, payload = dataPayload),
+            buildSpectrumTapeBlock(flag = 0x00, payload = secondHeaderPayload),
+            buildSpectrumTapeBlock(flag = 0xFF, payload = secondDataPayload),
+        )
+
+        val tapeImage = ULATapeParser.parse(tapBytes)
+
+        assertEquals(1, tapeImage.blocks[0].pairedDataBlockIndex)
+        assertEquals(3, tapeImage.blocks[2].pairedDataBlockIndex)
+        assertEquals(null, tapeImage.blocks[1].pairedDataBlockIndex)
+        assertEquals(null, tapeImage.blocks[3].pairedDataBlockIndex)
+    }
 }
 
 private fun buildTzxWithStandardBlocks(vararg blocks: Pair<Int, ByteArray>): ByteArray {

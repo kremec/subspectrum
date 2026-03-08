@@ -8,6 +8,7 @@ data class SpectrumTapeDataBlock(
     val flag: UByte,
     val payload: ByteArray,
     val checksum: UByte,
+    val pairedDataBlockIndex: Int? = null,
 ) {
     val checksumIsValid: Boolean
         get() = checksum == calculateChecksum(flag, payload)

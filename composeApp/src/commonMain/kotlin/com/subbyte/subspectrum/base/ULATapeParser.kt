@@ -3,6 +3,10 @@ package com.subbyte.subspectrum.base
 import com.subbyte.subspectrum.units.SpectrumTapeDataBlock
 import com.subbyte.subspectrum.units.SpectrumTapeImage
 
+private const val TAPE_HEADER_FLAG: Byte = 0x00
+private const val TAPE_DATA_FLAG: Byte = 0xFF.toByte()
+private const val TAPE_HEADER_PAYLOAD_LENGTH = 17
+
 private val TZX_SIGNATURE = byteArrayOf(
     'Z'.code.toByte(),
     'X'.code.toByte(),
@@ -144,7 +148,7 @@ object ULATapeParser {
             }
         }
 
-        return SpectrumTapeImage(dataBlocks)
+        return SpectrumTapeImage(annotateDataBlockMetadata(dataBlocks))
     }
 
     private fun parseTap(fileBytes: ByteArray): SpectrumTapeImage {
@@ -157,7 +161,41 @@ object ULATapeParser {
             dataBlocks += SpectrumTapeDataBlock.fromRawBlock(rawData)
         }
 
-        return SpectrumTapeImage(dataBlocks)
+        return SpectrumTapeImage(annotateDataBlockMetadata(dataBlocks))
+    }
+
+    private fun annotateDataBlockMetadata(
+        blocks: List<SpectrumTapeDataBlock>,
+    ): List<SpectrumTapeDataBlock> {
+        if (blocks.isEmpty()) {
+            return blocks
+        }
+
+        val blockCopies = blocks.toMutableList()
+        for (index in blocks.indices) {
+            val block = blocks[index]
+            val isHeaderBlock =
+                block.flag.toByte() == TAPE_HEADER_FLAG &&
+                        block.payload.size == TAPE_HEADER_PAYLOAD_LENGTH &&
+                        block.checksumIsValid
+            if (!isHeaderBlock) {
+                continue
+            }
+
+            val dataIndex = index + 1
+            val pairedDataBlock = blocks.getOrNull(dataIndex)
+            val isValidDataBlock =
+                pairedDataBlock != null &&
+                        pairedDataBlock.flag.toByte() == TAPE_DATA_FLAG &&
+                        pairedDataBlock.checksumIsValid
+            if (!isValidDataBlock) {
+                continue
+            }
+
+            blockCopies[index] = block.copy(pairedDataBlockIndex = dataIndex)
+        }
+
+        return blockCopies
     }
 
     private fun hasTzxSignature(fileBytes: ByteArray): Boolean {

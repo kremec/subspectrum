@@ -7,7 +7,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.LocationSearching
+import androidx.compose.material.icons.outlined.MyLocation
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,27 +22,37 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.ui.components.IconButton
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun MemoryPanel() {
-    var uiVersion by remember { mutableIntStateOf(0) }
+    var renderVersion by remember { mutableIntStateOf(0) }
+    var trackPc by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
-        var dirty = true
+        var renderDirty = true
+
         launch {
-            merge(
-                Memory.memorySet.invalidations,
-                Registers.specialPurposeRegisters.pcInvalidations,
-            ).conflate().collect { dirty = true }
+            Memory.memorySet.invalidations.conflate().collect {
+                renderDirty = true
+            }
+        }
+
+        launch {
+            Registers.specialPurposeRegisters.pcInvalidations.conflate().collect {
+                renderDirty = true
+            }
         }
 
         while (true) {
             withFrameNanos { }
-            if (dirty) {
-                dirty = false
-                uiVersion++
+            if (renderDirty) {
+                renderDirty = false
+                renderVersion++
             }
         }
     }
@@ -49,10 +63,24 @@ fun MemoryPanel() {
             .background(Color.White)
             .padding(8.dp)
     ) {
-        Text(
-            "Memory",
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text("Memory")
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(
+                onClick = { trackPc = !trackPc },
+                tooltip = if (trackPc) "Disable PC tracking" else "Enable PC tracking"
+            ) {
+                Icon(
+                    imageVector = if (trackPc) Icons.Outlined.MyLocation else Icons.Outlined.LocationSearching,
+                    contentDescription = if (trackPc) "PC tracking enabled" else "PC tracking disabled"
+                )
+            }
+        }
         HorizontalDivider()
 
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -62,19 +90,26 @@ fun MemoryPanel() {
                 else -> 16
             }
 
-            val memoryRows = remember(bytesPerRow) {
-                buildMemoryRows(bytesPerRow)
+            var rows by remember { mutableStateOf<List<MemoryRow>>(emptyList()) }
+            LaunchedEffect(bytesPerRow) {
+                rows = withContext(Dispatchers.Default) {
+                    buildMemoryRows(bytesPerRow)
+                }
             }
+
             val lazyListState = rememberLazyListState()
             val pc = Registers.specialPurposeRegisters.getPC()
             val prevBytesPerRow = remember { mutableStateOf(bytesPerRow) }
 
-            LaunchedEffect(uiVersion) {
-                val pcRowIndex = memoryRows.indexOfLast { row -> row.startAddress < pc.toUShort().toInt() }
-                if (pcRowIndex == -1) return@LaunchedEffect
+            LaunchedEffect(renderVersion, trackPc) {
+                if (!trackPc) return@LaunchedEffect
+                if (rows.isEmpty()) return@LaunchedEffect
+
+                val pcRowIndex = pc.toUShort().toInt() / bytesPerRow
 
                 val visible = lazyListState.layoutInfo.visibleItemsInfo
-                val isPcRowVisible = visible.any { it.index == pcRowIndex } && visible.indexOfFirst { it.index == pcRowIndex } !in listOf(0, visible.size)
+                val pcVisibleIndex = visible.indexOfFirst { it.index == pcRowIndex }
+                val isPcRowVisible = pcVisibleIndex != -1 && pcVisibleIndex !in listOf(0, visible.lastIndex)
                 if (isPcRowVisible) return@LaunchedEffect
 
                 lazyListState.scrollToItem(pcRowIndex)
@@ -93,7 +128,19 @@ fun MemoryPanel() {
 
             Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(state = lazyListState) {
-                    items(memoryRows, key = { it.address }) { row ->
+                    items(rows, key = { it.address }) { row ->
+                        val rowBytes = remember(row.startAddress, bytesPerRow, renderVersion) {
+                            List(bytesPerRow) { index ->
+                                val byteAddress = (row.startAddress + index).toUShort()
+                                val byteValue = Memory.memorySet.getMemoryCell(byteAddress)
+                                    .toUByte()
+                                    .toString(16)
+                                    .padStart(2, '0')
+                                    .uppercase()
+                                byteAddress to byteValue
+                            }
+                        }
+
                         Row(modifier = Modifier.padding(4.dp)) {
                             Text(
                                 row.address,
@@ -101,13 +148,7 @@ fun MemoryPanel() {
                                 fontWeight = FontWeight.Light,
                                 modifier = Modifier.width(60.dp)
                             )
-                            repeat(bytesPerRow) { index ->
-                                val byteAddress = (row.startAddress + index).toUShort()
-                                val byteValue = Memory.memorySet.getMemoryCell(byteAddress)
-                                    .toUByte()
-                                    .toString(16)
-                                    .padStart(2, '0')
-                                    .uppercase()
+                            rowBytes.forEach { (byteAddress, byteValue) ->
                                 val textColor =
                                     if (byteAddress == pc.toUShort()) Color.Red else Color.Black
                                 Text(

@@ -1,4 +1,4 @@
-package com.subbyte.subspectrum.ui.topbar
+package com.subbyte.subspectrum.ui.topbar.button
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
@@ -7,7 +7,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import com.subbyte.subspectrum.proc.Processor
-import com.subbyte.subspectrum.ui.topbar.components.TopBarButton
+import com.subbyte.subspectrum.ui.components.IconButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 fun RunButton() {
     val scope = rememberCoroutineScope()
 
-    TopBarButton(
+    IconButton(
         tooltip = if (Processor.running.value) "Stop" else "Run",
         onClick = { scope.launch(Dispatchers.Default) {
             if (Processor.running.value) Processor.stop() else Processor.run()

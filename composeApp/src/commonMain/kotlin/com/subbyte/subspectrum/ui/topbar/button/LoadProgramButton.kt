@@ -1,4 +1,4 @@
-package com.subbyte.subspectrum.ui.topbar
+package com.subbyte.subspectrum.ui.topbar.button
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.UploadFile
@@ -8,7 +8,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.subbyte.subspectrum.ProgramFilePicker
 import com.subbyte.subspectrum.base.ULATapeDeck
 import com.subbyte.subspectrum.base.ULATapeParser
-import com.subbyte.subspectrum.ui.topbar.components.TopBarButton
+import com.subbyte.subspectrum.ui.components.IconButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -17,7 +17,7 @@ import kotlinx.coroutines.withContext
 fun LoadProgramButton() {
     val scope = rememberCoroutineScope()
 
-    TopBarButton(
+    IconButton(
         tooltip = "Load Tape",
         onClick = {
             scope.launch {

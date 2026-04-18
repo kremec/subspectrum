@@ -29,7 +29,7 @@ fun App() {
             left = {
                 VerticalSplitPane(
                     modifier = Modifier.fillMaxSize(),
-                    initialSplit = 0.4f,
+                    initialSplit = 0.5f,
                     top = { RegistersPanel() },
                     bottom = { MemoryPanel() }
                 )

@@ -22,7 +22,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.ui.components.IconButton
+import com.subbyte.subspectrum.ui.components.HexValueEditor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -32,6 +34,7 @@ import kotlinx.coroutines.withContext
 fun MemoryPanel() {
     var renderVersion by remember { mutableIntStateOf(0) }
     var trackPc by remember { mutableStateOf(false) }
+    val editingEnabled = !Processor.running.value
 
     LaunchedEffect(Unit) {
         var renderDirty = true
@@ -132,16 +135,14 @@ fun MemoryPanel() {
                         val rowBytes = remember(row.startAddress, bytesPerRow, renderVersion) {
                             List(bytesPerRow) { index ->
                                 val byteAddress = (row.startAddress + index).toUShort()
-                                val byteValue = Memory.memorySet.getMemoryCell(byteAddress)
-                                    .toUByte()
-                                    .toString(16)
-                                    .padStart(2, '0')
-                                    .uppercase()
-                                byteAddress to byteValue
+                                byteAddress to Memory.memorySet.getMemoryCell(byteAddress)
                             }
                         }
 
-                        Row(modifier = Modifier.padding(4.dp)) {
+                        Row(
+                            modifier = Modifier.padding(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Text(
                                 row.address,
                                 fontFamily = FontFamily.Monospace,
@@ -151,12 +152,16 @@ fun MemoryPanel() {
                             rowBytes.forEach { (byteAddress, byteValue) ->
                                 val textColor =
                                     if (byteAddress == pc.toUShort()) Color.Red else Color.Black
-                                Text(
-                                    byteValue,
-                                    fontFamily = FontFamily.Monospace,
-                                    fontWeight = FontWeight.Light,
+                                HexValueEditor(
+                                    value = byteValue
+                                        .toUByte()
+                                        .toString(16)
+                                        .padStart(2, '0')
+                                        .uppercase(),
+                                    digits = 2,
                                     color = textColor,
-                                    modifier = Modifier.width(30.dp)
+                                    enabled = editingEnabled,
+                                    onValueCommitted = { Memory.memorySet.setMemoryCell(byteAddress, it.toByte()) },
                                 )
                             }
                         }

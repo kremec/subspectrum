@@ -22,28 +22,38 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.proc.instructions.Instructions
 import com.subbyte.subspectrum.ui.components.IconButton
+import com.subbyte.subspectrum.ui.components.HexValueEditor
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.flow.conflate
 
 data class DisassemblyRow(
     val address: String,
-    val bytes: String,
+    val bytes: ByteArray,
     val operation: String,
-    val startAddress: Int
+    val startAddress: Address
 )
+
+private fun DisassemblyRow.containsAddress(address: Address): Boolean {
+    val start = startAddress.toUInt()
+    val endExclusive = start + bytes.size.toUInt()
+    val value = address.toUInt()
+    return value in start until endExclusive
+}
 
 @Composable
 fun DisassemblyPanel() {
     var renderVersion by remember { mutableIntStateOf(0) }
     var rowsVersion by remember { mutableIntStateOf(0) }
     var trackPc by remember { mutableStateOf(false) }
+    val editingEnabled = !Processor.running.value
 
     LaunchedEffect(Unit) {
         var renderDirty = true
@@ -132,14 +142,14 @@ fun DisassemblyPanel() {
         HorizontalDivider()
 
         val lazyListState = rememberLazyListState()
-        val pcAddress = Registers.specialPurposeRegisters.getPC().toUShort().toInt()
+        val pcAddress = Registers.specialPurposeRegisters.getPC().toUShort()
         val breakpoints by Processor.breakpoints
 
         LaunchedEffect(renderVersion, trackPc) {
             if (!trackPc) return@LaunchedEffect
 
-            val pcRowIndex = rows.binarySearchBy(pcAddress) { it.startAddress }
-            if (pcRowIndex < 0) return@LaunchedEffect
+            val pcRowIndex = rows.indexOfFirst { it.containsAddress(pcAddress) }
+            if (pcRowIndex == -1) return@LaunchedEffect
 
             val visible = lazyListState.layoutInfo.visibleItemsInfo
             val pcVisibleIndex = visible.indexOfFirst { it.index == pcRowIndex }
@@ -154,14 +164,15 @@ fun DisassemblyPanel() {
                 items(count = rows.size, key = { rows[it].startAddress }) { index ->
                     val row = rows[index]
                     val textColor =
-                        if (row.startAddress == pcAddress) Color.Red else Color.Black
+                        if (row.containsAddress(pcAddress)) Color.Red else Color.Black
 
                     val breakpointSet = breakpoints.contains(row.startAddress)
 
                     Row(
                         modifier = Modifier
                             .padding(4.dp)
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(
                             modifier = Modifier
@@ -191,13 +202,28 @@ fun DisassemblyPanel() {
                             color = textColor,
                             modifier = Modifier.width(90.dp)
                         )
-                        Text(
-                            row.bytes,
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Light,
-                            color = textColor,
-                            modifier = Modifier.width(130.dp)
-                        )
+                        Row(
+                            modifier = Modifier.width(130.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            row.bytes.forEachIndexed { byteIndex, byteValue ->
+                                val byteAddress =
+                                    (row.startAddress.toUInt() + byteIndex.toUInt()).toUShort()
+                                HexValueEditor(
+                                    value = byteValue
+                                        .toUByte()
+                                        .toString(16)
+                                        .padStart(2, '0')
+                                        .uppercase(),
+                                    digits = 2,
+                                    color = textColor,
+                                    enabled = editingEnabled,
+                                    onValueCommitted = {
+                                        Memory.memorySet.setMemoryCell(byteAddress, it.toByte())
+                                    },
+                                )
+                            }
+                        }
                         Text(
                             row.operation,
                             fontFamily = FontFamily.Monospace,
@@ -219,29 +245,32 @@ fun DisassemblyPanel() {
 
 private fun decodeDisassemblyRows(): List<DisassemblyRow> {
     val rows = ArrayList<DisassemblyRow>(0x10000)
-    for (address in 0..0xFFFF) {
-        rows += decodeDisassemblyRow(address)
+
+    var address = 0
+    while (address <= 0xFFFF) {
+        val row = decodeDisassemblyRow(address.toUShort())
+        rows += row
+        address += row.bytes.size.coerceAtLeast(1)
     }
+
     return rows
 }
 
-private fun decodeDisassemblyRow(address: Int): DisassemblyRow {
+private fun decodeDisassemblyRow(address: Address): DisassemblyRow {
     return try {
-        val decodedInstruction = Instructions.decode(address.toUShort())
+        val decodedInstruction = Instructions.decode(address)
         val instruction = decodedInstruction.instruction
         DisassemblyRow(
             address = address.toString(16).padStart(4, '0').uppercase(),
-            bytes = instruction.bytes.joinToString(" ") { byte ->
-                byte.toInt().and(0xFF).toString(16).padStart(2, '0').uppercase()
-            },
+            bytes = ByteArray(instruction.bytes.size) { instruction.bytes[it] },
             operation = instruction.toString(),
             startAddress = address,
         )
     } catch (_: Exception) {
-        val byte = Memory.memorySet.getMemoryCell(address.toUShort())
+        val byte = Memory.memorySet.getMemoryCell(address)
         DisassemblyRow(
             address = address.toString(16).padStart(4, '0').uppercase(),
-            bytes = byte.toInt().and(0xFF).toString(16).padStart(2, '0').uppercase(),
+            bytes = byteArrayOf(byte),
             operation = "BYTE",
             startAddress = address,
         )

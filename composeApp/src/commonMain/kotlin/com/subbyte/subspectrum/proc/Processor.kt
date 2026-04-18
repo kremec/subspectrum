@@ -1,6 +1,7 @@
 package com.subbyte.subspectrum.proc
 
 import androidx.compose.runtime.mutableStateOf
+import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.base.ULATapeDeck
@@ -21,18 +22,19 @@ object Processor {
 
     var running = mutableStateOf(false)
 
-    var breakpoints = mutableStateOf(setOf<Int>())
-    var currentBreakpoint: Int? = null
+    var breakpoints = mutableStateOf(emptySet<Address>())
+    var currentBreakpoint: Address? = null
     var totalInstructionsExecuted: Long = 0
 
     fun step() {
         val initialPc = Registers.specialPurposeRegisters.getPC()
+        val initialPcAddress = initialPc.toUShort()
 
-        if (breakpoints.value.contains(initialPc.toInt())) {
-            if (currentBreakpoint != initialPc.toInt()) {
+        if (breakpoints.value.contains(initialPcAddress)) {
+            if (currentBreakpoint != initialPcAddress) {
                 if (running.value) {
                     running.value = false
-                    currentBreakpoint = initialPc.toInt()
+                    currentBreakpoint = initialPcAddress
                     return
                 }
             } else {
@@ -191,7 +193,7 @@ object Processor {
 
         running.value = false
 
-        breakpoints.value = setOf()
+        breakpoints.value = emptySet()
         currentBreakpoint = null
         totalInstructionsExecuted = 0
     }

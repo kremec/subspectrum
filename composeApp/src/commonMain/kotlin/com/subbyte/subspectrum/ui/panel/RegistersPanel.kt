@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.subbyte.subspectrum.base.RegisterSet
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.units.Word
+import com.subbyte.subspectrum.units.getBit
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
@@ -34,6 +35,38 @@ fun Register8(registerName: String, registerValue: Byte) {
 @Composable
 fun Register16(registerName: String, registerValue: Word) {
     Register(registerName, registerValue.toHexString().padStart(2, '0').uppercase())
+}
+
+@Composable
+fun FlagState(flagName: String, isSet: Boolean) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(flagName, fontWeight = FontWeight.Light)
+        Text(
+            if (isSet) "1" else "0",
+            fontFamily = FontFamily.Monospace,
+            fontWeight = FontWeight.Light
+        )
+    }
+}
+
+@Composable
+fun RegisterFlags(registerSet: RegisterSet) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        val f = registerSet.getF()
+        FlagState("S", registerSet.getSFlag())
+        FlagState("Z", registerSet.getZFlag())
+        FlagState("F5", f.getBit(5))
+        FlagState("H", registerSet.getHFlag())
+        FlagState("F3", f.getBit(3))
+        FlagState("PV", registerSet.getPVFlag())
+        FlagState("N", registerSet.getNFlag())
+        FlagState("C", registerSet.getCFlag())
+    }
 }
 
 @Composable
@@ -76,6 +109,7 @@ fun RegisterSetPanel(
             Register8(registerName = "H$registerNameSuffix", registerValue = registerSet.getH())
             Register8(registerName = "L$registerNameSuffix", registerValue = registerSet.getL())
         }
+        RegisterFlags(registerSet = registerSet)
     }
 }
 

@@ -1,0 +1,118 @@
+name: Production Release
+
+on:
+  push:
+    tags:
+      - 'prd-*.*.*'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-tag:
+    name: Validate tag
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Validate production tag
+        id: version
+        shell: bash
+        run: |
+          tag="${GITHUB_REF_NAME}"
+
+          if [[ ! "${tag}" =~ ^prd-([1-9][0-9]*)\.([0-9]+)\.([0-9]+)$ ]]; then
+            echo "Expected tag format prd-x.y.z with x > 0, got ${tag}" >&2
+            echo "Compose Desktop native packages reject versions whose major version is 0." >&2
+            exit 1
+          fi
+
+          major=$((10#${BASH_REMATCH[1]}))
+          minor=$((10#${BASH_REMATCH[2]}))
+          patch=$((10#${BASH_REMATCH[3]}))
+
+          if (( major > 255 || minor > 255 || patch > 65535 )); then
+            echo "Version ${tag#prd-} exceeds Windows MSI limits: major <= 255, minor <= 255, patch <= 65535." >&2
+            exit 1
+          fi
+
+          echo "version=${tag#prd-}" >> "${GITHUB_OUTPUT}"
+
+  build:
+    name: Build ${{ matrix.name }}
+    needs: validate-tag
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS
+            os: macos-latest
+            gradle_command: ./gradlew
+            task: :composeApp:packageReleaseDmg
+            artifact_name: subspectrum-macos
+            artifact_path: composeApp/build/compose/binaries/main-release/dmg/*.dmg
+          - name: Windows
+            os: windows-latest
+            gradle_command: ./gradlew.bat
+            task: :composeApp:packageReleaseMsi
+            artifact_name: subspectrum-windows
+            artifact_path: composeApp/build/compose/binaries/main-release/msi/*.msi
+          - name: Linux
+            os: ubuntu-latest
+            gradle_command: ./gradlew
+            task: :composeApp:packageReleaseDeb
+            artifact_name: subspectrum-linux
+            artifact_path: composeApp/build/compose/binaries/main-release/deb/*.deb
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Build installer
+        shell: bash
+        run: >
+          ${{ matrix.gradle_command }}
+          ${{ matrix.task }}
+          "-PreleaseVersion=${{ needs.validate-tag.outputs.version }}"
+          --no-daemon
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_path }}
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub release
+    needs:
+      - validate-tag
+      - build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VERSION: ${{ needs.validate-tag.outputs.version }}
+    steps:
+      - name: Download installers
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: Create release
+        shell: bash
+        run: |
+          gh release create "${GITHUB_REF_NAME}" release-assets/* \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "subspectrum ${VERSION}" \
+            --notes "Production release ${VERSION}." \
+            --verify-tag

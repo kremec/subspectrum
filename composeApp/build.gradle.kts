@@ -8,6 +8,23 @@ plugins {
     alias(libs.plugins.composeHotReload)
 }
 
+val releaseVersion = providers.gradleProperty("releaseVersion")
+    .orElse(libs.versions.version.name)
+    .map { version ->
+        val match = Regex("""([1-9]\d*)\.(\d+)\.(\d+)""").matchEntire(version)
+        require(match != null) {
+            "Invalid releaseVersion '$version'. Native desktop release versions must use MAJOR.MINOR.PATCH with MAJOR > 0."
+        }
+
+        val major = match.groupValues[1].toIntOrNull()
+        val minor = match.groupValues[2].toIntOrNull()
+        val patch = match.groupValues[3].toIntOrNull()
+        require(major != null && major <= 255 && minor != null && minor <= 255 && patch != null && patch <= 65535) {
+            "Invalid releaseVersion '$version'. Windows MSI requires MAJOR <= 255, MINOR <= 255, and PATCH <= 65535."
+        }
+        version
+    }
+
 kotlin {
     jvm()
     
@@ -52,7 +69,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = libs.versions.app.name.get()
-            packageVersion = libs.versions.version.name.get()
+            packageVersion = releaseVersion.get()
             vendor = libs.versions.app.vendor.get()
             description = libs.versions.app.description.get()
 
@@ -63,7 +80,7 @@ compose.desktop {
             }
             windows {
                 iconFile.set(project.file("../media/icon.ico"))
-                msiPackageVersion = libs.versions.version.name.get()
+                msiPackageVersion = releaseVersion.get()
                 shortcut = true
                 dirChooser = true
                 menu = true

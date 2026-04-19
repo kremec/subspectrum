@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.ui.panel
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,6 +13,8 @@ import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.outlined.LocationSearching
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material.icons.outlined.MyLocation
+import androidx.compose.material.icons.outlined.SpeakerNotes
+import androidx.compose.material.icons.outlined.SpeakerNotesOff
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -25,10 +28,19 @@ import androidx.compose.ui.unit.dp
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.base.annotations.MemoryAnnotation
+import com.subbyte.subspectrum.base.annotations.MemoryInstructionAnnotation
+import com.subbyte.subspectrum.base.annotations.MemoryRegionAnnotation
+import com.subbyte.subspectrum.base.annotations.RAMSectionRegistry
+import com.subbyte.subspectrum.base.annotations.ROMInstructionRegistry
 import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.proc.instructions.Instructions
+import com.subbyte.subspectrum.ui.components.AnnotationColumn
+import com.subbyte.subspectrum.ui.components.AnnotationTooltip
 import com.subbyte.subspectrum.ui.components.IconButton
 import com.subbyte.subspectrum.ui.components.HexValueEditor
+import com.subbyte.subspectrum.ui.components.RegionDelimiterRow
+import com.subbyte.subspectrum.ui.components.StickyAnnotationOverlay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -39,20 +51,31 @@ data class DisassemblyRow(
     val bytes: ByteArray,
     val operation: String,
     val startAddress: Address
-)
-
-private fun DisassemblyRow.containsAddress(address: Address): Boolean {
-    val start = startAddress.toUInt()
-    val endExclusive = start + bytes.size.toUInt()
-    val value = address.toUInt()
-    return value in start until endExclusive
+) {
+    fun containsAddress(address: Address): Boolean {
+        val start = startAddress.toUInt()
+        val endExclusive = start + bytes.size.toUInt()
+        val value = address.toUInt()
+        return value in start until endExclusive
+    }
 }
 
+private data class DisassemblyLayout(
+    val rows: List<DisassemblyRow>,
+    val annotationsByAddress: Map<Int, List<MemoryAnnotation>>,
+    val delimitersByAddress: Map<Int, List<MemoryRegionAnnotation>>,
+    val instructionAnnotationsByAddress: Map<Address, MemoryInstructionAnnotation>,
+    val lazyItemIndexesByAddress: Map<Int, Int>,
+)
+
+@Suppress("DEPRECATION")
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DisassemblyPanel() {
     var renderVersion by remember { mutableIntStateOf(0) }
     var rowsVersion by remember { mutableIntStateOf(0) }
     var trackPc by remember { mutableStateOf(false) }
+    var annotatedLayoutEnabled by remember { mutableStateOf(false) }
     val editingEnabled = !Processor.running.value
 
     LaunchedEffect(Unit) {
@@ -86,11 +109,6 @@ fun DisassemblyPanel() {
         }
     }
 
-    var rows by remember { mutableStateOf<List<DisassemblyRow>>(emptyList()) }
-    LaunchedEffect(rowsVersion) {
-        rows = withContext(Dispatchers.Default) { decodeDisassemblyRows() }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -106,134 +124,190 @@ fun DisassemblyPanel() {
             Text("Disassembly")
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
+                onClick = { annotatedLayoutEnabled = !annotatedLayoutEnabled },
+                tooltip = if (annotatedLayoutEnabled) "Disable annotated layout" else "Enable annotated layout",
+            ) {
+                Icon(
+                    imageVector = if (annotatedLayoutEnabled) {
+                        Icons.Outlined.SpeakerNotes
+                    } else {
+                        Icons.Outlined.SpeakerNotesOff
+                    },
+                    contentDescription = if (annotatedLayoutEnabled) "Disable annotated layout" else "Enable annotated layout",
+                    tint = if (annotatedLayoutEnabled) Color.Black else Color.Gray,
+                )
+            }
+            IconButton(
                 onClick = { trackPc = !trackPc },
                 tooltip = if (trackPc) "Disable PC tracking" else "Enable PC tracking"
             ) {
                 Icon(
                     imageVector = if (trackPc) Icons.Outlined.MyLocation else Icons.Outlined.LocationSearching,
-                    contentDescription = if (trackPc) "PC tracking enabled" else "PC tracking disabled"
+                    contentDescription = if (trackPc) "PC tracking enabled" else "PC tracking disabled",
+                    tint = if (trackPc) Color.Black else Color.Gray,
                 )
             }
         }
         HorizontalDivider()
 
-        // Header
-        Row(modifier = Modifier.padding(4.dp)) {
-            Spacer(Modifier.width(20.dp))
-            Text(
-                "ADDRESS",
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Light,
-                modifier = Modifier.width(90.dp)
-            )
-            Text(
-                "BYTES",
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Light,
-                modifier = Modifier.width(130.dp)
-            )
-            Text(
-                "OPERATION",
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Light,
-                modifier = Modifier.weight(1f)
+        val breakpoints by Processor.breakpoints
+        val regions = remember(renderVersion) {
+            RAMSectionRegistry.allRegions(Memory.memorySet)
+        }
+        var rows by remember { mutableStateOf<List<DisassemblyRow>>(emptyList()) }
+        LaunchedEffect(rowsVersion) {
+            rows = withContext(Dispatchers.Default) { decodeDisassemblyRows() }
+        }
+        val layout = remember(rows, regions, annotatedLayoutEnabled) {
+            buildDisassemblyLayout(
+                rows = rows,
+                regions = regions,
+                annotatedLayoutEnabled = annotatedLayoutEnabled,
             )
         }
-        HorizontalDivider()
 
         val lazyListState = rememberLazyListState()
         val pcAddress = Registers.specialPurposeRegisters.getPC().toUShort()
-        val breakpoints by Processor.breakpoints
 
         LaunchedEffect(renderVersion, trackPc) {
             if (!trackPc) return@LaunchedEffect
 
-            val pcRowIndex = rows.indexOfFirst { it.containsAddress(pcAddress) }
+            val pcRowIndex = layout.rows.indexOfFirst { it.containsAddress(pcAddress) }
             if (pcRowIndex == -1) return@LaunchedEffect
 
-            val visible = lazyListState.layoutInfo.visibleItemsInfo
-            val pcVisibleIndex = visible.indexOfFirst { it.index == pcRowIndex }
-            val isPcRowVisible = pcVisibleIndex != -1 && pcVisibleIndex !in listOf(0, visible.lastIndex)
-            if (isPcRowVisible) return@LaunchedEffect
-
-            lazyListState.scrollToItem(pcRowIndex)
+            lazyListState.scrollToRowIfNeeded(
+                rowIndex = pcRowIndex,
+                rowAddress = layout.rows[pcRowIndex].startAddress.toInt(),
+                lazyItemIndexesByAddress = layout.lazyItemIndexesByAddress,
+            )
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(state = lazyListState) {
-                items(count = rows.size, key = { rows[it].startAddress }) { index ->
-                    val row = rows[index]
+                layout.rows.forEach { row ->
+                    val rowAnnotations = layout.annotationsByAddress[row.startAddress.toInt()].orEmpty()
+                    val rowDelimiters = layout.delimitersByAddress[row.startAddress.toInt()].orEmpty()
+                    val instructionAnnotation = layout.instructionAnnotationsByAddress[row.startAddress]
                     val textColor =
                         if (row.containsAddress(pcAddress)) Color.Red else Color.Black
 
                     val breakpointSet = breakpoints.contains(row.startAddress)
 
-                    Row(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .width(20.dp)
-                                .align(Alignment.CenterVertically)
-                                .clickable(
-                                    indication = null,
-                                    interactionSource = null
-                                ) {
-                                    Processor.breakpoints.value = if (breakpointSet)
-                                        breakpoints - row.startAddress
-                                    else
-                                        breakpoints + row.startAddress
+                    if (annotatedLayoutEnabled && rowDelimiters.isNotEmpty()) {
+                        stickyHeader(key = "disassembly-delimiters-${row.startAddress}") {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color.White),
+                            ) {
+                                rowDelimiters.forEach { region ->
+                                    RegionDelimiterRow(region = region)
                                 }
-                        ) {
-                            Icon(
-                                imageVector = if (breakpointSet) Icons.Filled.Circle else Icons.Outlined.Circle,
-                                contentDescription = if (breakpointSet) "Remove breakpoint" else "Add breakpoint",
-                                modifier = Modifier.size(15.dp)
-                            )
-                        }
-
-                        Text(
-                            row.address,
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Light,
-                            color = textColor,
-                            modifier = Modifier.width(90.dp)
-                        )
-                        Row(
-                            modifier = Modifier.width(130.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            row.bytes.forEachIndexed { byteIndex, byteValue ->
-                                val byteAddress =
-                                    (row.startAddress.toUInt() + byteIndex.toUInt()).toUShort()
-                                HexValueEditor(
-                                    value = byteValue
-                                        .toUByte()
-                                        .toString(16)
-                                        .padStart(2, '0')
-                                        .uppercase(),
-                                    digits = 2,
-                                    color = textColor,
-                                    enabled = editingEnabled,
-                                    onValueCommitted = {
-                                        Memory.memorySet.setMemoryCell(byteAddress, it.toByte())
-                                    },
-                                )
                             }
                         }
-                        Text(
-                            row.operation,
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Light,
-                            color = textColor,
-                            modifier = Modifier.weight(1f)
-                        )
+                    }
+
+                    if (annotatedLayoutEnabled && rowAnnotations.isNotEmpty()) {
+                        item(key = "disassembly-annotation-${row.startAddress}") {
+                            AnnotationColumn(
+                                annotations = rowAnnotations,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color.White)
+                                    .padding(horizontal = 4.dp, vertical = 4.dp),
+                            )
+                        }
+                    }
+
+                    item(key = "disassembly-row-${row.startAddress}") {
+                        Row(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .width(20.dp)
+                                    .align(Alignment.CenterVertically)
+                                    .clickable(
+                                        indication = null,
+                                        interactionSource = null
+                                    ) {
+                                        Processor.breakpoints.value = if (breakpointSet)
+                                            breakpoints - row.startAddress
+                                        else
+                                            breakpoints + row.startAddress
+                                    }
+                            ) {
+                                Icon(
+                                    imageVector = if (breakpointSet) Icons.Filled.Circle else Icons.Outlined.Circle,
+                                    contentDescription = if (breakpointSet) "Remove breakpoint" else "Add breakpoint",
+                                    modifier = Modifier.size(15.dp)
+                                )
+                            }
+
+                            Text(
+                                row.address,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Light,
+                                color = textColor,
+                                modifier = Modifier.width(90.dp)
+                            )
+                            Row(
+                                modifier = Modifier.width(130.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                row.bytes.forEachIndexed { byteIndex, byteValue ->
+                                    val byteAddress =
+                                        (row.startAddress.toUInt() + byteIndex.toUInt()).toUShort()
+                                    HexValueEditor(
+                                        value = byteValue
+                                            .toUByte()
+                                            .toString(16)
+                                            .padStart(2, '0')
+                                            .uppercase(),
+                                        digits = 2,
+                                        color = textColor,
+                                        enabled = editingEnabled,
+                                        onValueCommitted = {
+                                            Memory.memorySet.setMemoryCell(byteAddress, it.toByte())
+                                        },
+                                    )
+                                }
+                            }
+                            if (instructionAnnotation == null) {
+                                DisassemblyOperationText(
+                                    operation = row.operation,
+                                    color = textColor,
+                                    modifier = Modifier.weight(1f),
+                                )
+                            } else {
+                                AnnotationTooltip(
+                                    tooltip = instructionAnnotation.description,
+                                    modifier = Modifier.weight(1f),
+                                ) {
+                                    DisassemblyOperationText(
+                                        operation = row.operation,
+                                        color = textColor,
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
+
+            StickyAnnotationOverlay(
+                enabled = annotatedLayoutEnabled,
+                lazyListState = lazyListState,
+                annotationsByAddress = layout.annotationsByAddress,
+                regionAnnotations = regions,
+                annotationKeyPrefix = "disassembly-annotation-",
+                delimiterKeyPrefix = "disassembly-delimiters-",
+                firstVisibleAddress = { lazyListState.firstVisibleRowAddress("disassembly-row-") },
+                modifier = Modifier.align(Alignment.TopStart),
+            )
 
             VerticalScrollbar(
                 modifier = Modifier.align(Alignment.CenterEnd),
@@ -243,17 +317,65 @@ fun DisassemblyPanel() {
     }
 }
 
+@Composable
+private fun DisassemblyOperationText(
+    operation: String,
+    color: Color,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        operation,
+        fontFamily = FontFamily.Monospace,
+        fontWeight = FontWeight.Light,
+        color = color,
+        modifier = modifier,
+    )
+}
+
+private fun buildDisassemblyLayout(
+    rows: List<DisassemblyRow>,
+    regions: List<MemoryRegionAnnotation>,
+    annotatedLayoutEnabled: Boolean,
+): DisassemblyLayout {
+    val annotationsByAddress = buildAnnotationsByAddress(
+        enabled = annotatedLayoutEnabled,
+        addresses = rows.map { it.startAddress.toInt() },
+    )
+    val delimitersByAddress = buildDelimitersByAddress(
+        enabled = annotatedLayoutEnabled,
+        rows = rows,
+        regions = regions,
+        rowStart = { it.startAddress.toInt() },
+        rowEndInclusive = { it.startAddress.toInt() + it.bytes.size - 1 },
+    )
+
+    return DisassemblyLayout(
+        rows = rows,
+        annotationsByAddress = annotationsByAddress,
+        delimitersByAddress = delimitersByAddress,
+        instructionAnnotationsByAddress = if (annotatedLayoutEnabled) {
+            ROMInstructionRegistry.instructionsByAddress
+        } else {
+            emptyMap()
+        },
+        lazyItemIndexesByAddress = buildLazyItemIndexes(
+            rows = rows,
+            annotationsByAddress = annotationsByAddress,
+            delimiterMap = delimitersByAddress,
+            rowStart = { it.startAddress.toInt() },
+        ),
+    )
+}
+
 private fun decodeDisassemblyRows(): List<DisassemblyRow> {
-    val rows = ArrayList<DisassemblyRow>(0x10000)
-
-    var address = 0
-    while (address <= 0xFFFF) {
-        val row = decodeDisassemblyRow(address.toUShort())
-        rows += row
-        address += row.bytes.size.coerceAtLeast(1)
+    return buildList {
+        var address = 0
+        while (address <= 0xFFFF) {
+            val row = decodeDisassemblyRow(address.toUShort())
+            add(row)
+            address += row.bytes.size.coerceAtLeast(1)
+        }
     }
-
-    return rows
 }
 
 private fun decodeDisassemblyRow(address: Address): DisassemblyRow {

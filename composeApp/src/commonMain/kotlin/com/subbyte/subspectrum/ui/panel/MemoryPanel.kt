@@ -269,7 +269,11 @@ fun MemoryPanel() {
                                             color = textColor,
                                             enabled = editingEnabled,
                                             onValueCommitted = {
-                                                Memory.memorySet.setMemoryCell(byteAddress, it.toByte())
+                                                Memory.memorySet.setMemoryCell(
+                                                    byteAddress,
+                                                    it.toByte(),
+                                                    canOverwriteROM = true
+                                                )
                                             },
                                         )
                                     }

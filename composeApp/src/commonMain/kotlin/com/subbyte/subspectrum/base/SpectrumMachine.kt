@@ -18,7 +18,7 @@ object SpectrumMachine {
         reset()
 
         val romBytes = Res.readBytes(path)
-        Memory.memorySet.setMemoryCells(0u, romBytes)
+        Memory.memorySet.setMemoryCells(0u, romBytes, canOverwriteROM = true)
     }
 
     fun reset() {

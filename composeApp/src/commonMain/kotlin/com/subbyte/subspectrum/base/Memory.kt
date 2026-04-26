@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 typealias Address = UShort
 
 val MEMORY_SIZE = Address.MAX_VALUE.toInt() + 1
+val ROM_END_ADDRESS: Address = 0x3FFFu
 
 data class MemorySet(
     private val memoryCells: DataByteArray = DataByteArray(ByteArray(MEMORY_SIZE))
@@ -29,12 +30,20 @@ data class MemorySet(
         return memoryCells[address.toInt()]
     }
 
-    fun setMemoryCell(address: Address, value: Byte) {
+    fun setMemoryCell(address: Address, value: Byte, canOverwriteROM: Boolean = false) {
+        if (!canOverwriteROM && isRomAddress(address)) {
+            return
+        }
+
         memoryCells[address.toInt()] = value
         invalidate()
     }
 
-    fun setMemoryCell(address: Address, value: UByte) {
+    fun setMemoryCell(address: Address, value: UByte, canOverwriteROM: Boolean = false) {
+        if (!canOverwriteROM && isRomAddress(address)) {
+            return
+        }
+
         memoryCells[address.toInt()] = value.toByte()
         invalidate()
     }
@@ -43,7 +52,11 @@ data class MemorySet(
         return memoryCells.sliceArray(IntRange(startAddress.toInt(), endInclusiveAddress.toInt()))
     }
 
-    fun setMemoryCells(startAddress: Address, data: ByteArray) {
+    fun setMemoryCells(
+        startAddress: Address,
+        data: ByteArray,
+        canOverwriteROM: Boolean = false
+    ) {
         if (data.size > MEMORY_SIZE) {
             throw IllegalArgumentException(
                 "Data size exceeds memory capacity: size=${data.size}, max=$MEMORY_SIZE"
@@ -58,7 +71,28 @@ data class MemorySet(
             )
         }
 
-        DataByteArray(data).copyInto(memoryCells, startAddress.toInt())
+        if (data.isEmpty()) {
+            return
+        }
+
+        if (canOverwriteROM) {
+            DataByteArray(data).copyInto(memoryCells, startAddress.toInt())
+            invalidate()
+            return
+        }
+
+        val writeStart = maxOf(startAddress.toInt(), ROM_END_ADDRESS.toInt() + 1)
+        if (writeStart >= endDataAddress) {
+            return
+        }
+
+        val sourceStart = writeStart - startAddress.toInt()
+        DataByteArray(data).copyInto(
+            destination = memoryCells,
+            destinationOffset = writeStart,
+            startIndex = sourceStart,
+            endIndex = data.size,
+        )
         invalidate()
     }
 
@@ -84,6 +118,10 @@ data class MemorySet(
     fun reset() {
         memoryCells.fill(0x00)
         invalidate()
+    }
+
+    private fun isRomAddress(address: Address): Boolean {
+        return address <= ROM_END_ADDRESS
     }
 }
 

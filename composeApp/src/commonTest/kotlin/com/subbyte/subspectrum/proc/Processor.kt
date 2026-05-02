@@ -29,7 +29,7 @@ class ProcessorTest {
     @Test
     fun stepExecutesSingleInstruction() {
         // Setup: LD B, C (0x41) at address 0x0000
-        Memory.memorySet.setMemoryCell(0x0000u, 0x41)
+        Memory.memorySet.setMemoryCell(0x0000u, 0x41, canOverwriteROM = true)
         Registers.specialPurposeRegisters.setPC(0x0000)
         Registers.registerSet.setC(0x99.toByte())
         Registers.registerSet.setB(0x00)
@@ -45,7 +45,7 @@ class ProcessorTest {
     @Test
     fun stepAdvancesProgramCounter() {
         // LD B, C at 0x1000
-        Memory.memorySet.setMemoryCell(0x1000u, 0x41)
+        Memory.memorySet.setMemoryCell(0x1000u, 0x41, canOverwriteROM = true)
         Registers.specialPurposeRegisters.setPC(0x1000)
 
         Processor.step()
@@ -58,7 +58,7 @@ class ProcessorTest {
         // Setup a sequence: LD E, A; LD H, E
         // LD E, A: 01 011 111 = 0x5F
         // LD H, E: 01 100 011 = 0x63
-        Memory.memorySet.setMemoryCells(0x2000u, byteArrayOf(0x5F, 0x63))
+        Memory.memorySet.setMemoryCells(0x2000u, byteArrayOf(0x5F, 0x63), canOverwriteROM = true)
         Registers.specialPurposeRegisters.setPC(0x2000)
         Registers.registerSet.setA(0x7F)
 
@@ -85,7 +85,7 @@ class ProcessorTest {
 
     @Test
     fun im1InterruptPushesPCAndJumpsTo0038() {
-        Memory.memorySet.setMemoryCell(0x0000u, 0x00) // NOP
+        Memory.memorySet.setMemoryCell(0x0000u, 0x00, canOverwriteROM = true) // NOP
         Registers.specialPurposeRegisters.setPC(0x0000)
         Registers.specialPurposeRegisters.setSP(0xFFFE.toShort())
 
@@ -106,8 +106,32 @@ class ProcessorTest {
     }
 
     @Test
+    fun im0InterruptUsesSpectrumDefaultRst38BusValue() {
+        Memory.memorySet.setMemoryCell(0x4000u, 0x00.toByte()) // NOP
+        Registers.specialPurposeRegisters.setPC(0x4000.toShort())
+        Registers.specialPurposeRegisters.setSP(0xFFFE.toShort())
+
+        Processor.interruptMode = 0
+        Processor.IFF1 = true
+        Processor.IFF2 = true
+
+        ULATiming.advanceCycles(ULATiming.T_STATES_PER_FRAME)
+
+        Processor.step()
+
+        assertEquals(0x0038.toShort(), Registers.specialPurposeRegisters.getPC())
+        assertEquals(0xFFFC.toShort(), Registers.specialPurposeRegisters.getSP())
+        assertEquals(0x01.toByte(), Memory.memorySet.getMemoryCell(0xFFFCu))
+        assertEquals(0x40.toByte(), Memory.memorySet.getMemoryCell(0xFFFDu))
+    }
+
+    @Test
     fun eiDelaysInterruptUntilAfterFollowingInstruction() {
-        Memory.memorySet.setMemoryCells(0x0000u, byteArrayOf(0xFB.toByte(), 0x00.toByte())) // EI; NOP
+        Memory.memorySet.setMemoryCells(
+            0x0000u,
+            byteArrayOf(0xFB.toByte(), 0x00.toByte()),
+            canOverwriteROM = true,
+        ) // EI; NOP
         Registers.specialPurposeRegisters.setPC(0x0000)
         Registers.specialPurposeRegisters.setSP(0xFFFE.toShort())
 
@@ -128,7 +152,7 @@ class ProcessorTest {
 
     @Test
     fun interruptExitsHALTAndPushesNextInstructionAddress() {
-        Memory.memorySet.setMemoryCell(0x0000u, 0x76.toByte()) // HALT
+        Memory.memorySet.setMemoryCell(0x0000u, 0x76.toByte(), canOverwriteROM = true) // HALT
         Registers.specialPurposeRegisters.setPC(0x0000)
         Registers.specialPurposeRegisters.setSP(0xFFFE.toShort())
 
@@ -144,6 +168,85 @@ class ProcessorTest {
         assertEquals(0x01.toByte(), Memory.memorySet.getMemoryCell(0xFFFCu))
         assertEquals(0x00.toByte(), Memory.memorySet.getMemoryCell(0xFFFDu))
         assertFalse(Processor.inHalt)
+    }
+
+    @Test
+    fun nmiPreservesIFF2PushesPCOnceAndJumpsTo0066() {
+        Registers.specialPurposeRegisters.setPC(0x1234.toShort())
+        Registers.specialPurposeRegisters.setSP(0xFFFE.toShort())
+        Registers.specialPurposeRegisters.setR(0x7F.toByte())
+
+        Processor.IFF1 = true
+        Processor.IFF2 = false
+        Processor.NMI_FF = true
+
+        Processor.step()
+
+        assertEquals(0x0066.toShort(), Registers.specialPurposeRegisters.getPC())
+        assertEquals(0xFFFC.toShort(), Registers.specialPurposeRegisters.getSP())
+        assertEquals(0x34.toByte(), Memory.memorySet.getMemoryCell(0xFFFCu))
+        assertEquals(0x12.toByte(), Memory.memorySet.getMemoryCell(0xFFFDu))
+        assertFalse(Processor.IFF1)
+        assertFalse(Processor.IFF2)
+        assertEquals(0x00.toByte(), Registers.specialPurposeRegisters.getR())
+    }
+
+    @Test
+    fun nmiIsNotDelayedAfterEIOrDI() {
+        Registers.specialPurposeRegisters.setPC(0x1234.toShort())
+        Registers.specialPurposeRegisters.setSP(0xFFFE.toShort())
+        Processor.afterEIDI = true
+        Processor.NMI_FF = true
+
+        Processor.step()
+
+        assertEquals(0x0066.toShort(), Registers.specialPurposeRegisters.getPC())
+        assertFalse(Processor.afterEIDI)
+    }
+
+    @Test
+    fun nmiExitsHALTAndPushesNextInstructionAddress() {
+        Memory.memorySet.setMemoryCell(0x4000u, 0x76.toByte()) // HALT
+        Registers.specialPurposeRegisters.setPC(0x4000.toShort())
+        Registers.specialPurposeRegisters.setSP(0xFFFE.toShort())
+
+        Processor.step()
+        assertTrue(Processor.inHalt)
+
+        Processor.NMI_FF = true
+        Processor.step()
+
+        assertEquals(0x0066.toShort(), Registers.specialPurposeRegisters.getPC())
+        assertEquals(0x01.toByte(), Memory.memorySet.getMemoryCell(0xFFFCu))
+        assertEquals(0x40.toByte(), Memory.memorySet.getMemoryCell(0xFFFDu))
+        assertFalse(Processor.inHalt)
+    }
+
+    @Test
+    fun im2InterruptUsesFullDataBusByteAsVectorLowByte() {
+        Memory.memorySet.setMemoryCell(0x4000u, 0x00.toByte()) // NOP
+        Memory.memorySet.setMemoryCell(0x80FFu, 0x34.toByte())
+        Memory.memorySet.setMemoryCell(0x8100u, 0x12.toByte())
+        Registers.specialPurposeRegisters.setPC(0x4000.toShort())
+        Registers.specialPurposeRegisters.setSP(0xFFFE.toShort())
+        Registers.specialPurposeRegisters.setI(0x80.toByte())
+        Registers.specialPurposeRegisters.setR(0x10.toByte())
+
+        Processor.interruptMode = 2
+        Processor.IFF1 = true
+        Processor.IFF2 = true
+
+        ULATiming.advanceCycles(ULATiming.T_STATES_PER_FRAME)
+
+        Processor.step()
+
+        assertEquals(0x1234.toShort(), Registers.specialPurposeRegisters.getPC())
+        assertEquals(0xFFFC.toShort(), Registers.specialPurposeRegisters.getSP())
+        assertEquals(0x01.toByte(), Memory.memorySet.getMemoryCell(0xFFFCu))
+        assertEquals(0x40.toByte(), Memory.memorySet.getMemoryCell(0xFFFDu))
+        assertFalse(Processor.IFF1)
+        assertFalse(Processor.IFF2)
+        assertEquals(0x12.toByte(), Registers.specialPurposeRegisters.getR())
     }
 
     @Test
@@ -240,8 +343,9 @@ class ProcessorTest {
         Memory.memorySet.setMemoryCells(
             0x0556u,
             byteArrayOf(0x14, 0x08, 0x15, 0xF3.toByte()),
+            canOverwriteROM = true,
         )
-        Memory.memorySet.setMemoryCell(0x053Fu, 0xC9.toByte())
+        Memory.memorySet.setMemoryCell(0x053Fu, 0xC9.toByte(), canOverwriteROM = true)
     }
 
     private fun buildTapeBlock(flag: Int, payload: ByteArray): SpectrumTapeDataBlock {

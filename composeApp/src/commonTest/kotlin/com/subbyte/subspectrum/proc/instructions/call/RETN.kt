@@ -80,8 +80,8 @@ class RETNTest {
     @Test
     fun executeNMIScenarioFromDocumentation() {
         Registers.specialPurposeRegisters.setSP(0x1000.toShort())
-        Memory.memorySet.setMemoryCell(0x0FFEu, 0x45.toByte())
-        Memory.memorySet.setMemoryCell(0x0FFFu, 0x1A.toByte())
+        Memory.memorySet.setMemoryCell(0x0FFEu, 0x45.toByte(), canOverwriteROM = true)
+        Memory.memorySet.setMemoryCell(0x0FFFu, 0x1A.toByte(), canOverwriteROM = true)
         Registers.specialPurposeRegisters.setSP(0x0FFE.toShort())
 
         val retn = RETN(

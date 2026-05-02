@@ -2,10 +2,12 @@ package com.subbyte.subspectrum.proc.instructions.call
 
 import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.proc.Processor
 import com.subbyte.subspectrum.units.DataByteArray
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class RETITest {
     @BeforeTest
@@ -13,6 +15,7 @@ class RETITest {
         Memory.memorySet.reset()
         Registers.registerSet.reset()
         Registers.specialPurposeRegisters.reset()
+        Processor.reset()
     }
 
     @Test
@@ -41,6 +44,24 @@ class RETITest {
 
         assertEquals(0x1234.toShort(), Registers.specialPurposeRegisters.getPC())
         assertEquals(0xFFFE.toShort(), Registers.specialPurposeRegisters.getSP())
+    }
+
+    @Test
+    fun executeCopiesIFF2ToIFF1() {
+        Registers.specialPurposeRegisters.setSP(0xFFFC.toShort())
+        Memory.memorySet.setMemoryCell(0xFFFCu, 0x34.toByte())
+        Memory.memorySet.setMemoryCell(0xFFFDu, 0x12.toByte())
+        Processor.IFF1 = false
+        Processor.IFF2 = true
+
+        val instruction = RETI(
+            address = 0x0038u,
+            bytes = DataByteArray(byteArrayOf(0xED.toByte(), 0x4D.toByte()))
+        )
+
+        instruction.execute()
+
+        assertTrue(Processor.IFF1)
     }
 
     @Test

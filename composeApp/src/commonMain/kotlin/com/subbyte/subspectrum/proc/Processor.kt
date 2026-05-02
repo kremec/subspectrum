@@ -8,10 +8,13 @@ import com.subbyte.subspectrum.base.ULATapeDeck
 import com.subbyte.subspectrum.base.ULATiming
 import com.subbyte.subspectrum.proc.instructions.Instructions
 import com.subbyte.subspectrum.units.toBytes
+import com.subbyte.subspectrum.units.wordFromBytes
 import kotlinx.coroutines.delay
 import kotlin.time.TimeSource
 
 object Processor {
+    private const val INTERRUPT_DATA_BUS_VALUE: Byte = 0xFF.toByte()
+
     var NMI_FF: Boolean = false
     var IFF1: Boolean = false
     var IFF2: Boolean = false
@@ -42,8 +45,11 @@ object Processor {
             }
         }
 
-        if (NMI_FF && !afterEIDI) {
+        if (NMI_FF) {
             handleNMI()
+            inHalt = false
+            afterEIDI = false
+            return
         }
         inHalt = false
         afterEIDI = false
@@ -80,11 +86,8 @@ object Processor {
 
     private fun handleNMI() {
         NMI_FF = false
-        IFF2 = IFF1
         IFF1 = false
-
-        val spRegisterValue = Registers.specialPurposeRegisters.getSP()
-        Registers.specialPurposeRegisters.setSP(spRegisterValue.minus(2).toShort())
+        Registers.specialPurposeRegisters.incrementR(1)
 
         if (inHalt) {
             // If in halt, PC must point to instruction after halt
@@ -92,13 +95,7 @@ object Processor {
             Registers.specialPurposeRegisters.setPC(pcRegisterValue.inc())
         }
 
-        val pcRegisterValue = Registers.specialPurposeRegisters.getPC()
-        val (highByte, lowByte) = pcRegisterValue.toBytes()
-        Registers.specialPurposeRegisters.setSP(Registers.specialPurposeRegisters.getSP().minus(2).toShort())
-        Memory.memorySet.setMemoryCells(
-            Registers.specialPurposeRegisters.getSP().toUShort(),
-            byteArrayOf(lowByte, highByte)
-        )
+        pushPCToStack()
 
         Registers.specialPurposeRegisters.setPC(0x0066)
 
@@ -108,6 +105,7 @@ object Processor {
     private fun handleInterrupt() {
         IFF1 = false
         IFF2 = false
+        Registers.specialPurposeRegisters.incrementR(1)
 
         if (inHalt) {
             // If in halt, PC must point to instruction after halt
@@ -118,18 +116,58 @@ object Processor {
 
         when (interruptMode) {
             0 -> {
-                // On Spectrum, IM0 commonly behaves like RST 0x38 because 0xFF is on data bus.
-                handleInterruptMode1()
+                handleInterruptMode0()
             }
             1 -> handleInterruptMode1()
             2 -> {
-                // TODO: Implement interrupt mode 2 vector table lookup.
-                ULATiming.advanceInterruptCycles(interruptMode)
+                handleInterruptMode2()
             }
         }
     }
 
+    private fun handleInterruptMode0() {
+        val restartAddress = when (INTERRUPT_DATA_BUS_VALUE) {
+            0xC7.toByte() -> 0x0000.toShort()
+            0xCF.toByte() -> 0x0008.toShort()
+            0xD7.toByte() -> 0x0010.toShort()
+            0xDF.toByte() -> 0x0018.toShort()
+            0xE7.toByte() -> 0x0020.toShort()
+            0xEF.toByte() -> 0x0028.toShort()
+            0xF7.toByte() -> 0x0030.toShort()
+            0xFF.toByte() -> 0x0038.toShort()
+            else -> 0x0038.toShort()
+        }
+
+        pushPCToStack()
+        Registers.specialPurposeRegisters.setPC(restartAddress)
+
+        ULATiming.advanceInterruptCycles(1)
+    }
+
     private fun handleInterruptMode1() {
+        pushPCToStack()
+        Registers.specialPurposeRegisters.setPC(0x0038)
+
+        ULATiming.advanceInterruptCycles(1)
+    }
+
+    private fun handleInterruptMode2() {
+        pushPCToStack()
+
+        val vectorAddress = Pair(
+            Registers.specialPurposeRegisters.getI(),
+            INTERRUPT_DATA_BUS_VALUE,
+        ).wordFromBytes()
+        val vectorBytes = Memory.memorySet.getMemoryCells(
+            vectorAddress.toUShort(),
+            vectorAddress.plus(1).toUShort(),
+        )
+        Registers.specialPurposeRegisters.setPC(Pair(vectorBytes[1], vectorBytes[0]).wordFromBytes())
+
+        ULATiming.advanceInterruptCycles(2)
+    }
+
+    private fun pushPCToStack() {
         val pcRegisterValue = Registers.specialPurposeRegisters.getPC()
         val (highByte, lowByte) = pcRegisterValue.toBytes()
         Registers.specialPurposeRegisters.setSP(Registers.specialPurposeRegisters.getSP().minus(2).toShort())
@@ -137,10 +175,6 @@ object Processor {
             Registers.specialPurposeRegisters.getSP().toUShort(),
             byteArrayOf(lowByte, highByte)
         )
-
-        Registers.specialPurposeRegisters.setPC(0x0038)
-
-        ULATiming.advanceInterruptCycles(1)
     }
 
     suspend fun run() {

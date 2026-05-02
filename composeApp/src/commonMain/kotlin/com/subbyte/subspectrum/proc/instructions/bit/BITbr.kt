@@ -21,10 +21,13 @@ data class BITbr(
         val sourceValue = Registers.registerSet.getRegister(sourceRegister)
         val bitValue = sourceValue.getBit(bitPosition)
 
+        Registers.registerSet.setSFlag(bitPosition == 7 && bitValue)
         Registers.registerSet.setZFlag(!bitValue)
+        Registers.registerSet.setYFFlag(bitPosition == 5 && bitValue)
         Registers.registerSet.setHFlag(true)
+        Registers.registerSet.setXFFlag(bitPosition == 3 && bitValue)
+        Registers.registerSet.setPVFlag(!bitValue)
         Registers.registerSet.setNFlag(false)
-        // S, P/V unknown
     }
 
     override fun toString(): String = "BIT $bitPosition, $sourceRegister"

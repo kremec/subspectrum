@@ -6,8 +6,9 @@ import com.subbyte.subspectrum.base.RegisterPairSSCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
-
 import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.getBit
+import com.subbyte.subspectrum.units.toBytes
 
 data class ADDHLss(
     override val address: Address,
@@ -25,10 +26,14 @@ data class ADDHLss(
         val sum = hl + source
         val result = sum.toShort()
 
+        Registers.specialPurposeRegisters.setMEMPTR(hlRegisterPairValue)
         Registers.registerSet.setHL(result)
 
         val halfCarryFlag = ((hl and 0xFFF) + (source and 0xFFF)) > 0xFFF
         val carryFlag = sum > 0xFFFF
+        val resultHighByte = result.toBytes().first
+        Registers.registerSet.setYFFlag(resultHighByte.getBit(5))
+        Registers.registerSet.setXFFlag(resultHighByte.getBit(3))
         Registers.registerSet.setHFlag(halfCarryFlag)
         Registers.registerSet.setNFlag(false)
         Registers.registerSet.setCFlag(carryFlag)

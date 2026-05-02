@@ -40,11 +40,12 @@ internal object ULAKeyboard {
         mutableStateOf(ULAKeyboardInputMode.Authentic)
 
     fun getKeyboardPortValue(portAddress: UShort): Byte? {
-        if (portAddress.toBytes().second != ULA_IO_PORT_LOW_BYTE) {
+        val (rowSelectByte, lowByte) = portAddress.toBytes()
+        if (lowByte != ULA_IO_PORT_LOW_BYTE) {
             return null
         }
 
-        val rowSelectMask = (portAddress.toInt() shr 8) and 0x00FF
+        val rowSelectMask = rowSelectByte.toUByte().toInt()
         var keyBits = KEYBOARD_ROW_IDLE
         for (row in 0 until KEYBOARD_ROW_COUNT) {
             val rowSelected = ((rowSelectMask shr row) and 0x01) == 0

@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.proc.instructions.control
 
+import com.subbyte.subspectrum.units.getBit
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Registers
@@ -20,6 +21,8 @@ data class CPL(
         Registers.registerSet.setA(result)
 
         Registers.registerSet.setHFlag(true)
+        Registers.registerSet.setYFFlag((result).getBit(5))
+        Registers.registerSet.setXFFlag((result).getBit(3))
         Registers.registerSet.setNFlag(true)
     }
 

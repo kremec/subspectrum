@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.proc.instructions.arith8
 
+import com.subbyte.subspectrum.units.getBit
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.RegisterCode
@@ -33,6 +34,8 @@ data class CPr(
         val carryFlag = diff < 0
         Registers.registerSet.setSFlag(signFlag)
         Registers.registerSet.setZFlag(zeroFlag)
+        Registers.registerSet.setYFFlag((sourceValue).getBit(5))
+        Registers.registerSet.setXFFlag((sourceValue).getBit(3))
         Registers.registerSet.setHFlag(halfCarryFlag)
         Registers.registerSet.setPVFlag(overflowFlag)
         Registers.registerSet.setNFlag(true)

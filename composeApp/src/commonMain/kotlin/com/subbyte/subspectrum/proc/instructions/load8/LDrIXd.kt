@@ -20,7 +20,9 @@ data class LDrIXd(
 
     override fun execute() {
         val ixRegisterValue = Registers.specialPurposeRegisters.getIX()
-        val sourceValue = Memory.memorySet.getMemoryCell(ixRegisterValue.plus(displacement).toUShort())
+        val effectiveAddress = ixRegisterValue.plus(displacement)
+        val sourceValue = Memory.memorySet.getMemoryCell(effectiveAddress.toUShort())
+        Registers.specialPurposeRegisters.setMEMPTR(effectiveAddress.toShort())
         Registers.registerSet.setRegister(destinationRegister, sourceValue)
     }
 

@@ -8,6 +8,7 @@ import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.getBit
 
 data class INDR(
     override val address: Address,
@@ -29,8 +30,18 @@ data class INDR(
         Registers.registerSet.setB(newBValue)
         Registers.registerSet.setHL(hlRegisterPairValue.dec())
 
-        Registers.registerSet.setZFlag(true)
-        Registers.registerSet.setNFlag(true)
+        val k = inputData.toUByte().toInt() + Registers.registerSet.getC().dec().toUByte().toInt()
+        val carry = k > 0xFF
+        val parityValue = (k % 8) xor newBValue.toUByte().toInt()
+
+        Registers.registerSet.setSFlag(newBValue < 0)
+        Registers.registerSet.setZFlag(newBValue == 0.toByte())
+        Registers.registerSet.setYFFlag(newBValue.getBit(5))
+        Registers.registerSet.setXFFlag(newBValue.getBit(3))
+        Registers.registerSet.setHFlag(carry)
+        Registers.registerSet.setPVFlag(parityValue.countOneBits() % 2 == 0)
+        Registers.registerSet.setNFlag(inputData < 0)
+        Registers.registerSet.setCFlag(carry)
 
         conditionBIs0 = newBValue == 0.toByte()
         if (!conditionBIs0) {

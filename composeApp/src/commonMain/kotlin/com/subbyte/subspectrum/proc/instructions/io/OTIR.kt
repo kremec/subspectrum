@@ -8,6 +8,7 @@ import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.getBit
 
 data class OTIR(
     override val address: Address,
@@ -29,8 +30,18 @@ data class OTIR(
         Registers.registerSet.setB(newBValue)
         Registers.registerSet.setHL(hlRegisterPairValue.inc())
 
-        Registers.registerSet.setZFlag(true)
-        Registers.registerSet.setNFlag(true)
+        val k = sourceMemoryValue.toUByte().toInt() + Registers.registerSet.getL().toUByte().toInt()
+        val carry = k > 0xFF
+        val parityValue = (k % 8) xor newBValue.toUByte().toInt()
+
+        Registers.registerSet.setSFlag(newBValue < 0)
+        Registers.registerSet.setZFlag(newBValue == 0.toByte())
+        Registers.registerSet.setYFFlag(newBValue.getBit(5))
+        Registers.registerSet.setXFFlag(newBValue.getBit(3))
+        Registers.registerSet.setHFlag(carry)
+        Registers.registerSet.setPVFlag(parityValue.countOneBits() % 2 == 0)
+        Registers.registerSet.setNFlag(sourceMemoryValue < 0)
+        Registers.registerSet.setCFlag(carry)
 
         conditionBIs0 = newBValue == 0.toByte()
         if (!conditionBIs0) {

@@ -9,6 +9,7 @@ import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 import com.subbyte.subspectrum.units.DataByteArray
 import com.subbyte.subspectrum.units.displayStringDisplacement
 import com.subbyte.subspectrum.units.getBit
+import com.subbyte.subspectrum.units.toBytes
 
 data class BITbIYd(
     override val address: Address,
@@ -20,13 +21,18 @@ data class BITbIYd(
 
     override fun execute() {
         val iyValue = Registers.specialPurposeRegisters.getIY()
-        val sourceValue = Memory.memorySet.getMemoryCell(iyValue.plus(displacement).toUShort())
+        val effectiveAddress = iyValue.plus(displacement)
+        val sourceValue = Memory.memorySet.getMemoryCell(effectiveAddress.toUShort())
         val bitValue = sourceValue.getBit(bitPosition)
+        val effectiveAddressHigh = effectiveAddress.toShort().toBytes().first
 
+        Registers.registerSet.setSFlag(bitPosition == 7 && bitValue)
         Registers.registerSet.setZFlag(!bitValue)
+        Registers.registerSet.setYFFlag(effectiveAddressHigh.getBit(5))
+        Registers.registerSet.setXFFlag(effectiveAddressHigh.getBit(3))
         Registers.registerSet.setHFlag(true)
+        Registers.registerSet.setPVFlag(!bitValue)
         Registers.registerSet.setNFlag(false)
-        // S, P/V unknown
     }
 
     override fun toString(): String = "BIT $bitPosition, (IY${displacement.displayStringDisplacement()})"

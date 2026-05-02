@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.proc.instructions.control
 
+import com.subbyte.subspectrum.units.getBit
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Registers
@@ -17,6 +18,8 @@ data class CCF(
     override fun execute() {
         val cFlagValue = Registers.registerSet.getCFlag()
 
+        Registers.registerSet.setYFFlag((Registers.registerSet.getA()).getBit(5))
+        Registers.registerSet.setXFFlag((Registers.registerSet.getA()).getBit(3))
         Registers.registerSet.setHFlag(cFlagValue)
         Registers.registerSet.setNFlag(false)
         Registers.registerSet.setCFlag(!cFlagValue)

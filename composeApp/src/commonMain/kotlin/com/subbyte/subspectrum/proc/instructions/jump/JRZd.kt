@@ -22,6 +22,7 @@ data class JRZd(
         if (conditionMet) {
             val pcRegisterValue = Registers.specialPurposeRegisters.getPC()
             val newPC = pcRegisterValue.plus(displacement).toShort()
+            Registers.specialPurposeRegisters.setMEMPTR(newPC)
             Registers.specialPurposeRegisters.setPC(newPC)
         }
     }

@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.proc.instructions.control
 
+import com.subbyte.subspectrum.units.getBit
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Registers
@@ -15,6 +16,8 @@ data class SCF(
     override fun getTStates(): Int = 4
 
     override fun execute() {
+        Registers.registerSet.setYFFlag((Registers.registerSet.getA()).getBit(5))
+        Registers.registerSet.setXFFlag((Registers.registerSet.getA()).getBit(3))
         Registers.registerSet.setHFlag(false)
         Registers.registerSet.setNFlag(false)
         Registers.registerSet.setCFlag(true)

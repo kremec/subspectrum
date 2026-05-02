@@ -8,6 +8,8 @@ import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
 import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.getBit
+
 data class LDDR(
     override val address: Address,
     override val bytes: DataByteArray
@@ -22,6 +24,7 @@ data class LDDR(
         val deRegisterPairValue = Registers.registerSet.getDE()
         val bcRegisterPairValue = Registers.registerSet.getBC()
         val newBC = bcRegisterPairValue.dec()
+        val n = (Registers.registerSet.getA().toUByte().toInt() + sourceMemoryValue.toUByte().toInt()).toByte()
 
         Memory.memorySet.setMemoryCell(deRegisterPairValue.toUShort(), sourceMemoryValue)
         Registers.registerSet.setDE(deRegisterPairValue.dec())
@@ -29,7 +32,9 @@ data class LDDR(
         Registers.registerSet.setBC(newBC)
 
         Registers.registerSet.setHFlag(false)
-        Registers.registerSet.setPVFlag(false)
+        Registers.registerSet.setYFFlag(n.getBit(1))
+        Registers.registerSet.setXFFlag(n.getBit(3))
+        Registers.registerSet.setPVFlag(newBC != 0.toShort())
         Registers.registerSet.setNFlag(false)
 
         conditionBCIs0 = newBC == 0.toShort()

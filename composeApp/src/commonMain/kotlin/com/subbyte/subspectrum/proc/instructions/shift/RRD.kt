@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.proc.instructions.shift
 
+import com.subbyte.subspectrum.units.getBit
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
@@ -33,6 +34,8 @@ data class RRD(
 
         Registers.registerSet.setSFlag(registerResult < 0)
         Registers.registerSet.setZFlag(registerResult == 0.toByte())
+        Registers.registerSet.setYFFlag((registerResult).getBit(5))
+        Registers.registerSet.setXFFlag((registerResult).getBit(3))
         Registers.registerSet.setHFlag(false)
         Registers.registerSet.setPVFlag(registerResult.countOneBits() % 2 == 0)
         Registers.registerSet.setNFlag(false)

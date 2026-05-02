@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.proc.instructions.control
 
+import com.subbyte.subspectrum.units.getBit
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Registers
@@ -40,6 +41,8 @@ data class DAA(
 
         Registers.registerSet.setSFlag(resultByte < 0)
         Registers.registerSet.setZFlag(resultByte == 0.toByte())
+        Registers.registerSet.setYFFlag((resultByte).getBit(5))
+        Registers.registerSet.setXFFlag((resultByte).getBit(3))
         Registers.registerSet.setHFlag(newHalfCarry)
         Registers.registerSet.setPVFlag(resultByte.countOneBits() % 2 == 0)
         Registers.registerSet.setCFlag(upperCorrection)

@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.proc.instructions.load8
 
+import com.subbyte.subspectrum.units.getBit
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Registers
@@ -22,6 +23,8 @@ data class LDAR(
 
         Registers.registerSet.setSFlag(rRegisterValue < 0)
         Registers.registerSet.setZFlag(rRegisterValue == 0.toByte())
+        Registers.registerSet.setYFFlag((rRegisterValue).getBit(5))
+        Registers.registerSet.setXFFlag((rRegisterValue).getBit(3))
         Registers.registerSet.setHFlag(false)
         val willTriggerInterrupt = Processor.IFF1 &&
                 ((ULATiming.currentTStatesInFrame + getTStates()) % ULATiming.T_STATES_PER_FRAME == 0)

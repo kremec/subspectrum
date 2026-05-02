@@ -20,7 +20,9 @@ data class LDrIYd(
 
     override fun execute() {
         val iyRegisterValue = Registers.specialPurposeRegisters.getIY()
-        val sourceValue = Memory.memorySet.getMemoryCell(iyRegisterValue.plus(displacement).toUShort())
+        val effectiveAddress = iyRegisterValue.plus(displacement)
+        val sourceValue = Memory.memorySet.getMemoryCell(effectiveAddress.toUShort())
+        Registers.specialPurposeRegisters.setMEMPTR(effectiveAddress.toShort())
         Registers.registerSet.setRegister(destinationRegister, sourceValue)
     }
 

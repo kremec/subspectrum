@@ -8,6 +8,8 @@ import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 
 import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.getBit
+
 data class CPIR(
     override val address: Address,
     override val bytes: DataByteArray
@@ -26,16 +28,19 @@ data class CPIR(
         val newHL = hlRegisterPairValue.inc()
         val newBC = bcRegisterPairValue.dec()
 
-        val comparison = aRegisterValue.minus(sourceMemoryValue).toByte()
+        val diff = aRegisterValue.toUByte().toInt() - sourceMemoryValue.toUByte().toInt()
+        val comparison = diff.toByte()
+        val halfCarryFlag = (aRegisterValue.toUByte().toInt() % 16) < (sourceMemoryValue.toUByte().toInt() % 16)
+        val n = (diff - (if (halfCarryFlag) 1 else 0)).toByte()
 
         Registers.registerSet.setHL(newHL)
         Registers.registerSet.setBC(newBC)
 
         Registers.registerSet.setSFlag(comparison < 0.toByte())
         Registers.registerSet.setZFlag(comparison == 0.toByte())
-        Registers.registerSet.setHFlag(
-            ((aRegisterValue.toUByte().toInt() and 0x0F) - (sourceMemoryValue.toUByte().toInt() and 0x0F)) < 0
-        )
+        Registers.registerSet.setYFFlag(n.getBit(1))
+        Registers.registerSet.setHFlag(halfCarryFlag)
+        Registers.registerSet.setXFFlag(n.getBit(3))
         Registers.registerSet.setPVFlag(newBC != 0.toShort())
         Registers.registerSet.setNFlag(true)
 

@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.proc.instructions.arith8
 
+import com.subbyte.subspectrum.units.getBit
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
@@ -36,6 +37,8 @@ data class ADCAIYd(
         val carryFlag = sum > 0xFF
         Registers.registerSet.setSFlag(signFlag)
         Registers.registerSet.setZFlag(zeroFlag)
+        Registers.registerSet.setYFFlag((result).getBit(5))
+        Registers.registerSet.setXFFlag((result).getBit(3))
         Registers.registerSet.setHFlag(halfCarryFlag)
         Registers.registerSet.setPVFlag(overflowFlag)
         Registers.registerSet.setNFlag(false)

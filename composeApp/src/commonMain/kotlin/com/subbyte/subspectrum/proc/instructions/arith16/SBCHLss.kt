@@ -6,8 +6,9 @@ import com.subbyte.subspectrum.base.RegisterPairSSCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
-
 import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.getBit
+import com.subbyte.subspectrum.units.toBytes
 
 data class SBCHLss(
     override val address: Address,
@@ -33,8 +34,11 @@ data class SBCHLss(
         val halfCarryFlag = ((hl and 0xFFF) - (source and 0xFFF) - carryValue) < 0
         val overflowFlag = ((hl xor source) and (hl xor diff) and 0x8000) != 0
         val carryFlag = diff < 0
+        val resultHighByte = result.toBytes().first
         Registers.registerSet.setSFlag(signFlag)
         Registers.registerSet.setZFlag(zeroFlag)
+        Registers.registerSet.setYFFlag(resultHighByte.getBit(5))
+        Registers.registerSet.setXFFlag(resultHighByte.getBit(3))
         Registers.registerSet.setHFlag(halfCarryFlag)
         Registers.registerSet.setPVFlag(overflowFlag)
         Registers.registerSet.setNFlag(true)

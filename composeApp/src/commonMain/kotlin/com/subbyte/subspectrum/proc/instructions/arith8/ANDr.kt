@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.proc.instructions.arith8
 
+import com.subbyte.subspectrum.units.getBit
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.RegisterCode
@@ -28,6 +29,8 @@ data class ANDr(
         val parityFlag = result.countOneBits() % 2 == 0
         Registers.registerSet.setSFlag(signFlag)
         Registers.registerSet.setZFlag(zeroFlag)
+        Registers.registerSet.setYFFlag((result).getBit(5))
+        Registers.registerSet.setXFFlag((result).getBit(3))
         Registers.registerSet.setHFlag(true)
         Registers.registerSet.setPVFlag(parityFlag)
         Registers.registerSet.setNFlag(false)

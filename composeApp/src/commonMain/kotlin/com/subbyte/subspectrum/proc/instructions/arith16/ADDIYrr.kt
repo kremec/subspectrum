@@ -6,8 +6,10 @@ import com.subbyte.subspectrum.base.RegisterPairRRCode
 import com.subbyte.subspectrum.base.Registers
 import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
-
 import com.subbyte.subspectrum.units.DataByteArray
+import com.subbyte.subspectrum.units.getBit
+import com.subbyte.subspectrum.units.toBytes
+
 data class ADDIYrr(
     override val address: Address,
     override val bytes: DataByteArray,
@@ -28,6 +30,9 @@ data class ADDIYrr(
 
         val halfCarryFlag = ((iy and 0xFFF) + (source and 0xFFF)) > 0xFFF
         val carryFlag = sum > 0xFFFF
+        val resultHighByte = result.toBytes().first
+        Registers.registerSet.setYFFlag(resultHighByte.getBit(5))
+        Registers.registerSet.setXFFlag(resultHighByte.getBit(3))
         Registers.registerSet.setHFlag(halfCarryFlag)
         Registers.registerSet.setNFlag(false)
         Registers.registerSet.setCFlag(carryFlag)

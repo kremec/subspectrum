@@ -8,6 +8,7 @@ import com.subbyte.subspectrum.proc.instructions.Instruction
 import com.subbyte.subspectrum.proc.instructions.InstructionDefinition
 import com.subbyte.subspectrum.units.DataByteArray
 import com.subbyte.subspectrum.units.getBit
+import com.subbyte.subspectrum.units.toBytes
 
 data class BITbHL(
     override val address: Address,
@@ -20,11 +21,15 @@ data class BITbHL(
         val hlValue = Registers.registerSet.getHL()
         val memoryValue = Memory.memorySet.getMemoryCell(hlValue.toUShort())
         val bitValue = memoryValue.getBit(bitPosition)
+        val memptrHigh = Registers.specialPurposeRegisters.getMEMPTR().toBytes().first
 
+        Registers.registerSet.setSFlag(bitPosition == 7 && bitValue)
         Registers.registerSet.setZFlag(!bitValue)
+        Registers.registerSet.setYFFlag(memptrHigh.getBit(5))
+        Registers.registerSet.setXFFlag(memptrHigh.getBit(3))
         Registers.registerSet.setHFlag(true)
+        Registers.registerSet.setPVFlag(!bitValue)
         Registers.registerSet.setNFlag(false)
-        // S, P/V unknown
     }
 
     override fun toString(): String = "BIT $bitPosition, (HL)"

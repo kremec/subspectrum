@@ -31,6 +31,8 @@ data class RLIXd(
 
         Registers.registerSet.setSFlag(result < 0)
         Registers.registerSet.setZFlag(result == 0.toByte())
+        Registers.registerSet.setYFFlag((result).getBit(5))
+        Registers.registerSet.setXFFlag((result).getBit(3))
         Registers.registerSet.setHFlag(false)
         Registers.registerSet.setPVFlag(result.countOneBits() % 2 == 0)
         Registers.registerSet.setNFlag(false)

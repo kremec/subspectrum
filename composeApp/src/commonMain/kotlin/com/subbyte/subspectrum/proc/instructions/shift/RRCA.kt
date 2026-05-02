@@ -22,6 +22,8 @@ data class RRCA(
         Registers.registerSet.setA(result)
 
         Registers.registerSet.setHFlag(false)
+        Registers.registerSet.setYFFlag((result).getBit(5))
+        Registers.registerSet.setXFFlag((result).getBit(3))
         Registers.registerSet.setNFlag(false)
         Registers.registerSet.setCFlag(carryValue)
     }

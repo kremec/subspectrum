@@ -15,7 +15,9 @@ enum class FlagSet(val position: Int) {
     C(0),
     N(1),
     PV(2),
+    XF(3),
     H(4),
+    YF(5),
     Z(6),
     S(7),
 }
@@ -252,9 +254,21 @@ data class RegisterSet(
         invalidate()
     }
 
+    fun getXFFlag(): Boolean = F.getBit(FlagSet.XF.position)
+    fun setXFFlag(value: Boolean) {
+        F = F.setBit(FlagSet.XF.position, value)
+        invalidate()
+    }
+
     fun getHFlag(): Boolean = F.getBit(FlagSet.H.position)
     fun setHFlag(value: Boolean) {
         F = F.setBit(FlagSet.H.position, value)
+        invalidate()
+    }
+
+    fun getYFFlag(): Boolean = F.getBit(FlagSet.YF.position)
+    fun setYFFlag(value: Boolean) {
+        F = F.setBit(FlagSet.YF.position, value)
         invalidate()
     }
 
@@ -301,6 +315,7 @@ data class SpecialPurposeRegisters(
     private var IY: Word = 0xFFFF.toShort(),
     private var SP: Word = 0xFFFF.toShort(),
     private var PC: Word = 0,
+    private var MEMPTR: Word = 0,
 ) {
     fun getI(): Byte = I
     fun setI(value: Byte) {
@@ -377,6 +392,12 @@ data class SpecialPurposeRegisters(
         pcInvalidate()
     }
 
+    fun getMEMPTR(): Word = MEMPTR
+    fun setMEMPTR(value: Word) {
+        MEMPTR = value
+        invalidate()
+    }
+
     fun reset() {
         I = 0
         R = 0
@@ -384,6 +405,7 @@ data class SpecialPurposeRegisters(
         IY = 0
         SP = 0
         PC = 0
+        MEMPTR = 0
         invalidate()
         pcInvalidate()
     }

@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.proc.instructions.undocumented.ed
 
+import com.subbyte.subspectrum.units.getBit
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.IO
@@ -20,6 +21,8 @@ data class INFC(
 
         Registers.registerSet.setSFlag(sourceIOPortValue < 0)
         Registers.registerSet.setZFlag(sourceIOPortValue == 0.toByte())
+        Registers.registerSet.setYFFlag((sourceIOPortValue).getBit(5))
+        Registers.registerSet.setXFFlag((sourceIOPortValue).getBit(3))
         Registers.registerSet.setHFlag(false)
         Registers.registerSet.setPVFlag(sourceIOPortValue.countOneBits() % 2 == 0)
         Registers.registerSet.setNFlag(false)

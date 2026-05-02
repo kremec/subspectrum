@@ -1,5 +1,6 @@
 package com.subbyte.subspectrum.proc.instructions.shift
 
+import com.subbyte.subspectrum.units.getBit
 import BitPattern
 import com.subbyte.subspectrum.base.Address
 import com.subbyte.subspectrum.base.Memory
@@ -38,6 +39,8 @@ data class RLD(
         val finalAValue = newAValue.toByte()
         Registers.registerSet.setSFlag(finalAValue < 0)
         Registers.registerSet.setZFlag(finalAValue == 0.toByte())
+        Registers.registerSet.setYFFlag((finalAValue).getBit(5))
+        Registers.registerSet.setXFFlag((finalAValue).getBit(3))
         Registers.registerSet.setHFlag(false)
         Registers.registerSet.setPVFlag(finalAValue.countOneBits() % 2 == 0)
         Registers.registerSet.setNFlag(false)

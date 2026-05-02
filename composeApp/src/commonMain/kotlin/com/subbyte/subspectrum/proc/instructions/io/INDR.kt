@@ -46,7 +46,6 @@ data class INDR(
         conditionBIs0 = newBValue == 0.toByte()
         if (!conditionBIs0) {
             Registers.specialPurposeRegisters.setPC(Registers.specialPurposeRegisters.getPC().minus(2).toShort())
-            Registers.specialPurposeRegisters.incrementR(2)
         }
     }
 

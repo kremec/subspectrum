@@ -41,7 +41,6 @@ data class LDDR(
         if (!conditionBCIs0) {
             val pcRegisterValue = Registers.specialPurposeRegisters.getPC()
             Registers.specialPurposeRegisters.setPC(pcRegisterValue.minus(2).toShort())
-            Registers.specialPurposeRegisters.incrementR(2)
         }
     }
 

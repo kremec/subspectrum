@@ -40,7 +40,6 @@ data class LDIR(
         conditionBCIs0 = newBC == 0.toShort()
         if (!conditionBCIs0) {
             Registers.specialPurposeRegisters.setPC(Registers.specialPurposeRegisters.getPC().minus(2).toShort())
-            Registers.specialPurposeRegisters.incrementR(2)
         }
     }
 

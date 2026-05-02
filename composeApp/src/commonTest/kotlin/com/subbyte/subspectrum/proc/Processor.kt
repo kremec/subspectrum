@@ -84,6 +84,74 @@ class ProcessorTest {
     }
 
     @Test
+    fun unprefixedInstructionIncrementsRByOne() {
+        Memory.memorySet.setMemoryCell(0x4000u, 0x00.toByte()) // NOP
+        Registers.specialPurposeRegisters.setPC(0x4000.toShort())
+        Registers.specialPurposeRegisters.setR(0x7F.toByte())
+
+        Processor.step()
+
+        assertEquals(0x00.toByte(), Registers.specialPurposeRegisters.getR())
+    }
+
+    @Test
+    fun edPrefixedInstructionIncrementsRByTwoAndLdARReadsIncrementedR() {
+        Memory.memorySet.setMemoryCells(0x4000u, byteArrayOf(0xED.toByte(), 0x5F.toByte())) // LD A,R
+        Registers.specialPurposeRegisters.setPC(0x4000.toShort())
+        Registers.specialPurposeRegisters.setR(0x10.toByte())
+
+        Processor.step()
+
+        assertEquals(0x12.toByte(), Registers.specialPurposeRegisters.getR())
+        assertEquals(0x12.toByte(), Registers.registerSet.getA())
+    }
+
+    @Test
+    fun ldRAWritesAAfterInstructionRIncrement() {
+        Memory.memorySet.setMemoryCells(0x4000u, byteArrayOf(0xED.toByte(), 0x4F.toByte())) // LD R,A
+        Registers.specialPurposeRegisters.setPC(0x4000.toShort())
+        Registers.specialPurposeRegisters.setR(0x10.toByte())
+        Registers.registerSet.setA(0xA5.toByte())
+
+        Processor.step()
+
+        assertEquals(0xA5.toByte(), Registers.specialPurposeRegisters.getR())
+    }
+
+    @Test
+    fun ddcbInstructionIncrementsRByTwo() {
+        Memory.memorySet.setMemoryCells(
+            0x4000u,
+            byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x00.toByte(), 0x36.toByte()), // SLL (IX+0)
+        )
+        Registers.specialPurposeRegisters.setPC(0x4000.toShort())
+        Registers.specialPurposeRegisters.setIX(0x5000.toShort())
+        Memory.memorySet.setMemoryCell(0x5000u, 0x01.toByte())
+
+        Processor.step()
+
+        assertEquals(0x02.toByte(), Registers.specialPurposeRegisters.getR())
+    }
+
+    @Test
+    fun ldirIncrementsRByTwoForEachExecutedIteration() {
+        Memory.memorySet.setMemoryCells(0x4000u, byteArrayOf(0xED.toByte(), 0xB0.toByte())) // LDIR
+        Memory.memorySet.setMemoryCells(0x5000u, byteArrayOf(0x11.toByte(), 0x22.toByte()))
+        Registers.specialPurposeRegisters.setPC(0x4000.toShort())
+        Registers.registerSet.setHL(0x5000.toShort())
+        Registers.registerSet.setDE(0x6000.toShort())
+        Registers.registerSet.setBC(0x0002.toShort())
+
+        Processor.step()
+        assertEquals(0x4000.toShort(), Registers.specialPurposeRegisters.getPC())
+        assertEquals(0x02.toByte(), Registers.specialPurposeRegisters.getR())
+
+        Processor.step()
+        assertEquals(0x4002.toShort(), Registers.specialPurposeRegisters.getPC())
+        assertEquals(0x04.toByte(), Registers.specialPurposeRegisters.getR())
+    }
+
+    @Test
     fun im1InterruptPushesPCAndJumpsTo0038() {
         Memory.memorySet.setMemoryCell(0x0000u, 0x00, canOverwriteROM = true) // NOP
         Registers.specialPurposeRegisters.setPC(0x0000)

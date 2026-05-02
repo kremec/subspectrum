@@ -488,7 +488,13 @@ object Instructions {
             if (pattern.matches(word)) {
                 try {
                     val instruction = def.decode(word, pc)
-                    return DecodedInstruction(instruction, pattern.getOpcodeFetchCount())
+                    val opcodeFetchCount = when {
+                        instruction.bytes.size >= 2 &&
+                                instruction.bytes[0] in byteArrayOf(0xDD.toByte(), 0xFD.toByte()) &&
+                                instruction.bytes[1] == 0xCB.toByte() -> 2
+                        else -> pattern.getOpcodeFetchCount()
+                    }
+                    return DecodedInstruction(instruction, opcodeFetchCount)
                 } catch (_: NoSuchElementException) {
                     // Decoding failed (e.g., invalid register code), try next definition
                     continue

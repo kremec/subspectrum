@@ -39,19 +39,20 @@ class SLLIXdTest {
         Memory.memorySet.setMemoryCells(
             0x1000u,
             byteArrayOf(0xDD.toByte(), 0xCB.toByte(), 0x01.toByte(), 0x36.toByte()),
+            canOverwriteROM = true,
         )
 
         val decoded = Instructions.decode(0x1000u)
 
         assertEquals("SLL (IX+01h)", decoded.instruction.toString())
         assertEquals(4, decoded.instruction.bytes.size)
-        assertEquals(3, decoded.opcodeFetchCount)
+        assertEquals(2, decoded.opcodeFetchCount)
     }
 
     @Test
     fun executeShiftLeftLogicalOneMemoryIXd() {
-        Registers.specialPurposeRegisters.setIX(0x2000.toShort())
-        Memory.memorySet.setMemoryCell(0x2001u, 0x80.toByte())
+        Registers.specialPurposeRegisters.setIX(0x5000.toShort())
+        Memory.memorySet.setMemoryCell(0x5001u, 0x80.toByte())
 
         val instruction = SLLIXd(
             address = 0x1000u,
@@ -61,7 +62,7 @@ class SLLIXdTest {
 
         instruction.execute()
 
-        assertEquals(0x01.toByte(), Memory.memorySet.getMemoryCell(0x2001u))
+        assertEquals(0x01.toByte(), Memory.memorySet.getMemoryCell(0x5001u))
         assertTrue(Registers.registerSet.getCFlag())
         assertFalse(Registers.registerSet.getNFlag())
         assertFalse(Registers.registerSet.getHFlag())

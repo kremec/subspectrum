@@ -48,7 +48,6 @@ data class CPIR(
         conditionMemHLIsA = comparison == 0.toByte()
         if (!conditionBCIs0 && !conditionMemHLIsA) {
             Registers.specialPurposeRegisters.setPC(Registers.specialPurposeRegisters.getPC().minus(2).toShort())
-            Registers.specialPurposeRegisters.incrementR(2)
         }
     }
 

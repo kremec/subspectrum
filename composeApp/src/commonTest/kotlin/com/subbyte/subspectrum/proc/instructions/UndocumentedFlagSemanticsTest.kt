@@ -5,6 +5,8 @@ import com.subbyte.subspectrum.base.Memory
 import com.subbyte.subspectrum.base.RegisterCode
 import com.subbyte.subspectrum.base.RegisterPairSSCode
 import com.subbyte.subspectrum.base.Registers
+import com.subbyte.subspectrum.base.ULAKeyboard
+import com.subbyte.subspectrum.base.ULAKeyboardInputMode
 import com.subbyte.subspectrum.proc.instructions.arith16.ADDHLss
 import com.subbyte.subspectrum.proc.instructions.arith8.ADDAr
 import com.subbyte.subspectrum.proc.instructions.arith8.CPr
@@ -29,6 +31,8 @@ class UndocumentedFlagSemanticsTest {
     fun setup() {
         Memory.memorySet.reset()
         IO.ioPortSet.reset()
+        ULAKeyboard.keyboardInputMode.value = ULAKeyboardInputMode.Authentic
+        ULAKeyboard.releaseAllKeyboardKeys()
         Registers.registerSet.reset()
         Registers.specialPurposeRegisters.reset()
     }
@@ -175,7 +179,7 @@ class UndocumentedFlagSemanticsTest {
         Registers.registerSet.setB(0x21)
         Registers.registerSet.setC(0x01)
         Registers.registerSet.setHL(0x8000.toShort())
-        IO.ioPortSet.setIO(0x2101u, 0x81.toByte())
+        IO.ioPortSet.setIO(0x2001u, 0x81.toByte())
 
         INI(0x1000u, DataByteArray(byteArrayOf(0xED.toByte(), 0xA2.toByte()))).execute()
 
@@ -186,5 +190,20 @@ class UndocumentedFlagSemanticsTest {
         assertFalse(Registers.registerSet.getCFlag())
         assertFalse(Registers.registerSet.getHFlag())
         assertFalse(Registers.registerSet.getPVFlag())
+    }
+
+    @Test
+    fun inputBlockReadsPortUsingBAfterDecrement() {
+        ULAKeyboard.keyboardInputMode.value = ULAKeyboardInputMode.Actual
+        assertTrue(ULAKeyboard.setKeyboardCharacterState('z', isPressed = true))
+
+        Registers.registerSet.setB(0xFF.toByte())
+        Registers.registerSet.setC(0xFE.toByte())
+        Registers.registerSet.setHL(0x8000.toShort())
+
+        INI(0x1000u, DataByteArray(byteArrayOf(0xED.toByte(), 0xA2.toByte()))).execute()
+
+        assertEquals(0xBD.toByte(), Memory.memorySet.getMemoryCell(0x8000u))
+        assertEquals(0xFE.toByte(), Registers.registerSet.getB())
     }
 }

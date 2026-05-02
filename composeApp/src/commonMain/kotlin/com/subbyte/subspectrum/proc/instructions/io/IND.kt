@@ -18,14 +18,14 @@ data class IND(
 
     override fun execute() {
         val bRegisterValue = Registers.registerSet.getB()
-        val inputPortAddress = Registers.registerSet.getBC().toUShort()
-        val inputData = IO.ioPortSet.getIO(inputPortAddress)
-
         val hlRegisterPairValue = Registers.registerSet.getHL()
-        Memory.memorySet.setMemoryCell(hlRegisterPairValue.toUShort(), inputData)
 
         val newBValue = bRegisterValue.dec()
         Registers.registerSet.setB(newBValue)
+        val inputPortAddress = Registers.registerSet.getBC().toUShort()
+        val inputData = IO.ioPortSet.getIO(inputPortAddress)
+
+        Memory.memorySet.setMemoryCell(hlRegisterPairValue.toUShort(), inputData)
         Registers.registerSet.setHL(hlRegisterPairValue.dec())
 
         val k = inputData.toUByte().toInt() + Registers.registerSet.getC().dec().toUByte().toInt()

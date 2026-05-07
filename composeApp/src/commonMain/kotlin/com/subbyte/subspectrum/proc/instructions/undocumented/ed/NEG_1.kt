@@ -33,7 +33,7 @@ data class NEG_1(
     override fun toString(): String = "NEG"
 
     companion object Companion : InstructionDefinition {
-        override val bitPattern = BitPattern.of("11101101 1001100")
+        override val bitPattern = BitPattern.of("11101101 01001100")
         override fun decode(word: Long, address: Address): Instruction {
             val bytes = bitPattern.toInstructionByteArray(word)
 
